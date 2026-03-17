@@ -1,0 +1,322 @@
+import { useMemo, useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import {
+  BufferGeometry,
+  Color,
+  Float32BufferAttribute,
+  Mesh,
+  ShaderMaterial,
+  Vector3,
+} from "three";
+import { Html } from "@react-three/drei";
+import { buildMigrationCurve } from "../../utils/migration";
+import migrationsData from "../../data/migrations.json";
+import birdsData from "../../data/birds.json";
+import { useAppStore } from "../../store";
+import { getMigrationProgress, isMigrationActive } from "../../systems/MigrationSystem";
+import type { Bird, MigrationRoute } from "../../types";
+
+const migrations = migrationsData as MigrationRoute[];
+const birds = birdsData as Bird[];
+const birdMap = new Map(birds.map((b) => [b.id, b]));
+
+const vertexShader = `
+  attribute float arcProgress;
+  varying float vArc;
+  void main() {
+    vArc = arcProgress;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  uniform float uTime;
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  varying float vArc;
+  void main() {
+    float dash = mod(vArc * 8.0 - uTime * 0.3, 1.0);
+    if (dash > 0.4) discard;
+    float glow = smoothstep(0.4, 0.0, dash) * 0.6 + 0.4;
+    gl_FragColor = vec4(uColor * glow, (1.0 - dash * 0.8) * uOpacity);
+  }
+`;
+
+interface RouteLineProps {
+  route: MigrationRoute;
+  color?: string;
+  opacity?: number;
+}
+
+function RouteLine({ route, color, opacity = 1.0 }: RouteLineProps) {
+  const matRef = useRef<ShaderMaterial>(null);
+
+  const geometry = useMemo(() => {
+    const fromBird = birdMap.get(route.from);
+    const toBird = birdMap.get(route.to);
+    if (!fromBird || !toBird) return null;
+
+    const points = buildMigrationCurve(
+      [fromBird.lat, fromBird.lng],
+      [toBird.lat, toBird.lng],
+      1.0,
+      64,
+    );
+
+    const geo = new BufferGeometry().setFromPoints(points);
+    const arcProgress = new Float32Array(points.length);
+    for (let i = 0; i < points.length; i++) {
+      arcProgress[i] = i / (points.length - 1);
+    }
+    geo.setAttribute("arcProgress", new Float32BufferAttribute(arcProgress, 1));
+    return geo;
+  }, [route]);
+
+  const material = useMemo(() => {
+    const c = new Color(color || "#fbbf24");
+    return new ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTime: { value: 0 },
+        uColor: { value: c },
+        uOpacity: { value: opacity },
+      },
+      transparent: true,
+      depthWrite: false,
+    });
+  }, [color, opacity]);
+
+  useFrame(({ clock }) => {
+    if (matRef.current) {
+      matRef.current.uniforms.uTime.value = clock.elapsedTime;
+      matRef.current.uniforms.uOpacity.value = opacity;
+    }
+  });
+
+  if (!geometry) return null;
+
+  return (
+    // @ts-expect-error R3F extends line element
+    <line geometry={geometry}>
+      <primitive ref={matRef} object={material} attach="material" />
+    </line>
+  );
+}
+
+function getPointAtProgress(points: Vector3[], t: number): Vector3 {
+  if (points.length === 0) return new Vector3();
+  const clamped = ((t % 1) + 1) % 1;
+  const exactIndex = clamped * (points.length - 1);
+  const idx = Math.floor(exactIndex);
+  const frac = exactIndex - idx;
+  const nextIdx = Math.min(idx + 1, points.length - 1);
+  return points[idx].clone().lerp(points[nextIdx], frac);
+}
+
+interface FlyingBirdIconProps {
+  route: MigrationRoute;
+}
+
+function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
+  const mainRef = useRef<Mesh>(null);
+  const trail1Ref = useRef<Mesh>(null);
+  const trail2Ref = useRef<Mesh>(null);
+  const trail3Ref = useRef<Mesh>(null);
+  const trail4Ref = useRef<Mesh>(null);
+  const season = useAppStore((s) => s.ecosystemState.season);
+
+  const points = useMemo(() => {
+    const fromBird = birdMap.get(route.from);
+    const toBird = birdMap.get(route.to);
+    if (!fromBird || !toBird) return [];
+
+    return buildMigrationCurve(
+      [fromBird.lat, fromBird.lng],
+      [toBird.lat, toBird.lng],
+      1.0,
+      64,
+    );
+  }, [route]);
+
+  useFrame(({ clock }) => {
+    if (points.length === 0) return;
+
+    const migrating = isMigrationActive(season);
+    const cycleFraction = migrating ? (clock.elapsedTime % 8) / 8 : 0;
+    const progress = getMigrationProgress(season, cycleFraction);
+
+    const mainPos = getPointAtProgress(points, progress);
+    const trail1Pos = getPointAtProgress(points, Math.max(0, progress - 0.03));
+    const trail2Pos = getPointAtProgress(points, Math.max(0, progress - 0.06));
+    const trail3Pos = getPointAtProgress(points, Math.max(0, progress - 0.10));
+    const trail4Pos = getPointAtProgress(points, Math.max(0, progress - 0.15));
+
+    if (mainRef.current) mainRef.current.position.copy(mainPos);
+    if (trail1Ref.current) trail1Ref.current.position.copy(trail1Pos);
+    if (trail2Ref.current) trail2Ref.current.position.copy(trail2Pos);
+    if (trail3Ref.current) trail3Ref.current.position.copy(trail3Pos);
+    if (trail4Ref.current) trail4Ref.current.position.copy(trail4Pos);
+  });
+
+  if (points.length === 0) return null;
+
+  const migrating = isMigrationActive(season);
+  const routeColor = route.color || "#fbbf24";
+
+  return (
+    <>
+      <mesh ref={trail4Ref}>
+        <sphereGeometry args={[0.003, 6, 4]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.12 : 0.04}
+        />
+      </mesh>
+      <mesh ref={trail3Ref}>
+        <sphereGeometry args={[0.004, 6, 4]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.2 : 0.06}
+        />
+      </mesh>
+      <mesh ref={trail2Ref}>
+        <sphereGeometry args={[0.005, 8, 6]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.35 : 0.1}
+        />
+      </mesh>
+      <mesh ref={trail1Ref}>
+        <sphereGeometry args={[0.006, 8, 6]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.55 : 0.15}
+        />
+      </mesh>
+      <mesh ref={mainRef}>
+        <sphereGeometry args={[0.009, 10, 8]} />
+        <meshBasicMaterial color={routeColor} transparent opacity={migrating ? 1.0 : 0.3} />
+      </mesh>
+    </>
+  );
+}
+
+interface MigrationLabelProps {
+  route: MigrationRoute;
+}
+
+function MigrationLabel({ route }: MigrationLabelProps) {
+  const { camera } = useThree();
+  const language = useAppStore((s) => s.language);
+  const season = useAppStore((s) => s.ecosystemState.season);
+  const [showLabel, setShowLabel] = useState(
+    () => camera.position.length() < 2.5,
+  );
+  const prevShowRef = useRef(showLabel);
+
+  useFrame(() => {
+    const shouldShow = camera.position.length() < 2.5;
+    if (prevShowRef.current !== shouldShow) {
+      prevShowRef.current = shouldShow;
+      setShowLabel(shouldShow);
+    }
+  });
+
+  const midpoint = useMemo(() => {
+    if (route.migrationDistanceKm == null) return null;
+    const fromBird = birdMap.get(route.from);
+    const toBird = birdMap.get(route.to);
+    if (!fromBird || !toBird) return null;
+
+    const points = buildMigrationCurve(
+      [fromBird.lat, fromBird.lng],
+      [toBird.lat, toBird.lng],
+      1.0,
+      64,
+    );
+    const midIdx = Math.floor(points.length / 2);
+    return points[midIdx];
+  }, [route]);
+
+  if (route.migrationDistanceKm == null || midpoint == null) return null;
+
+  const dist = route.migrationDistanceKm;
+  const seasonIcon = season === "spring" ? "🌸" : season === "autumn" ? "🍂" : season === "summer" ? "☀️" : "❄️";
+  const distText = language === "zh" ? `${seasonIcon} ${dist}千米` : `${seasonIcon} ${dist}km`;
+
+  return (
+    <Html position={midpoint} center>
+      <div
+        style={{
+          opacity: showLabel ? 1 : 0,
+          pointerEvents: "none",
+          transition: "opacity 0.3s ease",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "3px 10px",
+            fontSize: "11px",
+            fontWeight: 600,
+            color: "rgba(255, 255, 255, 0.95)",
+            background: "rgba(0, 10, 30, 0.7)",
+            backdropFilter: "blur(8px)",
+            borderRadius: "9999px",
+            whiteSpace: "nowrap",
+            border: "1px solid rgba(100, 180, 255, 0.15)",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
+            letterSpacing: "0.02em",
+          }}
+        >
+          ✈ {distText}
+        </span>
+      </div>
+    </Html>
+  );
+}
+
+const ROUTE_COLORS_FALLBACK = ["#fbbf24", "#f87171", "#34d399", "#a78bfa", "#fb923c", "#38bdf8"];
+
+export function MigrationPaths() {
+  const showAllRoutes = useAppStore((s) => s.showAllRoutes);
+  const selectedBirdId = useAppStore((s) => s.selectedBirdId);
+
+  const selectedRouteIds = useMemo(() => {
+    if (!selectedBirdId) return new Set<string>();
+    return new Set(
+      migrations
+        .filter((r) => r.from === selectedBirdId || r.to === selectedBirdId)
+        .map((r) => r.id),
+    );
+  }, [selectedBirdId]);
+
+  return (
+    <group>
+      {migrations.map((route, idx) => {
+        const isSelected = selectedRouteIds.has(route.id);
+        const visible = showAllRoutes || isSelected || !selectedBirdId;
+        if (!visible) return null;
+
+        const dimmed = showAllRoutes && selectedBirdId && !isSelected;
+        const routeColor = route.color || (showAllRoutes ? ROUTE_COLORS_FALLBACK[idx % ROUTE_COLORS_FALLBACK.length] : undefined);
+
+        return (
+          <group key={route.id}>
+            <RouteLine route={route} color={routeColor} opacity={dimmed ? 0.3 : 1.0} />
+            <FlyingBirdIcon route={route} />
+            <MigrationLabel route={route} />
+          </group>
+        );
+      })}
+    </group>
+  );
+}

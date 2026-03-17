@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "regions": [
+    "asia",
+    "europe",
+    "americas",
+    "africa",
+    "oceania",
+    "antarctica"
+  ],
+  "birds": [
+    {
+      "id": "african-fish-eagle",
+      "region": "africa"
+    },
+    {
+      "id": "african-grey-parrot",
+      "region": "africa"
+    },
+    {
+      "id": "andean-condor",
+      "region": "americas"
+    },
+    {
+      "id": "arctic-tern",
+      "region": "europe"
+    },
+    {
+      "id": "atlantic-puffin",
+      "region": "europe"
+    },
+    {
+      "id": "bald-eagle",
+      "region": "americas"
+    },
+    {
+      "id": "bar-tailed-godwit",
+      "region": "oceania"
+    },
+    {
+      "id": "barn-owl",
+      "region": "europe"
+    },
+    {
+      "id": "barn-swallow",
+      "region": "europe"
+    },
+    {
+      "id": "blue-footed-booby",
+      "region": "americas"
+    },
+    {
+      "id": "california-condor",
+      "region": "americas"
+    },
+    {
+      "id": "canada-goose",
+      "region": "americas"
+    },
+    {
+      "id": "cassowary",
+      "region": "oceania"
+    },
+    {
+      "id": "collared-kingfisher",
+      "region": "asia"
+    },
+    {
+      "id": "emperor-penguin",
+      "region": "antarctica"
+    },
+    {
+      "id": "emu",
+      "region": "oceania"
+    },
+    {
+      "id": "european-robin",
+      "region": "europe"
+    },
+    {
+      "id": "galapagos-penguin",
+      "region": "americas"
+    },
+    {
+      "id": "golden-eagle",
+      "region": "europe"
+    },
+    {
+      "id": "great-hornbill",
+      "region": "asia"
+    },
+    {
+      "id": "greater-flamingo",
+      "region": "europe"
+    },
+    {
+      "id": "harpy-eagle",
+      "region": "americas"
+    },
+    {
+      "id": "himalayan-monal",
+      "region": "asia"
+    },
+    {
+      "id": "hoatzin",
+      "region": "americas"
+    },
+    {
+      "id": "indian-peafowl",
+      "region": "asia"
+    },
+    {
+      "id": "kakapo",
+      "region": "oceania"
+    },
+    {
+      "id": "king-penguin",
+      "region": "antarctica"
+    },
+    {
+      "id": "kiwi",
+      "region": "oceania"
+    },
+    {
+      "id": "kookaburra",
+      "region": "oceania"
+    },
+    {
+      "id": "lilac-breasted-roller",
+      "region": "africa"
+    },
+    {
+      "id": "magnificent-frigatebird",
+      "region": "americas"
+    },
+    {
+      "id": "mandarin-duck",
+      "region": "asia"
+    },
+    {
+      "id": "marabou-stork",
+      "region": "africa"
+    },
+    {
+      "id": "northern-cardinal",
+      "region": "americas"
+    },
+    {
+      "id": "ostrich",
+      "region": "africa"
+    },
+    {
+      "id": "peregrine-falcon",
+      "region": "americas"
+    },
+    {
+      "id": "red-crowned-crane",
+      "region": "asia"
+    },
+    {
+      "id": "resplendent-quetzal",
+      "region": "americas"
+    },
+    {
+      "id": "ruby-throated-hummingbird",
+      "region": "americas"
+    },
+    {
+      "id": "scarlet-macaw",
+      "region": "americas"
+    },
+    {
+      "id": "secretary-bird",
+      "region": "africa"
+    },
+    {
+      "id": "shoebill",
+      "region": "africa"
+    },
+    {
+      "id": "snowy-egret",
+      "region": "americas"
+    },
+    {
+      "id": "snowy-owl",
+      "region": "americas"
+    },
+    {
+      "id": "sulphur-crested-cockatoo",
+      "region": "oceania"
+    },
+    {
+      "id": "superb-fairywren",
+      "region": "oceania"
+    },
+    {
+      "id": "superb-lyrebird",
+      "region": "oceania"
+    },
+    {
+      "id": "toco-toucan",
+      "region": "americas"
+    },
+    {
+      "id": "toucan-barbet",
+      "region": "americas"
+    },
+    {
+      "id": "wandering-albatross",
+      "region": "antarctica"
+    },
+    {
+      "id": "white-bellied-sea-eagle",
+      "region": "asia"
+    },
+    {
+      "id": "white-stork",
+      "region": "europe"
+    },
+    {
+      "id": "whooping-crane",
+      "region": "americas"
+    }
+  ]
+}

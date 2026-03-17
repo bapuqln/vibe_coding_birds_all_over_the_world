@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+:root {
+  --z-globe: 0;
+  --z-marker: 5;
+  --z-sidebar: 20;
+  --z-bottom-panel: 30;
+  --z-card: 60;
+  --z-modal: 80;
+  --z-overlay: 100;
+
+  --safe-area: 20px;
+  --panel-duration: 250ms;
+  --panel-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.18);
+  --glass-bg-card: rgba(255, 255, 255, 0.92);
+  --glass-blur: 20px;
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  --glass-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.25);
+  --glass-radius: 20px;
+  --glass-radius-pill: 9999px;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg-card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-button {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-pill);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s var(--panel-ease),
+              box-shadow 0.2s var(--panel-ease),
+              background 0.2s var(--panel-ease);
+}
+
+.glass-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.glass-button:active {
+  transform: scale(0.97);
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #050a18;
+  font-family:
+    "Noto Sans SC",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(78, 205, 196, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+@keyframes panelSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes panelSlideRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes panelScaleFade {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
+  50% { box-shadow: 0 4px 24px rgba(245, 158, 11, 0.3), 0 0 16px rgba(245, 158, 11, 0.15); }
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleFade {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes expeditionConfetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-60px) rotate(360deg); opacity: 0; }
+}
+
+.expedition-confetti::before,
+.expedition-confetti::after {
+  content: "🎉";
+  position: absolute;
+  font-size: 20px;
+  animation: expeditionConfetti 2.5s ease-out forwards;
+}
+
+.expedition-confetti::before {
+  left: -20px;
+  top: -10px;
+  animation-delay: 0.1s;
+}
+
+.expedition-confetti::after {
+  right: -20px;
+  top: -10px;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes guideFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes discoverySparkle {
+  0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 0.8; }
+}
+
+.journey-btn {
+  width: 180px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(100, 180, 255, 0.12);
+  background: rgba(0, 10, 30, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.journey-btn:hover {
+  background: rgba(0, 10, 30, 0.8);
+  border-color: rgba(100, 180, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.journey-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+}

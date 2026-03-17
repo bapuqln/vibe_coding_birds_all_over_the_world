@@ -1,0 +1,65 @@
+[
+  {
+    "id": "arctic-tern-migration",
+    "from": "arctic-tern",
+    "to": "emperor-penguin",
+    "nameZh": "北极燕鸥迁徙路线",
+    "nameEn": "Arctic Tern Migration",
+    "migrationDistanceKm": 71000,
+    "color": "#f87171"
+  },
+  {
+    "id": "godwit-migration",
+    "from": "bar-tailed-godwit",
+    "to": "snowy-owl",
+    "nameZh": "斑尾塍鹬迁徙路线",
+    "nameEn": "Bar-tailed Godwit Migration",
+    "migrationDistanceKm": 11000,
+    "color": "#34d399"
+  },
+  {
+    "id": "swallow-migration",
+    "from": "barn-swallow",
+    "to": "lilac-breasted-roller",
+    "nameZh": "家燕迁徙路线",
+    "nameEn": "Barn Swallow Migration",
+    "migrationDistanceKm": 20000,
+    "color": "#a78bfa"
+  },
+  {
+    "id": "stork-migration",
+    "from": "white-stork",
+    "to": "secretary-bird",
+    "nameZh": "白鹳迁徙路线",
+    "nameEn": "White Stork Migration",
+    "migrationDistanceKm": 20000,
+    "color": "#fbbf24"
+  },
+  {
+    "id": "eagle-migration",
+    "from": "white-bellied-sea-eagle",
+    "to": "bald-eagle",
+    "nameZh": "海雕迁徙路线",
+    "nameEn": "Sea Eagle Migration",
+    "migrationDistanceKm": 15000,
+    "color": "#fb923c"
+  },
+  {
+    "id": "goose-migration",
+    "from": "canada-goose",
+    "to": "greater-flamingo",
+    "nameZh": "加拿大雁迁徙路线",
+    "nameEn": "Canada Goose Migration",
+    "migrationDistanceKm": 5000,
+    "color": "#38bdf8"
+  },
+  {
+    "id": "whooping-crane-migration",
+    "from": "whooping-crane",
+    "to": "bald-eagle",
+    "nameZh": "美洲鹤迁徙路线",
+    "nameEn": "Whooping Crane Migration",
+    "migrationDistanceKm": 4000,
+    "color": "#ec4899"
+  }
+]

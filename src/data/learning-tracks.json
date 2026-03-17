@@ -1,0 +1,77 @@
+[
+  {
+    "id": "birds-of-prey",
+    "name": "Birds of Prey",
+    "nameZh": "猛禽之路",
+    "description": "Eagles, falcons, owls — powerful hunters of the sky.",
+    "descriptionZh": "鹰、隼、猫头鹰——天空中的强大猎手。",
+    "birdIds": [
+      "bald-eagle",
+      "peregrine-falcon",
+      "snowy-owl",
+      "harpy-eagle",
+      "golden-eagle"
+    ],
+    "badgeIcon": "🦅"
+  },
+  {
+    "id": "ocean-birds",
+    "name": "Ocean Birds",
+    "nameZh": "海洋鸟类",
+    "description": "Penguins, albatrosses, and birds of the open sea.",
+    "descriptionZh": "企鹅、信天翁和远洋海鸟。",
+    "birdIds": [
+      "emperor-penguin",
+      "wandering-albatross",
+      "galapagos-penguin",
+      "king-penguin",
+      "blue-footed-booby"
+    ],
+    "badgeIcon": "🐧"
+  },
+  {
+    "id": "rainforest-birds",
+    "name": "Rainforest Birds",
+    "nameZh": "雨林鸟类",
+    "description": "Colorful birds of tropical forests and canopy life.",
+    "descriptionZh": "热带雨林与树冠层的多彩鸟类。",
+    "birdIds": [
+      "toco-toucan",
+      "scarlet-macaw",
+      "african-grey-parrot",
+      "resplendent-quetzal",
+      "great-hornbill"
+    ],
+    "badgeIcon": "🦜"
+  },
+  {
+    "id": "migratory-birds",
+    "name": "Migratory Birds",
+    "nameZh": "迁徙之鸟",
+    "description": "Long-distance travelers that cross continents and oceans.",
+    "descriptionZh": "跨越大陆与海洋的长途旅行家。",
+    "birdIds": [
+      "arctic-tern",
+      "barn-swallow",
+      "bar-tailed-godwit",
+      "whooping-crane",
+      "white-stork"
+    ],
+    "badgeIcon": "✈️"
+  },
+  {
+    "id": "colorful-birds",
+    "name": "Colorful Birds",
+    "nameZh": "缤纷羽衣",
+    "description": "Some of the brightest and most beautiful plumage on Earth.",
+    "descriptionZh": "地球上最艳丽夺目的羽毛明星。",
+    "birdIds": [
+      "greater-flamingo",
+      "indian-peafowl",
+      "collared-kingfisher",
+      "lilac-breasted-roller",
+      "himalayan-monal"
+    ],
+    "badgeIcon": "🌈"
+  }
+]

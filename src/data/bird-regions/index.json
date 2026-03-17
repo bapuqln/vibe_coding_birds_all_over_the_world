@@ -1,0 +1,5 @@
+{
+  "regions": [
+    { "id": "asia", "file": "asia.json" }
+  ]
+}

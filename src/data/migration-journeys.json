@@ -1,0 +1,210 @@
+[
+  {
+    "id": "arctic-tern-journey",
+    "nameZh": "北极燕鸥之旅",
+    "nameEn": "Arctic Tern Journey",
+    "descriptionZh": "跟随北极燕鸥从北极到南极的史诗迁徙之旅，穿越五大洲。",
+    "descriptionEn": "Follow the Arctic Tern on its epic migration from the Arctic to Antarctica, crossing five continents.",
+    "badge": "🏔️",
+    "color": "#f87171",
+    "seasons": ["spring", "autumn"],
+    "stops": [
+      {
+        "id": "greenland",
+        "nameZh": "格陵兰",
+        "nameEn": "Greenland",
+        "lat": 72,
+        "lng": -40,
+        "birdIds": ["arctic-tern", "snowy-owl", "king-eider"]
+      },
+      {
+        "id": "united-kingdom",
+        "nameZh": "英国",
+        "nameEn": "United Kingdom",
+        "lat": 54,
+        "lng": -2,
+        "birdIds": ["european-robin", "atlantic-puffin", "barn-owl"]
+      },
+      {
+        "id": "morocco",
+        "nameZh": "摩洛哥",
+        "nameEn": "Morocco",
+        "lat": 32,
+        "lng": -5,
+        "birdIds": ["greater-flamingo", "common-kestrel", "european-bee-eater"]
+      },
+      {
+        "id": "south-africa",
+        "nameZh": "南非",
+        "nameEn": "South Africa",
+        "lat": -34,
+        "lng": 18,
+        "birdIds": ["secretary-bird", "african-fish-eagle", "lilac-breasted-roller"]
+      },
+      {
+        "id": "antarctica",
+        "nameZh": "南极洲",
+        "nameEn": "Antarctica",
+        "lat": -75,
+        "lng": 0,
+        "birdIds": ["emperor-penguin", "wandering-albatross", "king-penguin"]
+      }
+    ]
+  },
+  {
+    "id": "swan-migration",
+    "nameZh": "天鹅迁徙之路",
+    "nameEn": "Swan Migration",
+    "descriptionZh": "追踪白鹳从欧洲到非洲的壮观迁徙路线。",
+    "descriptionEn": "Track the White Stork's spectacular migration route from Europe to Africa.",
+    "badge": "🦢",
+    "color": "#fbbf24",
+    "seasons": ["autumn", "spring"],
+    "stops": [
+      {
+        "id": "germany",
+        "nameZh": "德国",
+        "nameEn": "Germany",
+        "lat": 52,
+        "lng": 13,
+        "birdIds": ["white-stork", "common-crane", "eurasian-eagle-owl"]
+      },
+      {
+        "id": "france",
+        "nameZh": "法国",
+        "nameEn": "France",
+        "lat": 46,
+        "lng": 2,
+        "birdIds": ["barn-swallow", "common-kestrel", "bluethroat"]
+      },
+      {
+        "id": "spain",
+        "nameZh": "西班牙",
+        "nameEn": "Spain",
+        "lat": 40,
+        "lng": -4,
+        "birdIds": ["greater-flamingo", "golden-eagle", "european-bee-eater"]
+      },
+      {
+        "id": "west-africa",
+        "nameZh": "西非",
+        "nameEn": "West Africa",
+        "lat": 10,
+        "lng": -5,
+        "birdIds": ["grey-crowned-crane", "african-grey-parrot", "carmine-bee-eater"]
+      },
+      {
+        "id": "east-africa",
+        "nameZh": "东非",
+        "nameEn": "East Africa",
+        "lat": -2,
+        "lng": 37,
+        "birdIds": ["secretary-bird", "superb-starling", "helmeted-guineafowl"]
+      }
+    ]
+  },
+  {
+    "id": "pacific-flyway",
+    "nameZh": "太平洋飞行通道",
+    "nameEn": "Pacific Flyway",
+    "descriptionZh": "沿着太平洋海岸线，从阿拉斯加到南美洲的迁徙走廊。",
+    "descriptionEn": "Follow the Pacific coast migration corridor from Alaska to South America.",
+    "badge": "🌊",
+    "color": "#38bdf8",
+    "seasons": ["spring", "summer", "autumn"],
+    "stops": [
+      {
+        "id": "alaska",
+        "nameZh": "阿拉斯加",
+        "nameEn": "Alaska",
+        "lat": 64,
+        "lng": -150,
+        "birdIds": ["bald-eagle", "snowy-owl", "willow-ptarmigan"]
+      },
+      {
+        "id": "pacific-northwest",
+        "nameZh": "太平洋西北",
+        "nameEn": "Pacific Northwest",
+        "lat": 47,
+        "lng": -122,
+        "birdIds": ["peregrine-falcon", "canada-goose", "northern-cardinal"]
+      },
+      {
+        "id": "california",
+        "nameZh": "加利福尼亚",
+        "nameEn": "California",
+        "lat": 36,
+        "lng": -120,
+        "birdIds": ["california-condor", "ruby-throated-hummingbird", "snowy-egret"]
+      },
+      {
+        "id": "central-america",
+        "nameZh": "中美洲",
+        "nameEn": "Central America",
+        "lat": 15,
+        "lng": -88,
+        "birdIds": ["resplendent-quetzal", "scarlet-macaw", "toucan-barbet"]
+      },
+      {
+        "id": "galapagos",
+        "nameZh": "加拉帕戈斯",
+        "nameEn": "Galápagos",
+        "lat": -1,
+        "lng": -90,
+        "birdIds": ["blue-footed-booby", "galapagos-penguin", "magnificent-frigatebird"]
+      }
+    ]
+  },
+  {
+    "id": "amazon-rainforest-loop",
+    "nameZh": "亚马逊雨林环线",
+    "nameEn": "Amazon Rainforest Loop",
+    "descriptionZh": "探索南美洲亚马逊雨林及周边地区的珍稀鸟类。",
+    "descriptionEn": "Explore rare birds of the Amazon Rainforest and surrounding regions of South America.",
+    "badge": "🌿",
+    "color": "#34d399",
+    "seasons": ["spring", "summer", "autumn", "winter"],
+    "stops": [
+      {
+        "id": "amazon-basin",
+        "nameZh": "亚马逊盆地",
+        "nameEn": "Amazon Basin",
+        "lat": -3,
+        "lng": -60,
+        "birdIds": ["harpy-eagle", "hoatzin", "scarlet-macaw"]
+      },
+      {
+        "id": "pantanal",
+        "nameZh": "潘塔纳尔湿地",
+        "nameEn": "Pantanal",
+        "lat": -17,
+        "lng": -57,
+        "birdIds": ["hyacinth-macaw", "jabiru", "toco-toucan"]
+      },
+      {
+        "id": "andes-cloud-forest",
+        "nameZh": "安第斯云雾林",
+        "nameEn": "Andes Cloud Forest",
+        "lat": -13,
+        "lng": -72,
+        "birdIds": ["andean-condor", "cock-of-the-rock", "sword-billed-hummingbird"]
+      },
+      {
+        "id": "patagonia",
+        "nameZh": "巴塔哥尼亚",
+        "nameEn": "Patagonia",
+        "lat": -45,
+        "lng": -70,
+        "birdIds": ["andean-flamingo", "greater-rhea", "black-necked-swan"]
+      },
+      {
+        "id": "atlantic-forest",
+        "nameZh": "大西洋森林",
+        "nameEn": "Atlantic Forest",
+        "lat": -23,
+        "lng": -43,
+        "birdIds": ["turquoise-fronted-parrot", "chestnut-eared-aracari", "vermilion-flycatcher"]
+      }
+    ]
+  }
+]

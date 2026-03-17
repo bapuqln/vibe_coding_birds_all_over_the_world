@@ -1,0 +1,86 @@
+# gstack (gk) configuration for kids-bird-globe
+# This file defines how gstack operates within this project's boundaries.
+
+version: "1.0"
+project: kids-bird-globe
+speckit_version: "0.3.0"
+
+# ─── Role Personas ───────────────────────────────────────────────
+# gstack uses CEO / ENG / QA / SHIP role concepts.
+# Map them to this project's spec-kit stages:
+roles:
+  ceo:
+    maps_to: "/speckit.spec"
+    description: "Product vision — reads & refines specs/{feature}/spec.md"
+  eng:
+    maps_to: "/speckit.plan + /speckit.implement"
+    description: "Architecture & implementation — plan.md → src/"
+  qa:
+    maps_to: "gk /review"
+    description: "Code review & quality gates — runs after git add"
+  ship:
+    maps_to: "gk /ship"
+    description: "Release validation — final pre-merge checks"
+
+# ─── Spec-Kit Integration ────────────────────────────────────────
+speckit:
+  specs_dir: "specs"
+  feature: "kids-bird-globe"
+  files:
+    spec: "specs/kids-bird-globe/spec.md"
+    plan: "specs/kids-bird-globe/plan.md"
+    tasks: "specs/kids-bird-globe/tasks.md"
+
+# ─── Safety Guardrails ──────────────────────────────────────────
+# gstack will NOT perform these actions without explicit manual confirmation.
+guardrails:
+  require_confirmation:
+    - "Modify index.html"
+    - "Modify vite.config.ts or tsconfig.json"
+    - "Add new npm dependencies (generate suggestion first)"
+    - "Delete or rename existing components in src/components/"
+    - "Modify .cursor/commands/ (spec-kit templates)"
+    - "Modify .specify/ directory contents"
+
+  never_touch:
+    - ".git/"
+    - "node_modules/"
+    - "dist/"
+    - ".env*"
+    - "package-lock.json"
+
+  prefer:
+    - "Edit existing files over creating new ones"
+    - "TypeScript strict mode compliance"
+    - "Functional React components with hooks"
+    - "Zustand for state management (no Redux, no Context sprawl)"
+    - "Tailwind CSS utility classes (no inline styles)"
+    - "Three.js via @react-three/fiber abstractions"
+
+# ─── Tech Stack Context ─────────────────────────────────────────
+tech:
+  language: "TypeScript"
+  framework: "React 19"
+  rendering: "Three.js via @react-three/fiber + @react-three/drei"
+  state: "Zustand"
+  styling: "Tailwind CSS v4"
+  build: "Vite 8"
+  target: "Web (Cloudflare Pages)"
+
+# ─── gk Command Defaults ────────────────────────────────────────
+commands:
+  plan:
+    input: "specs/kids-bird-globe/plan.md"
+    context:
+      - "specs/kids-bird-globe/spec.md"
+      - "src/types.ts"
+      - "src/store.ts"
+  review:
+    trigger: "after git add"
+    scope: "staged changes only"
+  qa:
+    checks:
+      - "TypeScript compilation (tsc -b --noEmit)"
+      - "Vite build (npm run build)"
+      - "No console.log in committed code"
+      - "No TODO/FIXME without linked task ID"

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "rainforest-explorer",
+    "titleZh": "雨林探险家",
+    "titleEn": "Rainforest Explorer",
+    "descriptionZh": "发现3种生活在雨林中的鸟类",
+    "descriptionEn": "Find 3 birds that live in rainforests",
+    "type": "habitat",
+    "target": "rainforest",
+    "goal": 3,
+    "badge": "🌴"
+  },
+  {
+    "id": "wingspan-hunter",
+    "titleZh": "翼展猎人",
+    "titleEn": "Wingspan Hunter",
+    "descriptionZh": "发现一只翼展超过2米的鸟",
+    "descriptionEn": "Discover a bird with wingspan > 2m",
+    "type": "trait",
+    "target": "wingspan_200",
+    "goal": 1,
+    "badge": "🦅"
+  },
+  {
+    "id": "night-watcher",
+    "titleZh": "夜行观察者",
+    "titleEn": "Night Watcher",
+    "descriptionZh": "发现一只夜行性鸟类",
+    "descriptionEn": "Find a nocturnal bird",
+    "type": "trait",
+    "target": "nocturnal",
+    "goal": 1,
+    "badge": "🌙"
+  },
+  {
+    "id": "antarctic-adventurer",
+    "titleZh": "南极冒险家",
+    "titleEn": "Antarctic Adventurer",
+    "descriptionZh": "找到一只生活在南极的鸟",
+    "descriptionEn": "Locate a bird in Antarctica",
+    "type": "region",
+    "target": "antarctica",
+    "goal": 1,
+    "badge": "🧊"
+  },
+  {
+    "id": "speed-demon",
+    "titleZh": "速度之王",
+    "titleEn": "Speed Demon",
+    "descriptionZh": "发现一只飞行速度超过100km/h的鸟",
+    "descriptionEn": "Find a bird with flight speed > 100 km/h",
+    "type": "trait",
+    "target": "speed_100",
+    "goal": 1,
+    "badge": "⚡"
+  },
+  {
+    "id": "ocean-discoverer",
+    "titleZh": "海洋发现者",
+    "titleEn": "Ocean Discoverer",
+    "descriptionZh": "发现3种海洋鸟类",
+    "descriptionEn": "Find 3 ocean birds",
+    "type": "habitat",
+    "target": "ocean",
+    "goal": 3,
+    "badge": "🌊"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "rainforest",
+    "type": "rainforest",
+    "nameZh": "热带雨林",
+    "nameEn": "Rainforest",
+    "centerLat": -3.0,
+    "centerLng": -60.0,
+    "radius": 25,
+    "color": "#2d5a27",
+    "particleType": "leaves"
+  },
+  {
+    "id": "savannah",
+    "type": "savannah",
+    "nameZh": "热带草原",
+    "nameEn": "Savannah",
+    "centerLat": -2.0,
+    "centerLng": 30.0,
+    "radius": 25,
+    "color": "#c4a035",
+    "particleType": "dust"
+  },
+  {
+    "id": "arctic",
+    "type": "arctic",
+    "nameZh": "北极",
+    "nameEn": "Arctic",
+    "centerLat": 75.0,
+    "centerLng": 0.0,
+    "radius": 20,
+    "color": "#b8d4e3",
+    "particleType": "snow"
+  },
+  {
+    "id": "ocean-islands",
+    "type": "ocean",
+    "nameZh": "海洋岛屿",
+    "nameEn": "Ocean Islands",
+    "centerLat": -25.0,
+    "centerLng": 150.0,
+    "radius": 20,
+    "color": "#1a8a8a",
+    "particleType": "shimmer"
+  }
+]
