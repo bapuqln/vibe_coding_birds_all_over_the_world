@@ -1,8 +1,9 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v3)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v4)
 
 > Each task is small and independently implementable.
 > Tasks are ordered by dependency — complete top-to-bottom.
 > Mapped to spec requirements (R-x), acceptance criteria (AC-x), and bugs (BUG-x).
+> **v4 changes**: Auto-rotation hardening, camera zoom constraint, atmosphere redesign, migration arc reduction, 3D bird models.
 > **v3 priority**: Auto-rotation fix (BUG-11) is first — smooth experience for daughter.
 
 ---
@@ -406,6 +407,148 @@
 
 ---
 
+## Phase 20: Auto-Rotation Lifecycle Hardening → BUG-11, R-11, AC-9
+
+> **Goal**: Ensure auto-rotation correctly resumes after ALL interaction types (drag, zoom, bird click).
+> **Depends on**: Phases 1–19 (all v3 work complete).
+> **Independent test**: Drag → release → wait 5s → globe resumes rotating. Repeat with scroll-zoom and bird-click.
+
+- [x] **20.1** [P] In `src/components/three/CameraController.tsx`, add `wheel` event listener on `gl.domElement` (via `useThree`) that sets `controls.autoRotate = false` and updates `lastInteractionRef.current = Date.now()`. Clean up in `useEffect` return. (BUG-11, R-11)
+- [x] **20.2** [P] In `src/components/three/CameraController.tsx`, add `touchmove` event listener on `gl.domElement` with the same logic as 20.1 for pinch-zoom tracking on mobile. (BUG-11, R-11)
+- [x] **20.3** In `src/components/three/CameraController.tsx`, in the `useFrame` idle-rotation block, move `autoRotateSpeed` recalculation to run on every frame while auto-rotating (not just the re-enable frame): `controls.autoRotateSpeed = 1.0 * (DEFAULT_DISTANCE / camera.position.length())`. (R-11)
+- [x] **20.4** In `src/components/three/CameraController.tsx`, when `selectedBirdId` transitions from non-null to null (bird deselect), explicitly set `lastInteractionRef.current = Date.now()` before starting the zoom-back animation. (BUG-11)
+- [x] **20.5** Verify: drag globe → release → wait 5s → auto-rotation resumes at correct speed. (AC-9)
+- [x] **20.6** Verify: scroll-zoom in/out → stop → wait 5s → auto-rotation resumes. (AC-9)
+- [x] **20.7** Verify: click bird → close card → wait 5s → auto-rotation resumes. (AC-9)
+- [x] **20.8** Verify: zoom in close → auto-rotation surface speed appears the same as when zoomed out. (AC-9)
+
+---
+
+## Phase 21: Camera Zoom Constraint → BUG-13, R-1, R-8, AC-1
+
+> **Goal**: Prevent the camera from penetrating the globe surface.
+> **Depends on**: Phase 20 (CameraController changes must be compatible).
+> **Independent test**: Scroll-zoom as far in as possible — camera stops before entering the globe.
+
+- [x] **21.1** In `src/components/three/CameraController.tsx`, add constant `MIN_CAMERA_DISTANCE = 1.15` alongside existing `DEFAULT_DISTANCE` and `ZOOM_DISTANCE`. (BUG-13)
+- [x] **21.2** In `src/components/three/GlobeScene.tsx`, change `<OrbitControls minDistance={1.5}>` to `<OrbitControls minDistance={1.15}>`. (BUG-13)
+- [x] **21.3** In `src/components/three/CameraController.tsx`, in the zoom-to-bird animation logic, clamp the target distance: `const targetDist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE)`. (R-8)
+- [x] **21.4** Verify: scroll-zoom as far in as possible → camera stops at ~1.15, globe surface not penetrated. (AC-1)
+- [x] **21.5** Verify: click bird → zoom-to-bird → camera stops at 1.8 (above 1.15). No visual glitches. (AC-7)
+- [x] **21.6** Verify: no inverted normals or disappearing textures at maximum zoom. (AC-1)
+
+---
+
+## Phase 22: Atmosphere Redesign → BUG-9, R-1, R-9, AC-1
+
+> **Goal**: Remove the blue ring artifact and replace with a clean rim glow on the globe material.
+> **Depends on**: Phase 21 (camera constraints must be in place to verify at all zoom levels).
+> **Independent test**: Rotate globe at all zoom levels — no blue ring or hard-edged band visible.
+
+- [x] **22.1** Delete `src/components/three/Atmosphere.tsx`. (BUG-9)
+- [x] **22.2** In `src/components/three/GlobeScene.tsx`, remove the `<Atmosphere />` import statement. (BUG-9)
+- [x] **22.3** In `src/components/three/GlobeScene.tsx`, remove the `<Atmosphere />` JSX element from the render tree. (BUG-9)
+- [x] **22.4** In `src/components/three/Globe.tsx`, replace `meshStandardMaterial` with a `MeshStandardMaterial` that uses `onBeforeCompile` to inject rim-glow GLSL into the fragment shader after `#include <output_fragment>`. Inject: `float rim = pow(1.0 - abs(dot(normalize(vNormal), normalize(vViewPosition))), 5.0); gl_FragColor.rgb += vec3(0.4, 0.6, 1.0) * rim * 0.2;`. (R-1)
+- [x] **22.5** In `src/components/three/Globe.tsx`, set `material.needsUpdate = true` after the `onBeforeCompile` modification to ensure the shader recompiles. (R-1)
+- [x] **22.6** Tune the rim-glow exponent (try 4.0–6.0) and intensity multiplier (try 0.15–0.25) until the glow is subtle and artifact-free at all zoom levels. (R-9)
+- [x] **22.7** Verify: no blue ring or hard-edged band at zoom distances 1.15 to 5.0. (AC-1)
+- [x] **22.8** Verify: subtle atmospheric glow visible at the globe edge from default distance (2.5). (AC-1)
+- [x] **22.9** Verify: glow fades gracefully — no abrupt transitions when rotating or zooming. (AC-1)
+- [x] **22.10** Fallback: if rim glow still produces artifacts after tuning, set intensity to 0 (remove glow entirely) and rely on cloud layer + lighting. (R-1)
+- [x] **22.11** Run `npx tsc --noEmit` — zero errors after Atmosphere removal. (AC-1)
+
+---
+
+## Phase 23: Migration Arc Height Reduction → BUG-14, R-12, AC-10
+
+> **Goal**: Make migration paths follow the globe surface closely with natural-looking arcs.
+> **Depends on**: None (independent of phases 20–22, can run in parallel).
+> **Independent test**: Migration arcs hug the globe — peak height ~0.05–0.10 above surface, no clipping.
+
+- [x] **23.1** In `src/utils/migration.ts`, change the arc height formula from `Math.min(0.4, Math.max(0.15, angularDistance * 0.3))` to `Math.min(0.12, Math.max(0.03, angularDistance * 0.04))`. (BUG-14, R-12)
+- [x] **23.2** In `src/utils/migration.ts`, compute the number of intermediate control points: `const numPoints = Math.min(7, Math.max(3, Math.floor(angularDistance / 0.3)))`. (R-12)
+- [x] **23.3** In `src/utils/migration.ts`, replace the single-midpoint curve construction with a multi-point approach: generate `numPoints` control points evenly spaced along the great-circle arc between `from` and `to`, each at radius `globeRadius + arcHeight`. Use `Vector3.lerpVectors` + normalize + scale for each intermediate point. (R-12)
+- [x] **23.4** In `src/utils/migration.ts`, create the `CatmullRomCurve3` with the full array of control points (not just 3) and sample 64 points as before. (R-12)
+- [x] **23.5** In `src/utils/migration.ts`, verify all control points have radius ≥ `globeRadius + 0.01` to prevent clipping. (R-12)
+- [x] **23.6** Verify: migration arcs hug the globe surface — peak height ~0.05–0.10 above surface. (AC-10)
+- [x] **23.7** Verify: short-distance arcs (same continent) are visibly lower than cross-continental arcs. (AC-10)
+- [x] **23.8** Verify: no curve clips through the Earth sphere at any point — rotate globe to check all paths. (AC-10)
+- [x] **23.9** Verify: curves follow the globe's curvature — no straight chords visible for long routes. (AC-10)
+- [x] **23.10** Verify: dash animation still flows smoothly along the lower curves. (AC-10)
+
+---
+
+## Phase 24: 3D Bird Models → R-3, BUG-10, R-9, AC-2
+
+> **Goal**: Replace golden sphere markers with 3D GLTF bird models oriented outward from the globe.
+> **Depends on**: Phase 22 (Atmosphere removal must be done so GlobeScene imports are clean).
+> **Independent test**: 15 small 3D birds visible on globe, facing outward, warm glow, hover interaction works.
+
+### Setup
+
+- [x] **24.1** Source a low-poly stylized bird model in GLB format (<50 KB, single mesh, CC0 licensed). Options: Kenney Nature Kit, Quaternius low-poly animals, or create in Blender (~200 triangles). (R-3)
+- [x] **24.2** Save the bird model to `public/models/bird.glb`. (R-3)
+- [x] **24.3** In `src/store.ts`, add `modelsReady: boolean` field (default `false`) and `setModelsReady: (ready: boolean) => void` action to the Zustand store. (R-9)
+
+### BirdMarker Rewrite
+
+- [x] **24.4** In `src/components/three/BirdMarker.tsx`, add `useGLTF.preload('/models/bird.glb')` at module level (outside the component) to start loading immediately. (R-3)
+- [x] **24.5** In `src/components/three/BirdMarker.tsx`, call `const gltf = useGLTF('/models/bird.glb')` inside the component and extract the first mesh's geometry: `const geometry = (gltf.scene.children[0] as THREE.Mesh).geometry`. (R-3)
+- [x] **24.6** In `src/components/three/BirdMarker.tsx`, replace the `sphereGeometry` + `MeshPhongMaterial` with a `<mesh>` using the extracted GLTF geometry and a new `MeshStandardMaterial`: `color: 0xFFB347`, `emissive: 0x332200`, `emissiveIntensity: 0.5`, `metalness: 0.2`, `roughness: 0.6`. (R-3)
+- [x] **24.7** In `src/components/three/BirdMarker.tsx`, set mesh scale to `[0.03, 0.03, 0.03]`. (R-3)
+
+### Orientation
+
+- [x] **24.8** In `src/components/three/BirdMarker.tsx`, compute the surface-normal quaternion for each bird: `const normal = new Vector3(...position).normalize(); const quaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), normal);` and apply it to the mesh. (R-3)
+- [x] **24.9** Verify: all 15 bird models face outward from the globe surface (perpendicular to the sphere at their lat/lng). (AC-2)
+
+### Animation & Interaction
+
+- [x] **24.10** In `src/components/three/BirdMarker.tsx`, replace the pulse scale animation with a bob animation: in `useFrame`, offset the mesh position along the surface normal by `0.005 * Math.sin(clock.elapsedTime * Math.PI + phaseOffset)`. (R-3)
+- [x] **24.11** In `src/components/three/BirdMarker.tsx`, update hover interaction: on `pointerOver`, lerp scale to `1.4×` and set `emissiveIntensity` to `1.5`. On `pointerOut`, lerp back to `1.0×` scale and `0.5` emissive intensity. Use a ref + `useFrame` lerp (~200ms transition). (R-3)
+- [x] **24.12** Verify: hover produces a smooth scale-up and visible glow effect. (AC-2)
+
+### Fallback & Loading
+
+- [x] **24.13** In `src/components/three/BirdMarker.tsx`, add a fallback: if GLTF geometry is unavailable (loading error), render the v3 golden sphere (`sphereGeometry(0.015)` + `MeshPhongMaterial(color: 0xFFD700, emissive: 0x444444)`) with pulse animation. (R-3)
+- [x] **24.14** In `src/components/three/BirdMarker.tsx` or `GlobeScene.tsx`, call `setModelsReady(true)` once `useGLTF` has successfully loaded the bird model. (R-9)
+- [x] **24.15** In `src/components/ui/LoadingScreen.tsx`, update the dismiss condition from `globeReady` to `globeReady && modelsReady`. (R-9)
+
+### Verification
+
+- [x] **24.16** Verify: 15 bird models visible on the globe as small 3D birds (not yellow dots or golden spheres). (AC-2)
+- [x] **24.17** Verify: models are warm-toned and visible against both land and ocean textures. (AC-2)
+- [x] **24.18** Verify: models rotate with the globe (children of earth group). (AC-2)
+- [x] **24.19** Verify: click on bird model → info card opens → camera zooms → audio plays. (AC-3, AC-7)
+- [x] **24.20** Verify: loading screen waits for bird model to load before dismissing. (AC-6)
+- [x] **24.21** Verify: if `bird.glb` is deleted/unreachable, golden sphere fallback renders instead. (AC-2)
+
+---
+
+## Phase 25: Final Verification (v4) → AC-1 through AC-10
+
+> **Goal**: End-to-end validation of all v4 changes working together.
+> **Depends on**: Phases 20–24 all complete.
+
+- [x] **25.1** Run `npx tsc --noEmit` — zero TypeScript errors.
+- [x] **25.2** Run `npm run build` — production build succeeds with no warnings.
+- [x] **25.3** Visual: globe renders with subtle rim glow, no blue ring artifact at any zoom level (1.15–5.0). (AC-1)
+- [x] **25.4** Visual: cloud layer visible, drifts slowly. (AC-1)
+- [x] **25.5** Visual: 15 bird models visible as small 3D birds, oriented outward, warm glow. (AC-2)
+- [x] **25.6** Visual: hover on bird → scale up + glow. Click → card + zoom + audio. (AC-2, AC-3, AC-7)
+- [x] **25.7** Visual: 3+ migration path curves with low arcs following the globe surface. (AC-10)
+- [x] **25.8** Visual: dash animation flows along curves. (AC-10)
+- [x] **25.9** Interaction: camera cannot zoom through the globe — stops at 1.15. (AC-1)
+- [x] **25.10** Interaction: drag → release → wait 5s → auto-rotation resumes. (AC-9)
+- [x] **25.11** Interaction: scroll-zoom → stop → wait 5s → auto-rotation resumes. (AC-9)
+- [x] **25.12** Interaction: click bird → close card → wait 5s → auto-rotation resumes. (AC-9)
+- [x] **25.13** Interaction: auto-rotation speed consistent at all zoom levels. (AC-9)
+- [x] **25.14** Interaction: language toggle switches all text. (AC-5)
+- [x] **25.15** Responsive: works at 375px, 768px, and 1920px widths. (AC-6)
+- [x] **25.16** Loading: loading screen waits for both Earth texture and bird model. (AC-6)
+
+---
+
 ## Summary
 
 | Phase | Tasks | Covers |
@@ -429,4 +572,51 @@
 | 17. Migration Paths ✅ | 17.1 – 17.15 | R-12, AC-10 |
 | 18. Audio + Docs ✅ | 18.1 – 18.4 | R-5, R-10 |
 | 19. Final Verification ✅ | 19.1 – 19.11 | AC-1 through AC-10 |
-| **Total** | **194 tasks** | **194 complete, 0 remaining** |
+| 20. Auto-Rotation Hardening ✅ | 20.1 – 20.8 | BUG-11, R-11, AC-9 |
+| 21. Camera Zoom Constraint ✅ | 21.1 – 21.6 | BUG-13, R-1, R-8, AC-1 |
+| 22. Atmosphere Redesign ✅ | 22.1 – 22.11 | BUG-9, R-1, R-9, AC-1 |
+| 23. Migration Arc Reduction ✅ | 23.1 – 23.10 | BUG-14, R-12, AC-10 |
+| 24. 3D Bird Models ✅ | 24.1 – 24.21 | R-3, BUG-10, R-9, AC-2 |
+| 25. Final Verification (v4) ✅ | 25.1 – 25.16 | AC-1 through AC-10 |
+| **Total** | **266 tasks** | **266 complete, 0 remaining** |
+
+---
+
+## Dependencies & Execution Order (v4)
+
+### Phase Dependencies
+
+- **Phase 20 (Auto-Rotation)**: No dependencies on other v4 phases — can start immediately.
+- **Phase 21 (Camera Constraint)**: Depends on Phase 20 (CameraController changes must be compatible).
+- **Phase 22 (Atmosphere)**: Depends on Phase 21 (need camera constraints to verify at all zoom levels).
+- **Phase 23 (Migration Arcs)**: **Independent** — can run in parallel with Phases 20–22.
+- **Phase 24 (3D Bird Models)**: Depends on Phase 22 (GlobeScene imports must be clean after Atmosphere removal).
+- **Phase 25 (Final Verification)**: Depends on all of Phases 20–24.
+
+### Parallel Opportunities
+
+```
+Phase 20 (Auto-Rotation) ──┐
+                            ├──→ Phase 21 ──→ Phase 22 ──→ Phase 24 ──┐
+Phase 23 (Migration Arcs) ─┼─────────────────────────────────────────┤──→ Phase 25
+                            │                                          │
+                            └── (independent, runs in parallel) ───────┘
+```
+
+Within phases:
+- **Phase 20**: Tasks 20.1 and 20.2 are [P] (different event listeners, same file but independent additions).
+- **Phase 22**: Tasks 22.1–22.3 (delete Atmosphere) can run before 22.4–22.5 (add rim glow to Globe).
+- **Phase 24**: Tasks 24.1–24.3 (setup) are [P]. Tasks 24.8–24.9 (orientation) are independent of 24.10–24.11 (animation).
+
+### Implementation Strategy
+
+**Recommended order** (sequential, single developer):
+1. Phase 20 → Phase 21 → Phase 22 (camera + atmosphere fixes, 25 tasks)
+2. Phase 23 (migration arcs, 10 tasks — can overlap with step 1)
+3. Phase 24 (3D bird models, 21 tasks)
+4. Phase 25 (final verification, 16 tasks)
+
+**Parallel strategy** (two developers):
+- Developer A: Phase 20 → 21 → 22 → 24
+- Developer B: Phase 23 (then assist with Phase 24 verification)
+- Both: Phase 25

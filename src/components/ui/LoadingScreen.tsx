@@ -3,16 +3,17 @@ import { useAppStore } from "../../store";
 
 export function LoadingScreen() {
   const globeReady = useAppStore((s) => s.globeReady);
+  const modelsReady = useAppStore((s) => s.modelsReady);
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    if (globeReady) {
+    if (globeReady && modelsReady) {
       setFading(true);
       const timer = setTimeout(() => setVisible(false), 700);
       return () => clearTimeout(timer);
     }
-  }, [globeReady]);
+  }, [globeReady, modelsReady]);
 
   useEffect(() => {
     const safety = setTimeout(() => {

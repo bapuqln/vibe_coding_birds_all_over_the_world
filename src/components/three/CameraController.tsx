@@ -12,20 +12,23 @@ const birdMap = new Map(birds.map((b) => [b.id, b]));
 
 const DEFAULT_DISTANCE = 2.5;
 const ZOOM_DISTANCE = 1.8;
+const MIN_CAMERA_DISTANCE = 1.15;
 const LERP_FACTOR = 0.04;
 const IDLE_TIMEOUT = 5000;
+const BASE_AUTO_ROTATE_SPEED = 1.0;
 
 interface CameraControllerProps {
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
 }
 
 export function CameraController({ controlsRef }: CameraControllerProps) {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const selectedBirdId = useAppStore((s) => s.selectedBirdId);
 
   const animatingRef = useRef(false);
   const userInteractedRef = useRef(false);
   const lastInteractionRef = useRef(Date.now());
+  const prevSelectedRef = useRef<string | null>(null);
 
   const bird = useMemo(
     () => (selectedBirdId ? birdMap.get(selectedBirdId) ?? null : null),
@@ -60,21 +63,50 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
   }, [controlsRef]);
 
   useEffect(() => {
+    const domElement = gl.domElement;
+
+    const handleWheel = () => {
+      const controls = controlsRef.current;
+      if (controls) controls.autoRotate = false;
+      lastInteractionRef.current = Date.now();
+    };
+
+    const handleTouchMove = () => {
+      const controls = controlsRef.current;
+      if (controls) controls.autoRotate = false;
+      lastInteractionRef.current = Date.now();
+    };
+
+    domElement.addEventListener("wheel", handleWheel, { passive: true });
+    domElement.addEventListener("touchmove", handleTouchMove, {
+      passive: true,
+    });
+    return () => {
+      domElement.removeEventListener("wheel", handleWheel);
+      domElement.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [gl.domElement, controlsRef]);
+
+  useEffect(() => {
+    const wasSelected = prevSelectedRef.current;
+    prevSelectedRef.current = selectedBirdId;
+
     userInteractedRef.current = false;
     if (bird) {
+      const targetDist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
       const { position, target } = computeCameraTarget(
         bird.lat,
         bird.lng,
-        ZOOM_DISTANCE,
+        targetDist,
       );
       targetPos.current.set(...position);
       targetLookAt.current.set(...target);
       animatingRef.current = true;
-    } else {
+    } else if (wasSelected) {
       lastInteractionRef.current = Date.now();
       animatingRef.current = true;
     }
-  }, [bird]);
+  }, [bird, selectedBirdId]);
 
   useFrame(() => {
     const controls = controlsRef.current;
@@ -89,7 +121,8 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
         controls.target.lerp(targetLookAt.current, LERP_FACTOR);
 
         const currentDist = camera.position.length();
-        const newDist = MathUtils.lerp(currentDist, ZOOM_DISTANCE, LERP_FACTOR);
+        const targetDist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
+        const newDist = MathUtils.lerp(currentDist, targetDist, LERP_FACTOR);
         camera.position.normalize().multiplyScalar(newDist);
 
         const dir = targetPos.current.clone().normalize();
@@ -124,9 +157,14 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
     ) {
       controls.autoRotate = true;
       controls.autoRotateSpeed =
-        1.0 * (DEFAULT_DISTANCE / camera.position.length());
+        BASE_AUTO_ROTATE_SPEED * (DEFAULT_DISTANCE / camera.position.length());
     } else if (bird) {
       controls.autoRotate = false;
+    }
+
+    if (controls.autoRotate) {
+      controls.autoRotateSpeed =
+        BASE_AUTO_ROTATE_SPEED * (DEFAULT_DISTANCE / camera.position.length());
     }
   });
 

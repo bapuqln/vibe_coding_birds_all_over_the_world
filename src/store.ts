@@ -6,11 +6,13 @@ interface AppStore {
   language: Language;
   audioStatus: AudioStatus;
   globeReady: boolean;
+  modelsReady: boolean;
 
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
   setAudioStatus: (status: AudioStatus) => void;
   setGlobeReady: (ready: boolean) => void;
+  setModelsReady: (ready: boolean) => void;
 }
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -18,10 +20,12 @@ export const useAppStore = create<AppStore>((set) => ({
   language: "zh",
   audioStatus: "idle",
   globeReady: false,
+  modelsReady: false,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
     set((state) => ({ language: state.language === "zh" ? "en" : "zh" })),
   setAudioStatus: (audioStatus) => set({ audioStatus }),
   setGlobeReady: (globeReady) => set({ globeReady }),
+  setModelsReady: (modelsReady) => set({ modelsReady }),
 }));
