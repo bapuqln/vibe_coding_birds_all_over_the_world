@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { MathUtils, Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useAppStore } from "../../store";
-import { computeCameraTarget } from "../../utils/camera";
+import { latLngToVector3 } from "../../utils/coordinates";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 
@@ -35,8 +35,8 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
     [selectedBirdId],
   );
 
-  const targetPos = useRef(new Vector3());
-  const targetLookAt = useRef(new Vector3());
+  const targetDir = useRef(new Vector3());
+  const targetDist = useRef(DEFAULT_DISTANCE);
 
   useEffect(() => {
     const controls = controlsRef.current;
@@ -93,17 +93,14 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
 
     userInteractedRef.current = false;
     if (bird) {
-      const targetDist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
-      const { position, target } = computeCameraTarget(
-        bird.lat,
-        bird.lng,
-        targetDist,
-      );
-      targetPos.current.set(...position);
-      targetLookAt.current.set(...target);
+      const dist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
+      const pos = latLngToVector3(bird.lat, bird.lng, dist);
+      targetDir.current.set(...pos).normalize();
+      targetDist.current = dist;
       animatingRef.current = true;
     } else if (wasSelected) {
       lastInteractionRef.current = Date.now();
+      targetDist.current = DEFAULT_DISTANCE;
       animatingRef.current = true;
     }
   }, [bird, selectedBirdId]);
@@ -117,24 +114,25 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
     }
 
     if (animatingRef.current && !userInteractedRef.current) {
+      const currentDist = camera.position.length();
+
       if (bird) {
-        controls.target.lerp(targetLookAt.current, LERP_FACTOR);
-
-        const currentDist = camera.position.length();
-        const targetDist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
-        const newDist = MathUtils.lerp(currentDist, targetDist, LERP_FACTOR);
-        camera.position.normalize().multiplyScalar(newDist);
-
-        const dir = targetPos.current.clone().normalize();
+        const newDist = MathUtils.lerp(
+          currentDist,
+          targetDist.current,
+          LERP_FACTOR,
+        );
         const currentDir = camera.position.clone().normalize();
-        currentDir.lerp(dir, LERP_FACTOR);
+        currentDir.lerp(targetDir.current, LERP_FACTOR).normalize();
         camera.position.copy(currentDir.multiplyScalar(newDist));
 
-        if (camera.position.distanceTo(targetPos.current) < 0.01) {
+        const goalPos = targetDir.current
+          .clone()
+          .multiplyScalar(targetDist.current);
+        if (camera.position.distanceTo(goalPos) < 0.01) {
           animatingRef.current = false;
         }
       } else {
-        const currentDist = camera.position.length();
         const newDist = MathUtils.lerp(
           currentDist,
           DEFAULT_DISTANCE,
@@ -156,8 +154,6 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
       Date.now() - lastInteractionRef.current > IDLE_TIMEOUT
     ) {
       controls.autoRotate = true;
-      controls.autoRotateSpeed =
-        BASE_AUTO_ROTATE_SPEED * (DEFAULT_DISTANCE / camera.position.length());
     } else if (bird) {
       controls.autoRotate = false;
     }

@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v4)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v5)
 
 > Each task is small and independently implementable.
 > Tasks are ordered by dependency — complete top-to-bottom.
@@ -549,74 +549,165 @@
 
 ---
 
+## Phase 26: Fix OrbitControls Target Lock → BUG-15, R-8, R-11, AC-7, AC-9
+
+> **Goal**: Lock OrbitControls target to [0,0,0] permanently. Camera zoom-to-bird only changes camera position.
+> **Depends on**: Phases 20–25 (v4 complete).
+
+- [x] **26.1** In `src/components/three/CameraController.tsx`, remove the line `controls.target.lerp(targetLookAt.current, LERP_FACTOR)` from the bird zoom animation block. (BUG-15)
+- [x] **26.2** In `src/components/three/CameraController.tsx`, remove `targetLookAt` ref entirely — it is no longer needed. (BUG-15)
+- [x] **26.3** In `src/components/three/CameraController.tsx`, update `computeCameraTarget` call to only use the position result (not the target). Camera direction is computed from the bird's lat/lng. (R-8)
+- [x] **26.4** In `src/components/three/GlobeScene.tsx`, add explicit `target={[0, 0, 0]}` prop to `<OrbitControls>`. (BUG-15)
+- [x] **26.5** In `src/components/three/GlobeScene.tsx`, add `makeDefault` prop to `<OrbitControls>` for proper R3F integration. (R-7)
+- [x] **26.6** Verify: click bird → zoom → close card → drag to rotate → rotation pivots around globe center, not offset. (AC-7)
+
+---
+
+## Phase 27: Improve Lighting → R-9, AC-6
+
+> **Goal**: Replace flat lighting with natural hemisphere + directional setup.
+> **Depends on**: Phase 26.
+
+- [x] **27.1** In `src/components/three/GlobeScene.tsx`, change `<ambientLight intensity={0.4} />` to `<ambientLight intensity={0.3} />`. (R-9)
+- [x] **27.2** In `src/components/three/GlobeScene.tsx`, change main directional light to `<directionalLight position={[5, 3, 5]} intensity={1.2} />`. (R-9)
+- [x] **27.3** In `src/components/three/GlobeScene.tsx`, change fill directional light to `<directionalLight position={[-3, -1, -3]} intensity={0.2} />`. (R-9)
+- [x] **27.4** In `src/components/three/GlobeScene.tsx`, add `<hemisphereLight skyColor="#b1e1ff" groundColor="#000000" intensity={0.4} />` after ambient light. (R-9)
+- [x] **27.5** Verify: globe has natural depth and contrast, not flat. (AC-6)
+
+---
+
+## Phase 28: Replace Atmosphere with Fresnel Shell → R-1, R-9, AC-1
+
+> **Goal**: Replace onBeforeCompile rim glow with a dedicated Fresnel atmosphere shell.
+> **Depends on**: Phase 27 (lighting must be in place to evaluate glow).
+
+- [x] **28.1** Create `src/components/three/AtmosphereShell.tsx` with a BackSide sphere at scale `[1.025, 1.025, 1.025]`, custom ShaderMaterial with Fresnel falloff (exponent 3.0, color `vec3(0.3, 0.6, 1.0)`, max opacity 0.15), AdditiveBlending, transparent, depthWrite false. (R-1)
+- [x] **28.2** In `src/components/three/Globe.tsx`, remove the `useMemo` material with `onBeforeCompile`. Replace with declarative `<meshStandardMaterial>` JSX. (R-9, TD-26)
+- [x] **28.3** In `src/components/three/GlobeScene.tsx`, add `<AtmosphereShell />` outside the earth group (between Starfield and the group). (R-1)
+- [x] **28.4** Verify: soft atmospheric glow at globe edges, no hard ring artifact at zoom levels 1.15–5.0. (AC-1)
+
+---
+
+## Phase 29: Fix BirdMarker Hooks & Declarative Pattern → BUG-17, R-3, R-7, AC-2
+
+> **Goal**: Fix React hooks violation and convert to declarative R3F patterns.
+> **Depends on**: Phase 28 (atmosphere must be in place).
+
+- [x] **29.1** In `src/components/three/BirdMarker.tsx`, remove the try-catch around `useGLTF()`. Call `useGLTF(MODEL_PATH)` unconditionally at the top of the component. (BUG-17)
+- [x] **29.2** In `src/components/three/BirdMarker.tsx`, replace `new MeshStandardMaterial()` and `new MeshPhongMaterial()` with declarative `<meshStandardMaterial>` JSX inside the mesh. (TD-26)
+- [x] **29.3** In `src/components/three/GlobeScene.tsx`, wrap the bird markers section in a `<Suspense fallback={null}>` boundary to handle GLTF loading. (BUG-17)
+- [x] **29.4** Verify: no React hooks warnings in console. Birds render correctly. (AC-2)
+
+---
+
+## Phase 30: Replace Bird Model → BUG-16, R-3, AC-2
+
+> **Goal**: Replace crude generated bird.glb with a quality stylized model.
+> **Depends on**: Phase 29 (BirdMarker must be working correctly).
+
+- [x] **30.1** Generate a higher-quality bird GLB with smooth geometry: ellipsoid body, proper head, tapered beak, swept-back wings, fan tail. Use subdivision or smooth normals. Target <100 KB, <500 triangles. (BUG-16)
+- [x] **30.2** Replace `public/models/bird.glb` with the new model. (R-3)
+- [x] **30.3** In `src/components/three/BirdMarker.tsx`, adjust scale if needed to keep birds at 0.02–0.04 units. (R-3)
+- [x] **30.4** Verify: birds look recognizable and appealing at globe scale. Warm-toned, visible against land and ocean. (AC-2)
+
+---
+
+## Phase 31: Improve Migration Paths → R-12, AC-10
+
+> **Goal**: Ensure migration arcs use proper great-circle interpolation.
+> **Depends on**: None (independent of phases 26–30).
+
+- [x] **31.1** In `src/utils/migration.ts`, replace `Vector3.lerpVectors` with spherical linear interpolation: normalize start/end, compute intermediate points on the great-circle arc using `slerp`, then elevate to `globeRadius + arcHeight`. (R-12)
+- [x] **31.2** Verify: long-distance arcs follow the globe curvature naturally, no straight chords. (AC-10)
+
+---
+
+## Phase 32: Add Country Borders → R-1, R-13, AC-1, AC-11
+
+> **Goal**: Render country/continent boundary lines on the globe surface.
+> **Depends on**: Phase 28 (atmosphere shell must be in place to verify visual layering).
+
+- [x] **32.1** Download simplified Natural Earth GeoJSON (110m countries) and save to `public/data/countries-110m.json`. Keep only boundary coordinates, strip properties to minimize size. (R-13)
+- [x] **32.2** Create `src/components/three/CountryBorders.tsx`. Load GeoJSON, project each coordinate to 3D using `latLngToVector3(lat, lng, 1.001)`. Build line segments from polygon rings. (R-13)
+- [x] **32.3** In `CountryBorders.tsx`, render line segments using `<lineSegments>` with a `<lineBasicMaterial color="white" transparent opacity={0.15} depthWrite={false} />`. (R-13)
+- [x] **32.4** In `src/components/three/GlobeScene.tsx`, add `<CountryBorders />` inside the earth group, after Globe and before BirdMarkers. (R-13)
+- [x] **32.5** Verify: country borders visible as thin semi-transparent lines. No performance degradation. Borders don't interfere with bird marker clicks. (AC-11)
+
+---
+
+## Phase 33: Add Map Labels → R-1, R-13, AC-11
+
+> **Goal**: Display continent and ocean names that appear when zoomed in.
+> **Depends on**: Phase 32 (borders should be in place for visual context).
+
+- [x] **33.1** Create `src/data/labels.ts` with continent and ocean label data (id, lat, lng, nameZh, nameEn). (R-13)
+- [x] **33.2** Create `src/components/three/MapLabels.tsx`. For each label, use `<Html>` from drei positioned at `latLngToVector3(lat, lng, 1.02)`. (R-13)
+- [x] **33.3** In `MapLabels.tsx`, implement zoom-dependent visibility: use `useThree` to get camera, compute distance in `useFrame`, set opacity to 0 when distance > 2.0, fade in when distance < 2.0. (R-13)
+- [x] **33.4** In `MapLabels.tsx`, read language from Zustand store and display the appropriate label text. (R-6, R-13)
+- [x] **33.5** Style labels: uppercase, letter-spacing 0.15em, font-size 10px, semi-transparent white, pointer-events none. (R-13)
+- [x] **33.6** In `src/components/three/GlobeScene.tsx`, add `<MapLabels />` inside the scene (outside the earth group so they face the camera). (R-13)
+- [x] **33.7** Verify: labels appear when zoomed in (distance < 2.0), fade out when zoomed out. Labels switch language. Labels don't interfere with bird markers. (AC-11)
+
+---
+
+## Phase 34: Final Verification (v5) → AC-1 through AC-11
+
+> **Goal**: End-to-end validation of all v5 changes.
+> **Depends on**: Phases 26–33 all complete.
+
+- [x] **34.1** Run `npx tsc --noEmit` — zero TypeScript errors.
+- [x] **34.2** Run `npm run build` — production build succeeds.
+- [x] **34.3** Visual: globe renders with soft Fresnel atmosphere glow, no hard ring artifact. (AC-1)
+- [x] **34.4** Visual: country borders visible as thin semi-transparent lines. (AC-11)
+- [x] **34.5** Visual: hemisphere lighting provides natural depth. (AC-6)
+- [x] **34.6** Visual: 15 bird models visible, recognizable, warm-toned. (AC-2)
+- [x] **34.7** Visual: migration arcs follow globe surface naturally. (AC-10)
+- [x] **34.8** Interaction: OrbitControls target stays [0,0,0] — click bird → zoom → close → rotate works correctly. (AC-7)
+- [x] **34.9** Interaction: auto-rotation resumes after all interaction types. (AC-9)
+- [x] **34.10** Interaction: camera cannot zoom through globe. (AC-1)
+- [x] **34.11** Labels: continent/ocean names appear when zoomed in, fade when zoomed out. (AC-11)
+- [x] **34.12** Labels: switch language with toggle. (AC-11)
+- [x] **34.13** Responsive: works at 375px, 768px, 1920px. (AC-6)
+
+---
+
 ## Summary
 
 | Phase | Tasks | Covers |
 |-------|-------|--------|
-| 1. Scaffold ✅ | 1.1 – 1.10 | Project setup, dependencies, file structure |
-| 2. Globe ✅ | 2.1 – 2.7 | R-1, AC-1 |
-| 3. Birds ✅ | 3.1 – 3.15 | R-2, R-3, AC-2 |
-| 4. Card + i18n ✅ | 4.1 – 4.12 | R-4, R-6, AC-3, AC-5 |
-| 5. Audio ✅ | 5.1 – 5.7 | R-5, AC-4 |
-| 6. Polish ✅ | 6.1 – 6.10 | AC-6 |
-| 7. Bug Fixes ✅ | 7.1 – 7.16 | BUG-1 through BUG-6, AC-2, AC-4, AC-6 |
-| 8. Camera Zoom ✅ | 8.1 – 8.14 | R-8, AC-7 |
-| 9. Visual Polish ✅ | 9.1 – 9.17 | R-9, AC-1, AC-6 |
-| 10. Rich Data ✅ | 10.1 – 10.14 | R-10, BUG-8, AC-8 |
-| 11. ⚡ Auto-Rotation Fix ✅ | 11.1 – 11.8 | BUG-11, R-11, AC-9 |
-| 12. Blue Halo Fix ✅ | 12.1 – 12.6 | BUG-9, R-1, AC-1 |
-| 13. Golden Markers ✅ | 13.1 – 13.7 | BUG-10, R-3, AC-2 |
-| 14. Globe Co-Rotation ✅ | 14.1 – 14.5 | BUG-12, AC-2 |
-| 15. Bird Data Overhaul ✅ | 15.1 – 15.16 | R-2, R-10, AC-8 |
-| 16. Cloud Layer ✅ | 16.1 – 16.5 | R-1, AC-1 |
-| 17. Migration Paths ✅ | 17.1 – 17.15 | R-12, AC-10 |
-| 18. Audio + Docs ✅ | 18.1 – 18.4 | R-5, R-10 |
-| 19. Final Verification ✅ | 19.1 – 19.11 | AC-1 through AC-10 |
-| 20. Auto-Rotation Hardening ✅ | 20.1 – 20.8 | BUG-11, R-11, AC-9 |
-| 21. Camera Zoom Constraint ✅ | 21.1 – 21.6 | BUG-13, R-1, R-8, AC-1 |
-| 22. Atmosphere Redesign ✅ | 22.1 – 22.11 | BUG-9, R-1, R-9, AC-1 |
-| 23. Migration Arc Reduction ✅ | 23.1 – 23.10 | BUG-14, R-12, AC-10 |
-| 24. 3D Bird Models ✅ | 24.1 – 24.21 | R-3, BUG-10, R-9, AC-2 |
-| 25. Final Verification (v4) ✅ | 25.1 – 25.16 | AC-1 through AC-10 |
-| **Total** | **266 tasks** | **266 complete, 0 remaining** |
+| 1–25 (v1–v4) ✅ | 1.1 – 25.16 | All v1–v4 requirements |
+| 26. OrbitControls Target Lock ✅ | 26.1 – 26.6 | BUG-15, R-8, R-11, AC-7, AC-9 |
+| 27. Lighting Improvement ✅ | 27.1 – 27.5 | R-9, AC-6 |
+| 28. Fresnel Atmosphere Shell ✅ | 28.1 – 28.4 | R-1, R-9, AC-1 |
+| 29. BirdMarker Hooks Fix ✅ | 29.1 – 29.4 | BUG-17, R-3, R-7, AC-2 |
+| 30. Bird Model Replacement ✅ | 30.1 – 30.4 | BUG-16, R-3, AC-2 |
+| 31. Migration Path Improvement ✅ | 31.1 – 31.2 | R-12, AC-10 |
+| 32. Country Borders ✅ | 32.1 – 32.5 | R-1, R-13, AC-1, AC-11 |
+| 33. Map Labels ✅ | 33.1 – 33.7 | R-1, R-13, AC-11 |
+| 34. Final Verification (v5) ✅ | 34.1 – 34.13 | AC-1 through AC-11 |
+| **Total** | **316 tasks** | **316 complete, 0 remaining** |
 
 ---
 
-## Dependencies & Execution Order (v4)
+## Dependencies & Execution Order (v5)
 
 ### Phase Dependencies
 
-- **Phase 20 (Auto-Rotation)**: No dependencies on other v4 phases — can start immediately.
-- **Phase 21 (Camera Constraint)**: Depends on Phase 20 (CameraController changes must be compatible).
-- **Phase 22 (Atmosphere)**: Depends on Phase 21 (need camera constraints to verify at all zoom levels).
-- **Phase 23 (Migration Arcs)**: **Independent** — can run in parallel with Phases 20–22.
-- **Phase 24 (3D Bird Models)**: Depends on Phase 22 (GlobeScene imports must be clean after Atmosphere removal).
-- **Phase 25 (Final Verification)**: Depends on all of Phases 20–24.
+- **Phase 26 (OrbitControls)**: No dependencies on other v5 phases — start immediately.
+- **Phase 27 (Lighting)**: Depends on Phase 26.
+- **Phase 28 (Atmosphere)**: Depends on Phase 27.
+- **Phase 29 (BirdMarker Hooks)**: Depends on Phase 28.
+- **Phase 30 (Bird Model)**: Depends on Phase 29.
+- **Phase 31 (Migration Paths)**: **Independent** — can run in parallel with Phases 26–30.
+- **Phase 32 (Country Borders)**: Depends on Phase 28 (atmosphere in place for visual layering).
+- **Phase 33 (Map Labels)**: Depends on Phase 32.
+- **Phase 34 (Final Verification)**: Depends on all of Phases 26–33.
 
-### Parallel Opportunities
+### Execution Order
 
 ```
-Phase 20 (Auto-Rotation) ──┐
-                            ├──→ Phase 21 ──→ Phase 22 ──→ Phase 24 ──┐
-Phase 23 (Migration Arcs) ─┼─────────────────────────────────────────┤──→ Phase 25
-                            │                                          │
-                            └── (independent, runs in parallel) ───────┘
+Phase 26 → 27 → 28 → 29 → 30 ──────────────────┐
+                  ↓                                ├──→ Phase 34
+                  28 → 32 → 33 ──────────────────┤
+Phase 31 (independent, parallel) ─────────────────┘
 ```
-
-Within phases:
-- **Phase 20**: Tasks 20.1 and 20.2 are [P] (different event listeners, same file but independent additions).
-- **Phase 22**: Tasks 22.1–22.3 (delete Atmosphere) can run before 22.4–22.5 (add rim glow to Globe).
-- **Phase 24**: Tasks 24.1–24.3 (setup) are [P]. Tasks 24.8–24.9 (orientation) are independent of 24.10–24.11 (animation).
-
-### Implementation Strategy
-
-**Recommended order** (sequential, single developer):
-1. Phase 20 → Phase 21 → Phase 22 (camera + atmosphere fixes, 25 tasks)
-2. Phase 23 (migration arcs, 10 tasks — can overlap with step 1)
-3. Phase 24 (3D bird models, 21 tasks)
-4. Phase 25 (final verification, 16 tasks)
-
-**Parallel strategy** (two developers):
-- Developer A: Phase 20 → 21 → 22 → 24
-- Developer B: Phase 23 (then assist with Phase 24 verification)
-- Both: Phase 25

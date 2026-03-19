@@ -2,10 +2,9 @@ import { useRef, useMemo, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import {
-  MeshStandardMaterial,
-  MeshPhongMaterial,
   Vector3,
   Quaternion,
+  MeshStandardMaterial,
   type Mesh,
 } from "three";
 import type { Bird } from "../../types";
@@ -25,6 +24,7 @@ interface BirdMarkerProps {
 
 export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const meshRef = useRef<Mesh>(null);
+  const matRef = useRef<MeshStandardMaterial>(null);
   const hoveredRef = useRef(false);
   const scaleRef = useRef(1);
   const emissiveRef = useRef(0.5);
@@ -47,44 +47,17 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     [normal],
   );
 
-  let gltfGeometry = null;
-  try {
-    const gltf = useGLTF(MODEL_PATH);
+  const gltf = useGLTF(MODEL_PATH);
+  const gltfGeometry = useMemo(() => {
     const firstMesh = gltf.scene.children[0] as Mesh | undefined;
-    gltfGeometry = firstMesh?.geometry ?? null;
-  } catch {
-    gltfGeometry = null;
-  }
-
-  const usesFallback = !gltfGeometry;
+    return firstMesh?.geometry ?? null;
+  }, [gltf]);
 
   useEffect(() => {
     if (gltfGeometry && index === 0) {
       setModelsReady(true);
     }
   }, [gltfGeometry, index, setModelsReady]);
-
-  const modelMaterial = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color: 0xffb347,
-        emissive: 0x332200,
-        emissiveIntensity: 0.5,
-        metalness: 0.2,
-        roughness: 0.6,
-      }),
-    [],
-  );
-
-  const fallbackMaterial = useMemo(
-    () =>
-      new MeshPhongMaterial({
-        color: 0xffd700,
-        emissive: 0x444444,
-        shininess: 80,
-      }),
-    [],
-  );
 
   const handleClick = useCallback(
     (e: { stopPropagation: () => void }) => {
@@ -102,34 +75,25 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const s = scaleRef.current * BASE_SCALE;
     meshRef.current.scale.set(s, s, s);
 
-    if (!usesFallback) {
-      const targetEmissive = hoveredRef.current ? 1.5 : 0.5;
-      emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
-      modelMaterial.emissiveIntensity = emissiveRef.current;
-
-      const bob =
-        0.005 * Math.sin(clock.elapsedTime * Math.PI + phaseOffset);
-      meshRef.current.position.set(
-        position[0] + normal.x * bob,
-        position[1] + normal.y * bob,
-        position[2] + normal.z * bob,
-      );
-    } else {
-      const pulse =
-        1.0 + 0.1 * Math.sin(clock.elapsedTime * 2.0 + phaseOffset);
-      const fs = (hoveredRef.current ? 1.3 : pulse) * BASE_SCALE;
-      meshRef.current.scale.set(fs, fs, fs);
-      fallbackMaterial.emissive.setHex(
-        hoveredRef.current ? 0x888844 : 0x444444,
-      );
+    const targetEmissive = hoveredRef.current ? 1.5 : 0.5;
+    emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
+    if (matRef.current) {
+      matRef.current.emissiveIntensity = emissiveRef.current;
     }
+
+    const bob = 0.005 * Math.sin(clock.elapsedTime * Math.PI + phaseOffset);
+    meshRef.current.position.set(
+      position[0] + normal.x * bob,
+      position[1] + normal.y * bob,
+      position[2] + normal.z * bob,
+    );
   });
 
   return (
     <mesh
       ref={meshRef}
       position={position}
-      quaternion={usesFallback ? undefined : quaternion}
+      quaternion={quaternion}
       onClick={handleClick}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -142,16 +106,18 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       }}
     >
       {gltfGeometry ? (
-        <>
-          <primitive object={gltfGeometry} attach="geometry" />
-          <primitive object={modelMaterial} attach="material" />
-        </>
+        <primitive object={gltfGeometry} attach="geometry" />
       ) : (
-        <>
-          <sphereGeometry args={[0.015, 16, 16]} />
-          <primitive object={fallbackMaterial} attach="material" />
-        </>
+        <sphereGeometry args={[0.015, 16, 16]} />
       )}
+      <meshStandardMaterial
+        ref={matRef}
+        color={0xffb347}
+        emissive={0x332200}
+        emissiveIntensity={0.5}
+        metalness={0.2}
+        roughness={0.6}
+      />
     </mesh>
   );
 }
