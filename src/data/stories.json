@@ -5,7 +5,7 @@
     "titleEn": "Rainforest Birds",
     "descriptionZh": "探索热带雨林中色彩斑斓的鸟类",
     "descriptionEn": "Discover colorful birds of the tropical rainforest",
-    "birdIds": ["toco-toucan", "bald-eagle", "european-robin", "northern-cardinal", "superb-fairywren"],
+    "birdIds": ["toco-toucan", "harpy-eagle", "scarlet-macaw", "hoatzin", "great-hornbill", "african-grey-parrot", "cassowary", "indian-peafowl"],
     "badge": "🌴"
   },
   {
@@ -14,7 +14,7 @@
     "titleEn": "Arctic Birds",
     "descriptionZh": "发现生活在冰天雪地中的勇敢鸟类",
     "descriptionEn": "Find brave birds living in the frozen wilderness",
-    "birdIds": ["emperor-penguin", "atlantic-puffin"],
+    "birdIds": ["emperor-penguin", "atlantic-puffin", "snowy-owl", "arctic-tern"],
     "badge": "❄️"
   },
   {
@@ -23,7 +23,7 @@
     "titleEn": "Grassland Birds",
     "descriptionZh": "探索广阔草原上的飞行高手",
     "descriptionEn": "Explore the flying masters of the vast grasslands",
-    "birdIds": ["secretary-bird", "lilac-breasted-roller", "andean-condor", "white-stork-sg", "barn-swallow-sg"],
+    "birdIds": ["secretary-bird", "lilac-breasted-roller", "andean-condor", "california-condor", "red-crowned-crane", "himalayan-monal", "canada-goose", "shoebill", "marabou-stork"],
     "badge": "🌾"
   },
   {
@@ -32,7 +32,7 @@
     "titleEn": "Ocean Birds",
     "descriptionZh": "发现在海岸和海洋上翱翔的鸟类",
     "descriptionEn": "Discover birds soaring over coasts and oceans",
-    "birdIds": ["white-bellied-sea-eagle", "collared-kingfisher", "pacific-golden-plover-sg"],
+    "birdIds": ["white-bellied-sea-eagle", "collared-kingfisher", "bald-eagle", "peregrine-falcon", "wandering-albatross"],
     "badge": "🌊"
   }
 ]

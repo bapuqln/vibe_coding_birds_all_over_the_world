@@ -22,23 +22,53 @@ export function ActionButton({
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`
-        relative flex h-11 min-w-30 items-center justify-center gap-2
-        rounded-xl px-4 text-sm font-semibold
-        shadow-lg backdrop-blur-lg
-        transition-all duration-200
-        hover:scale-105 active:scale-95
-        ${
-          active
-            ? "bg-amber-500 text-white ring-2 ring-amber-300/50"
-            : "bg-black/65 text-white hover:bg-black/75"
-        }
-      `}
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        height: 44,
+        minWidth: 120,
+        width: 120,
+        padding: "0 16px",
+        borderRadius: 12,
+        fontSize: 14,
+        fontWeight: 600,
+        border: "none",
+        cursor: "pointer",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+        transition: "transform 0.2s, background 0.2s",
+        background: active ? "#f59e0b" : "rgba(0,0,0,0.65)",
+        color: "white",
+      }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}
+      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+      onMouseDown={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(0.95)"; }}
+      onMouseUp={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}
     >
-      {icon && <span className="text-base">{icon}</span>}
+      {icon && <span style={{ fontSize: 16 }}>{icon}</span>}
       <span>{children}</span>
       {badge !== undefined && (
-        <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white shadow">
+        <span style={{
+          position: "absolute",
+          right: -6,
+          top: -6,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 20,
+          minWidth: 20,
+          padding: "0 4px",
+          borderRadius: 9999,
+          background: "#f59e0b",
+          fontSize: 10,
+          fontWeight: 700,
+          color: "white",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+        }}>
           {badge}
         </span>
       )}

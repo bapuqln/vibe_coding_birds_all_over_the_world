@@ -7,6 +7,10 @@ const HABITAT_COLORS: Record<string, string> = {
   grassland: "#eab308",
   forest: "#16a34a",
   polar: "#93c5fd",
+  mountains: "#a855f7",
+  desert: "#f97316",
+  ocean: "#0ea5e9",
+  tundra: "#94a3b8",
 };
 
 interface WingspanBarProps {
@@ -16,35 +20,44 @@ interface WingspanBarProps {
 }
 
 export function WingspanBar({ wingspanCm, habitatType, language }: WingspanBarProps) {
-  const maxRange = 250;
+  if (wingspanCm <= 0) return null;
+
+  const maxRange = 350;
   const childArmSpan = 120;
   const pct = Math.min((wingspanCm / maxRange) * 100, 100);
   const refPct = (childArmSpan / maxRange) * 100;
   const barColor = habitatType ? HABITAT_COLORS[habitatType] || "#3b82f6" : "#3b82f6";
 
   return (
-    <div className="mt-2">
-      <div className="flex items-center justify-between text-xs text-violet-700">
+    <div style={{ marginTop: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#6d28d9" }}>
         <span>
           {language === "zh" ? `翼展：${wingspanCm}厘米` : `Wingspan: ${wingspanCm} cm`}
         </span>
       </div>
-      <div className="relative mt-1.5 h-3 w-full overflow-hidden rounded-full bg-violet-100">
+      <div style={{ position: "relative", marginTop: 6, height: 12, width: "100%", overflow: "hidden", borderRadius: 9999, background: "#ede9fe" }}>
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, backgroundColor: barColor }}
+          style={{
+            height: "100%",
+            borderRadius: 9999,
+            transition: "width 0.5s",
+            width: `${pct}%`,
+            backgroundColor: barColor,
+          }}
         />
         <div
-          className="absolute top-0 h-full border-r-2 border-dashed border-gray-500/60"
-          style={{ left: `${refPct}%` }}
+          style={{
+            position: "absolute",
+            top: 0,
+            height: "100%",
+            borderRight: "2px dashed rgba(107,114,128,0.6)",
+            left: `${refPct}%`,
+          }}
         />
       </div>
-      <div className="mt-0.5 flex justify-between text-[10px] text-gray-400">
+      <div style={{ marginTop: 2, display: "flex", justifyContent: "space-between", fontSize: 10, color: "#9ca3af" }}>
         <span>0</span>
-        <span
-          style={{ position: "relative", left: `${refPct - 50}%` }}
-          className="text-gray-500 font-medium"
-        >
+        <span style={{ position: "relative", left: `${refPct - 50}%`, fontWeight: 500, color: "#6b7280" }}>
           {language === "zh" ? "你的臂展" : "Your arm span"}
         </span>
         <span>{maxRange}cm</span>

@@ -24,6 +24,10 @@ const HABITAT_COLORS: Record<HabitatType, string> = {
   grassland: "#eab308",
   forest: "#16a34a",
   polar: "#e0f2fe",
+  mountains: "#a855f7",
+  desert: "#f97316",
+  ocean: "#0ea5e9",
+  tundra: "#94a3b8",
 };
 
 export function HabitatHighlight() {

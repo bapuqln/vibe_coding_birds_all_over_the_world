@@ -6,7 +6,11 @@ export type HabitatType =
   | "coast"
   | "grassland"
   | "forest"
-  | "polar";
+  | "polar"
+  | "mountains"
+  | "desert"
+  | "ocean"
+  | "tundra";
 
 export type EvolutionEra =
   | "mesozoic"
@@ -50,6 +54,7 @@ export interface Bird {
   wingspanCm?: number;
   rarity?: Rarity;
   storyTheme?: string;
+  soundUrl?: string;
 }
 
 export interface MigrationRoute {

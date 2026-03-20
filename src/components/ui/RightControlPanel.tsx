@@ -40,8 +40,14 @@ export function RightControlPanel() {
 
   return (
     <div
-      className="pointer-events-auto fixed z-10 flex gap-2 max-[899px]:bottom-4 max-[899px]:left-1/2 max-[899px]:-translate-x-1/2 max-[899px]:flex-row min-[900px]:bottom-4 min-[900px]:right-4 min-[900px]:flex-col min-[900px]:items-end"
+      className="pointer-events-auto fixed z-10"
       style={{
+        right: 16,
+        bottom: 16,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        gap: 8,
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
         paddingRight: "env(safe-area-inset-right, 0px)",
       }}

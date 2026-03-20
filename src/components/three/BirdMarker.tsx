@@ -1,5 +1,5 @@
 import { useRef, useMemo, useCallback, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Html } from "@react-three/drei";
 import {
   Vector3,
@@ -16,12 +16,15 @@ const MODEL_PATH = "/models/bird.glb";
 const BASE_SCALE = 0.03;
 const FLIGHT_RADIUS = 0.015;
 const FLIGHT_SPEED = 0.4;
+const LOD_DISTANCE = 2.5;
+const MAX_3D_MODELS = 15;
 
 useGLTF.preload(MODEL_PATH);
 
 interface BirdMarkerProps {
   bird: Bird;
   index: number;
+  totalVisible3D?: number;
 }
 
 export function BirdMarker({ bird, index }: BirdMarkerProps) {
@@ -31,12 +34,15 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const scaleRef = useRef(1);
   const emissiveRef = useRef(0.5);
   const pausedUntilRef = useRef(0);
+  const use3DRef = useRef(false);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const setModelsReady = useAppStore((s) => s.setModelsReady);
   const setHoveredBird = useAppStore((s) => s.setHoveredBird);
   const activeRegion = useAppStore((s) => s.activeRegion);
   const hoveredBirdId = useAppStore((s) => s.hoveredBirdId);
   const phaseOffset = index * 1.3;
+
+  const { camera } = useThree();
 
   const isVisible = !activeRegion || bird.region === activeRegion;
   const isHovered = hoveredBirdId === bird.id;
@@ -84,12 +90,29 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
 
+    const posVec = new Vector3(...position);
+    const dist = camera.position.distanceTo(posVec);
+    const shouldUse3D = dist < LOD_DISTANCE && index < MAX_3D_MODELS;
+    use3DRef.current = shouldUse3D;
+
     const targetScale = hoveredRef.current ? 1.4 : 1.0;
     scaleRef.current += (targetScale - scaleRef.current) * 0.15;
-    const s = scaleRef.current * BASE_SCALE;
+
+    const modelScale = shouldUse3D ? BASE_SCALE * 1.2 : BASE_SCALE;
+    const s = scaleRef.current * modelScale;
 
     const wingFlap = 1 + 0.08 * Math.sin(clock.elapsedTime * (2 * Math.PI / 1.2) + phaseOffset);
     meshRef.current.scale.set(s * wingFlap, s, s);
+
+    const gentleRotation = shouldUse3D
+      ? Math.sin(clock.elapsedTime * 0.3 + phaseOffset) * 0.15
+      : 0;
+    if (shouldUse3D) {
+      const q = quaternion.clone();
+      const rotQ = new Quaternion().setFromAxisAngle(normal, gentleRotation);
+      q.multiply(rotQ);
+      meshRef.current.quaternion.copy(q);
+    }
 
     const targetEmissive = hoveredRef.current ? 1.5 : rarityGlow;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
@@ -105,7 +128,10 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const tangent1 = new Vector3(-normal.y, normal.x, 0).normalize();
     const tangent2 = new Vector3().crossVectors(normal, tangent1).normalize();
 
-    const bob = 0.005 * Math.sin(clock.elapsedTime * Math.PI + phaseOffset);
+    const floatAmplitude = shouldUse3D ? 0.008 : 0.005;
+    const floatSpeed = shouldUse3D ? Math.PI * 0.8 : Math.PI;
+    const bob = floatAmplitude * Math.sin(clock.elapsedTime * floatSpeed + phaseOffset);
+
     meshRef.current.position.set(
       position[0] + normal.x * bob + tangent1.x * flightX + tangent2.x * flightZ,
       position[1] + normal.y * bob + tangent1.y * flightX + tangent2.y * flightZ,
@@ -156,7 +182,6 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
         />
       </mesh>
 
-      {/* Tooltip on hover */}
       {isHovered && (
         <Html
           position={[
