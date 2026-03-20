@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v13)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v14)
 
+> **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system with CSS utility classes, modern pill-shaped buttons with hover glow, improved globe rendering (enhanced atmosphere, rim lighting, better clouds), bird hover interactions (scale, glow, tooltip), particle bird silhouettes around globe, improved camera animation (ease-in-out, 1.2s), bottom discovery panel with progress bar, responsive layout improvements, rendering performance optimizations.
+>
 > **v13 changelog**: Global UI Layer System — unified 7-layer z-index hierarchy, refactored App root into layered container architecture, panel collision avoidance (one panel active at a time via `activePanel` store state), bird info card repositioned to right side (desktop) / bottom center (mobile), responsive layout (desktop sidebar+bottom+right, tablet collapsed+center modal, mobile full-screen sheets), safe area padding (20px all sides), modal priority with overlay blocking, smooth panel animations (250ms slide/scale-fade).
 >
 > **v12 changelog**: Full-scope expansion — dataset to 50+ birds, migration visualization with animated arcs and moving dots, bird distribution heatmap layer, AR bird viewing mode, enhanced bird click animations (flap, hop, look, circle flight), performance optimization with KTX2 textures and lazy loading, educational features (wingspan bar, fun facts).
@@ -11,6 +13,36 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v14)
+
+### TD-89: Glass UI Design System
+**Problem**: UI panels use opaque dark backgrounds that feel heavy and dated. No consistent visual language across floating panels.
+**Solution**: Implement glassmorphism design system with CSS utility classes. Glass properties: `background: rgba(255,255,255,0.12)`, `backdrop-filter: blur(20px)`, `border-radius: 20px`, soft shadow, subtle border. Three variants: `.glass-panel` (dark glass for overlays), `.glass-card` (light glass for cards), `.glass-button` (compact glass for buttons). Applied to BirdInfoCard, DiscoveryProgressBar, ActionButton, and bottom discovery panel.
+
+### TD-90: Modern Button Design
+**Problem**: ActionButtons use flat dark backgrounds with basic hover effects. They don't feel premium or kid-friendly.
+**Solution**: Upgrade to rounded pill shape (`border-radius: 9999px`), glass background, hover glow effect (box-shadow with color spread), scale(1.05) on hover, scale(0.97) on active. Consistent across all button instances.
+
+### TD-91: Globe Visual Improvements
+**Problem**: Atmosphere glow is subtle and lighting is flat. Globe doesn't feel immersive.
+**Solution**: Enhance AtmosphereShell with two-pass Fresnel shader (inner warm glow + outer cool halo). Add rim light (directional from behind) to create depth. Improve cloud layer opacity and blending. Increase hemisphere light warmth.
+
+### TD-92: Bird Hover Interaction
+**Problem**: Bird markers have basic hover (scale + emissive change) but no styled tooltip or smooth animation.
+**Solution**: Enhance hover in BirdMarker: smoother scale lerp to 1.3, increased emissive glow, gentle floating bob. Upgrade Html tooltip with glass-style background, fade-in transition, bird name + region display.
+
+### TD-93: Particle Bird Effects
+**Problem**: Globe feels static when not interacting with birds.
+**Solution**: Add `BirdParticles` component to GlobeScene. Render ~10 small bird-shaped particles orbiting the globe at varying altitudes and speeds. Use Points with custom shader or small instanced meshes. Very low density, slow movement, creates ambient life.
+
+### TD-94: Camera Animation System
+**Problem**: Camera lerp uses constant factor (0.04) resulting in linear-feeling motion without smooth acceleration/deceleration.
+**Solution**: Replace constant lerp with ease-in-out timing. Track animation start time and use smoothstep function over 1.2s duration. Camera decelerates smoothly at destination. Feels cinematic and polished.
+
+### TD-95: Bottom Discovery Panel
+**Problem**: Discovery progress is only shown in the left sidebar. No prominent bottom panel showing exploration status.
+**Solution**: Add `BottomDiscoveryPanel` component in bottom-center position. Shows "Birds discovered: X / Y" with glass-style progress bar. Positioned in BottomPanelLayer (z-40). Slide-up animation. Respects panel collision avoidance.
 
 ## High-Level Architecture (v13 — Layered UI)
 
@@ -76,6 +108,41 @@ App.tsx
 │
 └── AudioPlayer (invisible)
 ```
+
+## Component Inventory (v14 additions)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `BirdParticles.tsx` | Ambient bird silhouette particles orbiting globe | v14 |
+| `BottomDiscoveryPanel.tsx` | Bottom-center discovery progress panel | v14 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `index.css` | Glass UI utility classes, button glow keyframes | v14 |
+| `ActionButton.tsx` | Pill shape, glass background, hover glow | v14 |
+| `BirdInfoCard.tsx` | Glass background with enhanced blur | v14 |
+| `DiscoveryProgressBar.tsx` | Glass panel styling | v14 |
+| `AtmosphereShell.tsx` | Enhanced two-layer Fresnel glow | v14 |
+| `GlobeScene.tsx` | Added rim light, BirdParticles | v14 |
+| `CloudLayer.tsx` | Improved opacity and blending | v14 |
+| `BirdMarker.tsx` | Enhanced hover glow, styled tooltip | v14 |
+| `CameraController.tsx` | Ease-in-out animation, 1.2s duration | v14 |
+| `App.tsx` | Added BottomDiscoveryPanel to BottomPanelLayer | v14 |
+
+## Implementation Phases (v14)
+
+- Phase 109: Glass UI Design System — CSS utility classes, glass variants → R-27
+- Phase 110: Modern Button Design — pill shape, hover glow → R-28
+- Phase 111: Globe Visual Improvements — atmosphere, lighting, clouds → R-29
+- Phase 112: Bird Hover Interaction — scale, glow, tooltip → R-30
+- Phase 113: Particle Bird Effects — ambient bird silhouettes → R-31
+- Phase 114: Camera Animation System — ease-in-out, 1.2s → R-32
+- Phase 115: Bottom Discovery Panel — progress display → R-33
+- Phase 116: Panel Layout & Responsive — layout improvements → R-19
+- Phase 117: Performance Optimization — lazy loading, limits → R-20
+- Phase 118: Final Verification → All v14 ACs
 
 ## Key Technical Decisions (v13)
 

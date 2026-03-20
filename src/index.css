@@ -12,6 +12,55 @@
   --safe-area: 20px;
   --panel-duration: 250ms;
   --panel-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.18);
+  --glass-bg-card: rgba(255, 255, 255, 0.92);
+  --glass-blur: 20px;
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  --glass-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.25);
+  --glass-radius: 20px;
+  --glass-radius-pill: 9999px;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg-card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-button {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-pill);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s var(--panel-ease),
+              box-shadow 0.2s var(--panel-ease),
+              background 0.2s var(--panel-ease);
+}
+
+.glass-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.glass-button:active {
+  transform: scale(0.97);
 }
 
 html,
@@ -62,4 +111,14 @@ body,
 @keyframes panelScaleFade {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
+  50% { box-shadow: 0 4px 24px rgba(245, 158, 11, 0.3), 0 0 16px rgba(245, 158, 11, 0.15); }
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

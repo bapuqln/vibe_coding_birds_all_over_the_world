@@ -22,6 +22,7 @@ export function ActionButton({
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
+      className="glass-button"
       style={{
         position: "relative",
         display: "flex",
@@ -30,26 +31,24 @@ export function ActionButton({
         gap: 6,
         height: 44,
         width: 120,
-        padding: "0 12px",
-        borderRadius: 14,
+        padding: "0 16px",
+        borderRadius: 9999,
         fontSize: 13,
         fontWeight: 600,
-        border: "none",
+        border: active ? "1px solid rgba(245, 158, 11, 0.4)" : "1px solid rgba(255, 255, 255, 0.18)",
         cursor: "pointer",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        boxShadow: active
-          ? "0 4px 16px rgba(245, 158, 11, 0.3)"
-          : "0 4px 12px rgba(0,0,0,0.2)",
-        transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
-        background: active ? "#f59e0b" : "rgba(0,0,0,0.6)",
+        background: active
+          ? "rgba(245, 158, 11, 0.85)"
+          : "rgba(255, 255, 255, 0.12)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         color: "white",
         flexShrink: 0,
+        boxShadow: active
+          ? "0 4px 20px rgba(245, 158, 11, 0.35), 0 0 12px rgba(245, 158, 11, 0.2)"
+          : "0 4px 16px rgba(0, 0, 0, 0.15)",
+        animation: active ? "glowPulse 2s ease-in-out infinite" : "none",
       }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-      onMouseDown={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(0.95)"; }}
-      onMouseUp={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}
     >
       {icon && <span style={{ fontSize: 15, lineHeight: 1 }}>{icon}</span>}
       <span style={{ whiteSpace: "nowrap" }}>{children}</span>
@@ -69,7 +68,7 @@ export function ActionButton({
           fontSize: 10,
           fontWeight: 700,
           color: "white",
-          boxShadow: "0 2px 6px rgba(239,68,68,0.3)",
+          boxShadow: "0 2px 8px rgba(239, 68, 68, 0.4)",
         }}>
           {badge}
         </span>

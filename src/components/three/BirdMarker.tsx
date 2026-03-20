@@ -109,8 +109,8 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const clickElapsed = now - clickAnimStartRef.current;
     const isClickAnimating = clickElapsed < CLICK_ANIM_DURATION;
 
-    const targetScale = hoveredRef.current ? 1.4 : 1.0;
-    scaleRef.current += (targetScale - scaleRef.current) * 0.15;
+    const targetScale = hoveredRef.current ? 1.35 : 1.0;
+    scaleRef.current += (targetScale - scaleRef.current) * 0.1;
 
     const modelScale = shouldUse3D ? BASE_SCALE * 1.2 : BASE_SCALE;
     const s = scaleRef.current * modelScale;
@@ -160,7 +160,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       meshRef.current.quaternion.copy(q);
     }
 
-    const targetEmissive = hoveredRef.current ? 1.5 : rarityGlow;
+    const targetEmissive = hoveredRef.current ? 2.0 : rarityGlow;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
     if (matRef.current) {
       matRef.current.emissiveIntensity = emissiveRef.current;
@@ -257,19 +257,35 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       {isHovered && (
         <Html
           position={[
-            position[0] + normal.x * 0.06,
-            position[1] + normal.y * 0.06,
-            position[2] + normal.z * 0.06,
+            position[0] + normal.x * 0.07,
+            position[1] + normal.y * 0.07,
+            position[2] + normal.z * 0.07,
           ]}
           center
           style={{ pointerEvents: "none" }}
         >
-          <div className="whitespace-nowrap rounded-lg bg-black/75 px-2.5 py-1.5 text-center backdrop-blur-sm">
-            <p className="text-xs font-bold text-white">
+          <div
+            style={{
+              whiteSpace: "nowrap",
+              textAlign: "center",
+              padding: "8px 14px",
+              borderRadius: 14,
+              background: "rgba(0, 0, 0, 0.55)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+              animation: "tooltipFadeIn 0.2s ease-out",
+            }}
+          >
+            <p style={{ fontSize: 13, fontWeight: 700, color: "white", margin: 0, lineHeight: 1.3 }}>
               {bird.nameEn}
             </p>
-            <p className="text-[10px] text-white/70">
-              {bird.region}
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", margin: "2px 0 0", lineHeight: 1.2 }}>
+              {bird.nameZh}
+            </p>
+            <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", margin: "2px 0 0", lineHeight: 1.2, textTransform: "capitalize" }}>
+              {bird.region.replace("-", " ")}
             </p>
           </div>
         </Html>

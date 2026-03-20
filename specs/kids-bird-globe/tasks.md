@@ -1,11 +1,104 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v13)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v14)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
 > v10 phases (76–84) are complete.
 > v11 phases (85–92) are complete.
 > v12 phases (93–100) are complete.
-> v13 phases (101–108) are new.
+> v13 phases (101–108) are complete.
+> v14 phases (109–118) are new.
+
+---
+
+# v14 Tasks (Visual & Interaction Upgrade)
+
+---
+
+## Phase 109: Glass UI Design System
+
+- [x] **109.1** Add glass UI CSS utility classes in `index.css` (`.glass-panel`, `.glass-card`, `.glass-button`).
+- [x] **109.2** Add hover glow keyframe animation in `index.css`.
+- [x] **109.3** Define glass color tokens as CSS custom properties.
+
+---
+
+## Phase 110: Modern Button Design
+
+- [x] **110.1** Refactor `ActionButton.tsx` to use pill shape (`border-radius: 9999px`).
+- [x] **110.2** Apply glass background and hover glow to `ActionButton`.
+- [x] **110.3** Add `scale(1.05)` hover and `scale(0.97)` active feedback.
+- [x] **110.4** Apply glass styling to `BirdInfoCard` action buttons.
+
+---
+
+## Phase 111: Globe Visual Improvements
+
+- [x] **111.1** Enhance `AtmosphereShell.tsx` with two-layer Fresnel shader (inner warm + outer cool).
+- [x] **111.2** Add rim light to `GlobeScene.tsx` (directional from behind).
+- [x] **111.3** Improve `CloudLayer.tsx` opacity and blending.
+- [x] **111.4** Increase hemisphere light warmth in `GlobeScene`.
+
+---
+
+## Phase 112: Bird Hover Interaction
+
+- [x] **112.1** Enhance hover scale lerp in `BirdMarker.tsx` (smoother, target 1.3).
+- [x] **112.2** Increase hover emissive glow intensity.
+- [x] **112.3** Upgrade `Html` tooltip with glass-style background and fade-in.
+
+---
+
+## Phase 113: Particle Bird Effects
+
+- [x] **113.1** Create `BirdParticles.tsx` component in `src/components/three/`.
+- [x] **113.2** Render ~10 bird-shaped particles orbiting globe at varying altitudes.
+- [x] **113.3** Integrate `BirdParticles` into `GlobeScene.tsx`.
+
+---
+
+## Phase 114: Camera Animation System
+
+- [x] **114.1** Replace constant lerp with ease-in-out smoothstep in `CameraController.tsx`.
+- [x] **114.2** Set animation duration to ~1.2 seconds.
+- [x] **114.3** Add smooth deceleration at destination.
+
+---
+
+## Phase 115: Bottom Discovery Panel
+
+- [x] **115.1** Create `BottomDiscoveryPanel.tsx` in `src/components/ui/`.
+- [x] **115.2** Display "Birds discovered: X / Y" with glass-style progress bar.
+- [x] **115.3** Add slide-up animation.
+- [x] **115.4** Integrate into `App.tsx` BottomPanelLayer.
+
+---
+
+## Phase 116: Panel Layout & Responsive
+
+- [x] **116.1** Verify panels never overlap at any viewport size.
+- [x] **116.2** Ensure bottom discovery panel respects safe areas.
+- [x] **116.3** Verify responsive breakpoints for all new components.
+
+---
+
+## Phase 117: Performance Optimization
+
+- [x] **117.1** Verify particle bird effects don't impact FPS.
+- [x] **117.2** Verify enhanced atmosphere shader performs well.
+- [x] **117.3** Ensure max 15 simultaneous 3D models still enforced.
+
+---
+
+## Phase 118: Final Verification (v14)
+
+- [x] **118.1** Glass UI design system applied to all panels. (AC-V14-1)
+- [x] **118.2** Modern pill buttons with hover glow. (AC-V14-2)
+- [x] **118.3** Enhanced globe atmosphere and lighting. (AC-V14-3)
+- [x] **118.4** Bird hover interactions work. (AC-V14-4)
+- [x] **118.5** Particle bird effects visible. (AC-V14-5)
+- [x] **118.6** Camera ease-in-out animation. (AC-V14-6)
+- [x] **118.7** Bottom discovery panel works. (AC-V14-7)
+- [x] **118.8** ~60 FPS maintained. (AC-V14-8)
 
 ---
 
@@ -296,28 +389,23 @@
 
 ---
 
-## Summary (v13)
+## Summary (v14)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
-| Global UI Layer System (v13) | 101.1–101.3 | Complete |
-| Layered Container Architecture (v13) | 102.1–102.6 | Complete |
-| Panel Collision Avoidance (v13) | 103.1–103.4 | Complete |
-| Bird Info Card Repositioning (v13) | 104.1–104.4 | Complete |
-| Update All Component Z-Indexes (v13) | 105.1–105.20 | Complete |
-| Responsive Layout Rules (v13) | 106.1–106.3 | Complete |
-| Safe Area & Animation Rules (v13) | 107.1–107.4 | Complete |
-| Final Verification (v13) | 108.1–108.12 | Complete |
+| Glass UI Design System (v14) | 109.1–109.3 | Complete |
+| Modern Button Design (v14) | 110.1–110.4 | Complete |
+| Globe Visual Improvements (v14) | 111.1–111.4 | Complete |
+| Bird Hover Interaction (v14) | 112.1–112.3 | Complete |
+| Particle Bird Effects (v14) | 113.1–113.3 | Complete |
+| Camera Animation System (v14) | 114.1–114.3 | Complete |
+| Bottom Discovery Panel (v14) | 115.1–115.4 | Complete |
+| Panel Layout & Responsive (v14) | 116.1–116.3 | Complete |
+| Performance Optimization (v14) | 117.1–117.3 | Complete |
+| Final Verification (v14) | 118.1–118.8 | Complete |
+| **Total v14 tasks** | **35 tasks** | **35 complete** |
 | **Total v13 tasks** | **52 tasks** | **52 complete** |
-| Dataset Expansion 50+ (v12) | 93.1–93.9 | Complete |
-| Migration Route Enhancement (v12) | 94.1–94.7 | Complete |
-| Bird Distribution Heatmap (v12) | 95.1–95.7 | Complete |
-| AR Bird Viewing (v12) | 96.1–96.8 | Complete |
-| Enhanced Animations (v12) | 97.1–97.6 | Complete |
-| UI Layout Hardening (v12) | 98.1–98.7 | Complete |
-| Performance Optimization (v12) | 99.1–99.6 | Complete |
-| Final Verification (v12) | 100.1–100.14 | Complete |
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total all tasks (v1–v13)** | **~781 tasks** | **~781 complete** |
+| **Total all tasks (v1–v14)** | **~816 tasks** | **~816 complete** |

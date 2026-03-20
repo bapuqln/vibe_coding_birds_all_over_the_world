@@ -47,14 +47,11 @@ export function DiscoveryProgressBar() {
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
+        className="glass-panel"
         style={{
           width: "100%",
-          borderRadius: 14,
-          background: "rgba(0, 0, 0, 0.65)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
           padding: "10px 14px",
-          border: "none",
+          border: "1px solid var(--glass-border)",
           cursor: "pointer",
           color: "white",
           textAlign: "left",
@@ -85,17 +82,16 @@ export function DiscoveryProgressBar() {
       </button>
 
       {expanded && (
-        <div style={{
-          marginTop: 6,
-          borderRadius: 14,
-          background: "rgba(0, 0, 0, 0.65)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-          padding: "10px 14px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}>
+        <div
+          className="glass-panel"
+          style={{
+            marginTop: 6,
+            padding: "10px 14px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
           {regionStats.map((r) => {
             const pct = r.total > 0 ? (r.found / r.total) * 100 : 0;
             return (

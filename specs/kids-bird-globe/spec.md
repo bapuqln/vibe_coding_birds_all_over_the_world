@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v13
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v14
 
+> **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system (semi-transparent backgrounds, backdrop blur 20px, soft shadows, rounded corners), modern pill-shaped buttons with hover glow and scale effects, improved globe rendering (enhanced atmosphere glow, better cloud layer, rim lighting, higher-quality Fresnel shader), bird hover interactions (scale animation, soft glow, floating motion, styled tooltip), particle bird silhouettes flying around the globe, improved camera animation system (ease-in-out transitions, 1.2s duration), bottom discovery panel with progress bar, responsive panel layout improvements, rendering performance optimizations (lazy loading, compressed textures, model limits).
+>
 > **v13 changelog**: Global UI Layer System — unified z-index hierarchy (7 layers from canvas z-0 to overlay z-100), refactored App root into layered container architecture (GlobeLayer → MarkerLayer → SidebarLayer → BottomPanelLayer → CardLayer → ModalLayer → OverlayLayer), panel collision avoidance system (only one panel type active at a time), bird info card repositioned to right side to prevent overlap with bottom panels, responsive layout rules (desktop: sidebar+bottom+right card, tablet: collapsed sidebar+center modal, mobile: full-screen sheets), safe area padding (20px all sides), modal priority system with semi-transparent overlay blocking lower layers, smooth panel animations (slide-up 250ms for bottom, slide-right 250ms for side, scale-fade 250ms for modal).
 >
 > **v12 changelog**: Full-scope expansion — dataset expanded to 50+ birds with comprehensive global coverage, migration visualization with animated arc lines and moving dots for Arctic Tern / Bar-tailed Godwit / Swallow routes, bird distribution heatmap layer with blue-green-red density visualization and toggle button, AR bird viewing mode via WebXR with camera overlay and 3D model placement, enhanced bird animations (wing flap, hop, look-toward-camera, circle flight), performance optimization with model lazy loading (max 15 simultaneous 3D models), KTX2 texture compression, educational wingspan visualization bar, fun fact section redesign. All UI layout issues resolved with strict flex-column card structure, spacing tokens, tag wrapping, sidebar alignment, and glass-morphism design.
@@ -369,6 +371,49 @@ As a child, I can see a visual bar comparing different birds' wingspan sizes in 
 - Modal: scale fade, 250ms ease-out.
 - All animations use CSS transitions or keyframes.
 
+### R-27: Glass UI Design System (v14)
+- Glassmorphism applied to all floating UI panels.
+- Glass card properties: `background: rgba(255,255,255,0.2)`, `backdrop-filter: blur(20px)`, `border-radius: 20px`, soft shadow.
+- Applied to: bird info card, discovery panel, floating buttons, progress bar.
+- CSS utility classes for glass variants (light, dark, accent).
+
+### R-28: Modern Button Design (v14)
+- Rounded pill shape (`border-radius: 9999px`).
+- Subtle shadow with hover glow effect.
+- Hover: `scale(1.05)`, increased shadow, subtle glow.
+- Active: `scale(0.97)` press feedback.
+- Consistent across all ActionButtons.
+
+### R-29: Globe Visual Improvements (v14)
+- Enhanced atmosphere glow with two-layer Fresnel (inner warm, outer cool).
+- Improved cloud layer with higher opacity and better blending.
+- Three-light setup: ambient, directional sunlight, subtle rim light.
+- Atmospheric glow ring around Earth visible from all angles.
+
+### R-30: Bird Hover Interaction (v14)
+- Hover over bird marker triggers: scale slightly larger, soft glow, small floating animation.
+- Display styled tooltip showing bird name and region.
+- Tooltip: glass-style background, rounded corners, smooth fade-in.
+
+### R-31: Particle Bird Effects (v14)
+- Subtle bird silhouette particles flying around the globe.
+- Very low density (~8-12 particles), slow movement, small size.
+- Creates ambient sense of life around the globe.
+- Particles rendered as simple bird shapes using Points or small meshes.
+
+### R-32: Camera Animation System (v14)
+- Smooth fly-to animation when bird is clicked.
+- Ease-in-out timing function.
+- Duration ~1.2 seconds.
+- Camera stops at comfortable viewing distance.
+- Smooth deceleration at end of animation.
+
+### R-33: Bottom Discovery Panel (v14)
+- Bottom-center panel showing recently discovered birds and exploration progress.
+- Displays "Birds discovered: X / Y" with progress bar.
+- Glass UI styling consistent with design system.
+- Slide-up animation on open.
+
 ### R-20: Performance (v12 enhanced)
 - Model lazy loading: only load bird models when they enter the visible region.
 - Limit simultaneously visible 3D models to 15; fallback to icon markers for others.
@@ -489,6 +534,46 @@ type Rarity = "common" | "rare" | "legendary";
 - High-resolution GeoJSON.
 
 ## Acceptance Criteria
+
+### AC-V14-1: Glass UI Design System
+- [ ] Glassmorphism CSS utility classes defined.
+- [ ] Bird info card uses glass background with backdrop blur.
+- [ ] Discovery panel uses glass styling.
+- [ ] Floating buttons use glass design.
+
+### AC-V14-2: Modern Button Design
+- [ ] Buttons use rounded pill shape.
+- [ ] Hover glow and scale effect works.
+- [ ] Active press feedback works.
+
+### AC-V14-3: Globe Visual Improvements
+- [ ] Enhanced atmosphere glow visible.
+- [ ] Cloud layer renders with improved quality.
+- [ ] Rim light adds depth to globe.
+
+### AC-V14-4: Bird Hover Interaction
+- [ ] Hover triggers scale and glow animation.
+- [ ] Tooltip displays bird name and region.
+- [ ] Tooltip has glass-style design.
+
+### AC-V14-5: Particle Bird Effects
+- [ ] Bird silhouette particles visible around globe.
+- [ ] Low density, slow movement.
+- [ ] Particles do not impact performance.
+
+### AC-V14-6: Camera Animation
+- [ ] Camera fly-to uses ease-in-out.
+- [ ] Animation duration ~1.2s.
+- [ ] Smooth deceleration at end.
+
+### AC-V14-7: Bottom Discovery Panel
+- [ ] Discovery panel shows progress.
+- [ ] Glass UI styling applied.
+- [ ] Slide-up animation works.
+
+### AC-V14-8: Performance
+- [ ] ~60 FPS maintained with all v14 features.
+- [ ] No jank during hover or camera animations.
 
 ### AC-V13-1: Global UI Layer System
 - [ ] Unified z-index hierarchy with 7 defined layers.

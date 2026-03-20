@@ -13,6 +13,7 @@ import { CameraController } from "./CameraController";
 import { SoundRipple } from "./SoundRipple";
 import { HabitatHighlight } from "./HabitatHighlight";
 import { HeatmapLayer } from "./HeatmapLayer";
+import { BirdParticles } from "./BirdParticles";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 import { useAppStore } from "../../store";
@@ -30,10 +31,12 @@ export function GlobeScene() {
 
   return (
     <>
-      <ambientLight intensity={0.3} />
-      <hemisphereLight args={["#b1e1ff", "#000000", 0.4]} />
-      <directionalLight position={[5, 3, 5]} intensity={1.2} />
-      <directionalLight position={[-3, -1, -3]} intensity={0.2} />
+      <ambientLight intensity={0.35} />
+      <hemisphereLight args={["#c8e6ff", "#0a1628", 0.5]} />
+      <directionalLight position={[5, 3, 5]} intensity={1.3} castShadow={false} />
+      <directionalLight position={[-3, -1, -3]} intensity={0.25} />
+      {/* Rim light for depth */}
+      <directionalLight position={[-4, 2, -5]} intensity={0.4} color="#6ea8fe" />
       <Starfield />
       <AtmosphereShell />
       <group>
@@ -49,6 +52,7 @@ export function GlobeScene() {
         <SoundRipple />
         <HabitatHighlight />
         <HeatmapLayer />
+        <BirdParticles />
       </group>
       <MapLabels />
       <CameraController controlsRef={controlsRef} />

@@ -21,6 +21,7 @@ import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
 import { DiscoveryNotification } from "./components/ui/DiscoveryNotification";
 import { DiscoveryProgressBar } from "./components/ui/DiscoveryProgressBar";
 import { ARViewerModal } from "./components/ui/ARViewerModal";
+import { BottomDiscoveryPanel } from "./components/ui/BottomDiscoveryPanel";
 
 export default function App() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
         style={{ zIndex: "var(--z-bottom-panel)" }}
       >
         <GuidedTour />
+        <BottomDiscoveryPanel />
       </div>
 
       {/* Layer 4 — Information Cards */}
