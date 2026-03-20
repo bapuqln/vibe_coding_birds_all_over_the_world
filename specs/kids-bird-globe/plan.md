@@ -1,12 +1,14 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v10)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v11)
 
+> **v11 changelog**: Full-scope upgrade — UI layout overhaul with strict flex-column card structure and spacing tokens, 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 40+ species, bird sound playback feature, bird discovery system with "New bird discovered!" notification, exploration progress system with continent-level tracking, bird click animations (wing flap, lift, rotate), performance optimizations (lazy loading, visibility culling), child-friendly design polish (glass-morphism, tag colors, wingspan bar).
+>
 > **v10 changelog**: Major upgrade — UI layout overhaul with strict flex-column card structure and spacing tokens, 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 30+ species, bird sound playback feature, performance optimizations (lazy loading, visibility culling), child-friendly design polish (glass-morphism, tag colors, wingspan bar).
 >
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
 
-## High-Level Architecture (v10)
+## High-Level Architecture (v11)
 
 ```
 App.tsx
@@ -21,7 +23,7 @@ App.tsx
 │           │   ├── CloudLayer
 │           │   ├── CountryBorders (GeoJSON)
 │           │   ├── HabitatHighlight
-│           │   ├── BirdMarker × 30+ (3D model + LOD + tooltip) [z-index: 1]
+│           │   ├── BirdMarker × 40+ (3D model + LOD + tooltip + click animation) [z-index: 1]
 │           │   ├── SoundRipple
 │           │   ├── MigrationPaths (all-routes + migration mode)
 │           │   └── RarityEffects (glow/particles for rare birds)
@@ -32,6 +34,8 @@ App.tsx
 ├── LoadingScreen (progress indicator) [z-index: 100]
 ├── AppTitle [z-index: 10]
 ├── LangToggle [z-index: 10]
+│
+├── DiscoveryProgressBar (global + continent progress) [z-index: 10]
 │
 ├── RightControlPanel [z-index: 10]
 │   ├── ActionButton "Discover" → random bird
@@ -44,14 +48,16 @@ App.tsx
 │
 ├── BirdInfoCard (center-bottom modal) [z-index: 20]
 │   ├── ImageHeader (photo + rarity badge + audio indicator)
-│   ├── TitleSection (nameZh, pinyin, nameEn)
+│   ├── TitleSection (nameZh large bold, pinyin small subtle, nameEn medium)
 │   ├── FunFact (amber card with "Did you know?")
 │   ├── TagRow (continent=blue, habitat=green, lifespan=orange)
 │   ├── InfoGrid (size, diet, wingspan bar)
 │   ├── ActionButtons (Collect + Listen)
 │   └── Close button
 │
-├── MyBirdsPanel (collection album) [z-index: 20]
+├── DiscoveryNotification ("New bird discovered!") [z-index: 25]
+│
+├── MyBirdsPanel (collection album with discovered/locked) [z-index: 20]
 ├── RegionFilterPanel [z-index: 20]
 ├── QuestPanel [z-index: 20]
 ├── GuidedTour overlay [z-index: 20]
@@ -67,7 +73,25 @@ App.tsx
 └── BirdTooltip [z-index: 15]
 ```
 
-## Key Technical Decisions (v10)
+## Key Technical Decisions (v11)
+
+### TD-73: Bird Discovery System
+**Problem**: No first-time discovery mechanic — children have no sense of achievement when finding new birds.
+**Solution**: Track discovered birds separately in localStorage. When a bird is clicked for the first time, show "New bird discovered!" notification with celebration animation. Discovery count displayed as "12/40 birds discovered". Collection screen shows discovered birds with details and locked/undiscovered birds as silhouettes.
+
+### TD-74: Exploration Progress System
+**Problem**: No global or continent-level progress tracking.
+**Solution**: Add `DiscoveryProgressBar` component showing global progress ("Bird Discovery Progress — 12/40 Birds Found") with a visual progress bar. Add continent-level breakdown (e.g. "Asia: 3/8", "Africa: 2/6"). Progress updates in real-time as birds are discovered. Data derived from discovery state in localStorage.
+
+### TD-75: Bird Click Animation
+**Problem**: Clicking a bird has no visual feedback beyond pausing movement.
+**Solution**: On click, trigger a short animation sequence: (1) rapid wing flap for 0.5s, (2) bird lifts 0.02 units along surface normal, (3) bird rotates to face camera direction. Animation is playful and does not block interaction. Implemented in `useFrame` with click timestamp tracking.
+
+### TD-76: Dataset Expansion to 40+
+**Problem**: 30 birds is insufficient for a rich educational experience.
+**Solution**: Expand to 40+ birds with additional species: Resplendent Quetzal, Blue-footed Booby, Flamingo, Golden Eagle, Barn Owl, Ostrich, Emu, Kakapo, Frigatebird, King Penguin, Snowy Egret, Toucan Barbet. Each with full data fields.
+
+## Key Technical Decisions (v10 — preserved)
 
 ### TD-63: UI Layout Overhaul — Strict Flex-Column Card
 **Problem**: Bird info card sections overlap each other, bottom tags overflow the card container, layout breaks on smaller screens.
@@ -90,12 +114,12 @@ App.tsx
 **Solution**: Use Three.js GLTFLoader via `@react-three/drei`'s `useGLTF` to load GLB bird models. Each bird location displays a small 3D model with idle animation (wing flap), slow floating motion, and gentle rotation. Scale: 0.2–0.3 relative to marker size. Sources: Sketchfab free models, PolyPizza, Google Poly archive.
 
 ### TD-68: LOD (Level of Detail) System
-**Problem**: Loading 30+ 3D models simultaneously is too expensive.
+**Problem**: Loading 40+ 3D models simultaneously is too expensive.
 **Solution**: When camera is far from a bird location, show a simple icon marker (sphere with emissive material). When camera zooms closer, load and display the 3D bird model. Limit max simultaneous 3D models to 15. Use distance-based culling to determine which birds get 3D models.
 
 ### TD-69: Bird Dataset Expansion
-**Problem**: Current dataset has only 15 birds, too small for educational value.
-**Solution**: Expand to 30+ birds covering all continents: South America (Andean Condor, Harpy Eagle, Scarlet Macaw, Hoatzin, Toco Toucan), North America (Bald Eagle, Snowy Owl, Peregrine Falcon, Canada Goose, California Condor), Africa (Secretary Bird, African Grey Parrot, Shoebill, Marabou Stork, Lilac-breasted Roller), Asia (Red-crowned Crane, Mandarin Duck, Great Hornbill, Himalayan Monal, Indian Peafowl), Oceania (Kookaburra, Cassowary, Kiwi, Sulphur-crested Cockatoo), Polar (Emperor Penguin, Albatross, Puffin, Arctic Tern).
+**Problem**: Current dataset needs more birds for educational value.
+**Solution**: Expand to 40+ birds covering all continents: South America (Andean Condor, Harpy Eagle, Scarlet Macaw, Hoatzin, Toco Toucan), North America (Bald Eagle, Snowy Owl, Peregrine Falcon, Canada Goose, California Condor), Africa (Secretary Bird, African Grey Parrot, Shoebill, Marabou Stork, Lilac-breasted Roller), Asia (Red-crowned Crane, Mandarin Duck, Great Hornbill, Himalayan Monal, Indian Peafowl), Oceania (Kookaburra, Cassowary, Kiwi, Sulphur-crested Cockatoo), Polar (Emperor Penguin, Albatross, Puffin, Arctic Tern), plus additional species.
 
 ### TD-70: Bird Sound Feature
 **Problem**: No dedicated sound playback button on bird card.
@@ -163,34 +187,56 @@ App.tsx
 **Problem**: No themed discovery experience.
 **Solution**: `StoryExplorer` offers themed bird sets with discovery progress and badge rewards.
 
-## Component Inventory (v10 additions)
+## Component Inventory (v11 additions)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `DiscoveryProgressBar.tsx` | Global + continent discovery progress display | v11 |
+| `DiscoveryNotification.tsx` | "New bird discovered!" celebration notification | v11 |
 
 ### Modified Components
 | Component | Changes | Version |
 |-----------|---------|---------|
-| `BirdInfoCard.tsx` | Strict flex-column layout, spacing tokens, tag colors, glass-morphism, Listen button, 80vh scroll | v10 |
-| `BirdMarker.tsx` | 3D model support, LOD system, enhanced animations | v10 |
-| `RightControlPanel.tsx` | Consistent button sizing, no overlap | v10 |
-| `ActionButton.tsx` | Identical width/height enforcement | v10 |
-| `LoadingScreen.tsx` | Enhanced progress stages for 30+ birds | v10 |
+| `BirdInfoCard.tsx` | Strict flex-column layout, spacing tokens, tag colors, glass-morphism, Listen button, 80vh scroll, typography hierarchy | v11 |
+| `BirdMarker.tsx` | 3D model support, LOD system, enhanced animations, click animation (flap/lift/rotate) | v11 |
+| `RightControlPanel.tsx` | Consistent button sizing, no overlap | v11 |
+| `ActionButton.tsx` | Identical width/height enforcement | v11 |
+| `MyBirdsPanel.tsx` | Shows discovered + locked birds, discovery count | v11 |
+| `LoadingScreen.tsx` | Enhanced progress stages for 40+ birds | v11 |
 
 ### Data Files
 | File | Changes | Version |
 |------|---------|---------|
-| `birds.json` | Expanded to 30+ birds, added soundUrl field | v10 |
-| `stories.json` | Updated with new bird IDs | v10 |
+| `birds.json` | Expanded to 40+ birds, added soundUrl field | v11 |
+| `stories.json` | Updated with new bird IDs | v11 |
 
-### Types
-| Type | Changes | Version |
-|------|---------|---------|
-| `Bird` | Added `soundUrl` field | v10 |
-| `HabitatType` | Added mountains, desert, ocean, tundra | v10 |
+### Store Changes
+| State | Changes | Version |
+|-------|---------|---------|
+| `discoveredBirds` | New: Set of discovered bird IDs in localStorage | v11 |
+| `discoveryNotification` | New: Currently showing discovery notification bird ID | v11 |
 
-## State Management (v10 — no new state needed)
+## State Management (v11)
 
-Existing Zustand store already supports all v10 features. Audio playback uses existing `audioStatus` state. Bird selection, collection, and region filtering work with expanded dataset without changes.
+New Zustand store additions:
+- `discoveredBirds: string[]` — list of discovered bird IDs, persisted in localStorage.
+- `discoveryNotification: string | null` — bird ID for active "New bird discovered!" notification.
+- `discoverBird(birdId)` — marks bird as discovered, triggers notification.
+- `dismissDiscoveryNotification()` — clears notification.
 
-## Implementation Phases (v10)
+## Implementation Phases (v11)
+
+- Phase 85: Bird Discovery System — localStorage tracking, notification component → R-21
+- Phase 86: Exploration Progress — DiscoveryProgressBar, continent breakdown → R-22
+- Phase 87: Bird Click Animation — wing flap, lift, rotate in BirdMarker → R-23
+- Phase 88: Dataset Expansion to 40+ — additional birds in birds.json → R-2
+- Phase 89: UI Layout Hardening — verify zero overlap, spacing tokens, tag wrapping → R-4, R-19
+- Phase 90: MyBirdsPanel Enhancement — discovered/locked bird display → R-5
+- Phase 91: Performance Tuning — lazy loading verification, 60 FPS → R-20
+- Phase 92: Final Verification → All v11 ACs
+
+## Implementation Phases (v10 — preserved)
 
 - Phase 76: UI Layout Fix — BirdInfoCard strict flex-column, spacing tokens, tag colors → R-4, R-19
 - Phase 77: UI Layout Fix — Tag row overflow, card scroll, glass-morphism → R-4, R-19

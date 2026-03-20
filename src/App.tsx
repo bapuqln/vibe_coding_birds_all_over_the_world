@@ -18,6 +18,8 @@ import { SoundGuessPanel } from "./components/ui/SoundGuessPanel";
 import { BirdEncyclopediaPanel } from "./components/ui/BirdEncyclopediaPanel";
 import { ContinentBirdPanel } from "./components/ui/ContinentBirdPanel";
 import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
+import { DiscoveryNotification } from "./components/ui/DiscoveryNotification";
+import { DiscoveryProgressBar } from "./components/ui/DiscoveryProgressBar";
 
 export default function App() {
   return (
@@ -38,10 +40,14 @@ export default function App() {
       {/* HUD layer — z-index: 10 */}
       <AppTitle />
       <LangToggle />
+      <DiscoveryProgressBar />
       <RightControlPanel />
       <BirdGuide />
       <BirdRadar />
       <StoryExplorer />
+
+      {/* Notification layer — z-index: 25 */}
+      <DiscoveryNotification />
 
       {/* Modal layer — z-index: 20 */}
       <BirdInfoCard />

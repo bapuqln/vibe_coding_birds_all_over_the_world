@@ -15,6 +15,7 @@ const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
 const STORY_KEY = "kids-bird-globe-stories";
 const POINTS_KEY = "kids-bird-globe-points";
+const DISCOVERY_KEY = "kids-bird-globe-discovered";
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
@@ -55,39 +56,34 @@ interface AppStore {
   soundGuessOptions: SoundGuessOption[];
   soundGuessCorrectId: string | null;
 
-  // v8: Collection
   collectedBirds: CollectedBird[];
   isCollectionOpen: boolean;
 
-  // v8: Region filter
   activeRegion: string | null;
   regionFilterOpen: boolean;
 
-  // v8: Quests
   questsOpen: boolean;
   questProgress: QuestProgress[];
   totalPoints: number;
 
-  // v9: Guided tour
   tourState: TourState;
   tourStep: number;
 
-  // v9: Bird guide
   guideMessage: string | null;
   guideMessageZh: string | null;
 
-  // v9: Migration mode
   migrationModeActive: boolean;
 
-  // v9: Story explorer
   storyExplorerOpen: boolean;
   storyProgress: Record<string, string[]>;
 
-  // v9: Bird radar
   radarOpen: boolean;
 
-  // UI: Tooltip
   hoveredBirdId: string | null;
+
+  // v11: Discovery system
+  discoveredBirds: string[];
+  discoveryNotification: string | null;
 
   // Actions
   setSelectedBird: (id: string | null) => void;
@@ -112,7 +108,6 @@ interface AppStore {
   nextSoundGuessRound: () => void;
   endSoundGuess: () => void;
 
-  // v8 actions
   collectBird: (birdId: string) => void;
   setCollectionOpen: (open: boolean) => void;
   setActiveRegion: (region: string | null) => void;
@@ -121,7 +116,6 @@ interface AppStore {
   updateQuestProgress: (questId: string, current: number) => void;
   completeQuest: (questId: string, reward: number) => void;
 
-  // v9 actions
   startTour: () => void;
   pauseTour: () => void;
   resumeTour: () => void;
@@ -133,6 +127,10 @@ interface AppStore {
   markStoryBirdDiscovered: (storyId: string, birdId: string) => void;
   setRadarOpen: (open: boolean) => void;
   setHoveredBird: (id: string | null) => void;
+
+  // v11 actions
+  discoverBird: (birdId: string) => void;
+  dismissDiscoveryNotification: () => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -183,6 +181,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   radarOpen: false,
 
   hoveredBirdId: null,
+
+  discoveredBirds: loadFromStorage<string[]>(DISCOVERY_KEY, []),
+  discoveryNotification: null,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -331,4 +332,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   setRadarOpen: (radarOpen) => set({ radarOpen }),
   setHoveredBird: (hoveredBirdId) => set({ hoveredBirdId }),
+
+  discoverBird: (birdId) => {
+    const state = get();
+    if (state.discoveredBirds.includes(birdId)) return;
+    const updated = [...state.discoveredBirds, birdId];
+    saveToStorage(DISCOVERY_KEY, updated);
+    set({ discoveredBirds: updated, discoveryNotification: birdId });
+  },
+  dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
 }));

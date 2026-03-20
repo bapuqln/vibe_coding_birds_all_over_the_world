@@ -18,6 +18,8 @@ const FLIGHT_RADIUS = 0.015;
 const FLIGHT_SPEED = 0.4;
 const LOD_DISTANCE = 2.5;
 const MAX_3D_MODELS = 15;
+const CLICK_ANIM_DURATION = 500;
+const CLICK_LIFT_HEIGHT = 0.02;
 
 useGLTF.preload(MODEL_PATH);
 
@@ -34,12 +36,14 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const scaleRef = useRef(1);
   const emissiveRef = useRef(0.5);
   const pausedUntilRef = useRef(0);
+  const clickAnimStartRef = useRef(0);
   const use3DRef = useRef(false);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const setModelsReady = useAppStore((s) => s.setModelsReady);
   const setHoveredBird = useAppStore((s) => s.setHoveredBird);
   const activeRegion = useAppStore((s) => s.activeRegion);
   const hoveredBirdId = useAppStore((s) => s.hoveredBirdId);
+  const discoverBird = useAppStore((s) => s.discoverBird);
   const phaseOffset = index * 1.3;
 
   const { camera } = useThree();
@@ -78,9 +82,11 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       setSelectedBird(bird.id);
+      discoverBird(bird.id);
       pausedUntilRef.current = Date.now() + 3000;
+      clickAnimStartRef.current = Date.now();
     },
-    [bird.id, setSelectedBird],
+    [bird.id, setSelectedBird, discoverBird],
   );
 
   const rarityGlow = bird.rarity === "legendary" ? 2.0
@@ -95,22 +101,48 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const shouldUse3D = dist < LOD_DISTANCE && index < MAX_3D_MODELS;
     use3DRef.current = shouldUse3D;
 
+    const now = Date.now();
+    const clickElapsed = now - clickAnimStartRef.current;
+    const isClickAnimating = clickElapsed < CLICK_ANIM_DURATION;
+
     const targetScale = hoveredRef.current ? 1.4 : 1.0;
     scaleRef.current += (targetScale - scaleRef.current) * 0.15;
 
     const modelScale = shouldUse3D ? BASE_SCALE * 1.2 : BASE_SCALE;
     const s = scaleRef.current * modelScale;
 
-    const wingFlap = 1 + 0.08 * Math.sin(clock.elapsedTime * (2 * Math.PI / 1.2) + phaseOffset);
+    let wingFlapFreq = 2 * Math.PI / 1.2;
+    let wingFlapAmp = 0.08;
+    if (isClickAnimating) {
+      wingFlapFreq = 2 * Math.PI / 0.15;
+      wingFlapAmp = 0.2;
+    }
+    const wingFlap = 1 + wingFlapAmp * Math.sin(clock.elapsedTime * wingFlapFreq + phaseOffset);
     meshRef.current.scale.set(s * wingFlap, s, s);
 
     const gentleRotation = shouldUse3D
       ? Math.sin(clock.elapsedTime * 0.3 + phaseOffset) * 0.15
       : 0;
+
     if (shouldUse3D) {
       const q = quaternion.clone();
-      const rotQ = new Quaternion().setFromAxisAngle(normal, gentleRotation);
-      q.multiply(rotQ);
+
+      if (isClickAnimating) {
+        const camDir = new Vector3().subVectors(camera.position, posVec).normalize();
+        const projectedDir = camDir.clone().sub(normal.clone().multiplyScalar(camDir.dot(normal))).normalize();
+        const forward = new Vector3(1, 0, 0).applyQuaternion(quaternion);
+        const angle = Math.atan2(
+          projectedDir.clone().cross(forward).dot(normal),
+          projectedDir.dot(forward),
+        );
+        const t = Math.min(clickElapsed / CLICK_ANIM_DURATION, 1);
+        const eased = t * t * (3 - 2 * t);
+        const rotQ = new Quaternion().setFromAxisAngle(normal, -angle * eased);
+        q.multiply(rotQ);
+      } else {
+        const rotQ = new Quaternion().setFromAxisAngle(normal, gentleRotation);
+        q.multiply(rotQ);
+      }
       meshRef.current.quaternion.copy(q);
     }
 
@@ -120,7 +152,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       matRef.current.emissiveIntensity = emissiveRef.current;
     }
 
-    const isPaused = Date.now() < pausedUntilRef.current;
+    const isPaused = now < pausedUntilRef.current;
     const t = clock.elapsedTime * FLIGHT_SPEED + phaseOffset;
     const flightX = isPaused ? 0 : Math.sin(t) * FLIGHT_RADIUS;
     const flightZ = isPaused ? 0 : Math.cos(t) * FLIGHT_RADIUS * 0.6;
@@ -130,7 +162,13 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
 
     const floatAmplitude = shouldUse3D ? 0.008 : 0.005;
     const floatSpeed = shouldUse3D ? Math.PI * 0.8 : Math.PI;
-    const bob = floatAmplitude * Math.sin(clock.elapsedTime * floatSpeed + phaseOffset);
+    let bob = floatAmplitude * Math.sin(clock.elapsedTime * floatSpeed + phaseOffset);
+
+    if (isClickAnimating) {
+      const clickT = clickElapsed / CLICK_ANIM_DURATION;
+      const liftCurve = Math.sin(clickT * Math.PI);
+      bob += CLICK_LIFT_HEIGHT * liftCurve;
+    }
 
     meshRef.current.position.set(
       position[0] + normal.x * bob + tangent1.x * flightX + tangent2.x * flightZ,

@@ -22,7 +22,7 @@ interface WingspanBarProps {
 export function WingspanBar({ wingspanCm, habitatType, language }: WingspanBarProps) {
   if (wingspanCm <= 0) return null;
 
-  const maxRange = 350;
+  const maxRange = 370;
   const childArmSpan = 120;
   const pct = Math.min((wingspanCm / maxRange) * 100, 100);
   const refPct = (childArmSpan / maxRange) * 100;

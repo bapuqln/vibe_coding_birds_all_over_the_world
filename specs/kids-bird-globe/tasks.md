@@ -1,8 +1,111 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v10)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v11)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are listed below.
-> v10 phases (76–84) are new.
+> v10 phases (76–84) are listed below.
+> v11 phases (85–92) are new.
+
+---
+
+# v11 Tasks (Full-Scope Upgrade)
+
+---
+
+## Phase 85: Bird Discovery System
+
+- [x] **85.1** Add `discoveredBirds` state to Zustand store with localStorage persistence.
+- [x] **85.2** Add `discoverBird(birdId)` action that marks a bird as discovered on first click.
+- [x] **85.3** Add `discoveryNotification` state for "New bird discovered!" notification.
+- [x] **85.4** Create `DiscoveryNotification` component with celebration animation.
+- [x] **85.5** Auto-dismiss discovery notification after 3 seconds.
+- [x] **85.6** Integrate discovery tracking into BirdMarker click handler.
+
+---
+
+## Phase 86: Exploration Progress System
+
+- [x] **86.1** Create `DiscoveryProgressBar` component showing global progress (e.g. "12/40 Birds Found").
+- [x] **86.2** Add continent-level progress breakdown (e.g. "Asia: 3/8").
+- [x] **86.3** Add visual progress bar with animated fill.
+- [x] **86.4** Position in HUD layer (z-index 10), no overlap with other UI.
+- [x] **86.5** Progress updates in real-time as birds are discovered.
+
+---
+
+## Phase 87: Bird Click Animation
+
+- [x] **87.1** Add click animation state tracking in BirdMarker (click timestamp, animation phase).
+- [x] **87.2** Implement rapid wing flap animation on click (0.5s duration).
+- [x] **87.3** Implement bird lift animation (0.02 units along surface normal).
+- [x] **87.4** Implement bird rotate-toward-camera on click.
+- [x] **87.5** Ensure animation is short, playful, and non-blocking.
+
+---
+
+## Phase 88: Dataset Expansion to 40+
+
+- [x] **88.1** Add additional birds to reach 40+ total in birds.json.
+- [x] **88.2** Add Resplendent Quetzal (Central America / South America).
+- [x] **88.3** Add Blue-footed Booby (South America / Galapagos).
+- [x] **88.4** Add Greater Flamingo (Africa / Europe).
+- [x] **88.5** Add Golden Eagle (Europe / North America).
+- [x] **88.6** Add Barn Owl (worldwide).
+- [x] **88.7** Add Ostrich (Africa).
+- [x] **88.8** Add Emu (Oceania).
+- [x] **88.9** Add Kakapo (Oceania / New Zealand).
+- [x] **88.10** Add Magnificent Frigatebird (ocean).
+- [x] **88.11** Add King Penguin (Antarctica).
+- [x] **88.12** Add Snowy Egret (North America).
+- [x] **88.13** Update stories.json with all new bird IDs.
+- [x] **88.14** Verify all birds have complete data fields including soundUrl.
+
+---
+
+## Phase 89: UI Layout Hardening
+
+- [x] **89.1** Verify BirdInfoCard strict flex-column layout with zero absolute positioning inside card.
+- [x] **89.2** Verify tag row wraps correctly on narrow screens.
+- [x] **89.3** Verify card max-height 80vh with overflow-y auto.
+- [x] **89.4** Verify sidebar buttons identical size, vertically aligned.
+- [x] **89.5** Verify no UI overlap between any panels at all viewport sizes.
+- [x] **89.6** Verify glass-morphism style applied correctly.
+
+---
+
+## Phase 90: MyBirdsPanel Enhancement
+
+- [x] **90.1** Update MyBirdsPanel to show discovered birds with full details.
+- [x] **90.2** Show locked/undiscovered birds as silhouettes with "?" overlay.
+- [x] **90.3** Display discovery count: "12 / 40 birds discovered".
+- [x] **90.4** Add continent filter tabs in collection view.
+
+---
+
+## Phase 91: Performance Tuning
+
+- [x] **91.1** Verify model lazy loading works with 40+ birds.
+- [x] **91.2** Verify max 15 simultaneous 3D models enforced.
+- [x] **91.3** Verify ~60 FPS during all interactions.
+- [x] **91.4** Verify audio lazy loading on demand.
+
+---
+
+## Phase 92: Final Verification (v11)
+
+- [x] **92.1** No absolute positioning inside bird info card. (AC-V11-1)
+- [x] **92.2** Card uses strict flex-column layout. (AC-V11-1)
+- [x] **92.3** Tag row wraps instead of overflowing. (AC-V11-1)
+- [x] **92.4** Card has max-height 80vh with overflow-y auto. (AC-V11-1)
+- [x] **92.5** Glass-morphism style applied. (AC-V11-1)
+- [x] **92.6** Tag colors correct (blue/green/orange). (AC-V11-1)
+- [x] **92.7** Click animation: wing flap, lift, rotate. (AC-V11-2)
+- [x] **92.8** 40+ birds in dataset. (AC-V11-3)
+- [x] **92.9** "Listen" button plays bird sound. (AC-V11-4)
+- [x] **92.10** First-time click shows "New bird discovered!" (AC-V11-5)
+- [x] **92.11** Global progress bar shows discovery count. (AC-V11-6)
+- [x] **92.12** Continent-level progress displayed. (AC-V11-6)
+- [x] **92.13** Max 15 simultaneous 3D models. (AC-V11-8)
+- [x] **92.14** ~60 FPS maintained. (AC-V11-8)
 
 ---
 
@@ -326,10 +429,18 @@
 
 ---
 
-## Summary (v10)
+## Summary (v11)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
+| Bird Discovery System (v11) | 85.1–85.6 | Complete |
+| Exploration Progress (v11) | 86.1–86.5 | Complete |
+| Bird Click Animation (v11) | 87.1–87.5 | Complete |
+| Dataset Expansion 40+ (v11) | 88.1–88.14 | Complete |
+| UI Layout Hardening (v11) | 89.1–89.6 | Complete |
+| MyBirdsPanel Enhancement (v11) | 90.1–90.4 | Complete |
+| Performance Tuning (v11) | 91.1–91.4 | Complete |
+| Final Verification (v11) | 92.1–92.14 | Complete |
 | UI Layout — Card (v10) | 76.1–76.5 | Complete |
 | UI Layout — Tags (v10) | 77.1–77.4 | Complete |
 | UI Layout — Sidebar (v10) | 78.1–78.4 | Complete |
@@ -339,5 +450,6 @@
 | Performance (v10) | 82.1–82.4 | Complete |
 | Design Polish (v10) | 83.1–83.5 | Complete |
 | Final Verification (v10) | 84.1–84.12 | Complete |
+| **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total all tasks (v1–v10)** | **~624 tasks** | **~624 complete** |
+| **Total all tasks (v1–v11)** | **~678 tasks** | **~678 complete** |

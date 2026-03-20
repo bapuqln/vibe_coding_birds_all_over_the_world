@@ -7,7 +7,7 @@ import { WingspanBar } from "./WingspanBar";
 const birds = birdsData as Bird[];
 const birdMap = new Map(birds.map((b) => [b.id, b]));
 
-const SPACING = { xs: 6, sm: 10, md: 16, lg: 24, xl: 32 } as const;
+const SP = { xs: 6, sm: 10, md: 16, lg: 24, xl: 32 } as const;
 
 export function BirdInfoCard() {
   const selectedBirdId = useAppStore((s) => s.selectedBirdId);
@@ -18,6 +18,7 @@ export function BirdInfoCard() {
   const collectedBirds = useAppStore((s) => s.collectedBirds);
   const markStoryBirdDiscovered = useAppStore((s) => s.markStoryBirdDiscovered);
   const setAudioStatus = useAppStore((s) => s.setAudioStatus);
+  const discoverBird = useAppStore((s) => s.discoverBird);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -37,7 +38,8 @@ export function BirdInfoCard() {
   );
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && selectedBirdId) {
+      discoverBird(selectedBirdId);
       previousFocusRef.current = document.activeElement as HTMLElement;
       requestAnimationFrame(() => closeButtonRef.current?.focus());
     } else {
@@ -51,7 +53,7 @@ export function BirdInfoCard() {
         setAudioStatus("idle");
       }
     }
-  }, [isOpen, setAudioStatus]);
+  }, [isOpen, selectedBirdId, setAudioStatus, discoverBird]);
 
   const handleClose = useCallback(() => {
     setSelectedBird(null);
@@ -148,16 +150,13 @@ export function BirdInfoCard() {
         role="dialog"
         aria-modal="true"
         aria-label={bird ? `${bird.nameEn} - ${bird.nameZh}` : ""}
-        className={`
-          absolute bottom-0 left-1/2 -translate-x-1/2
-          w-full max-w-lg
-          transition-transform duration-500
-          ease-[cubic-bezier(0.34,1.56,0.64,1)]
-          ${isOpen ? "translate-y-0" : "translate-y-full"}
-          min-[900px]:bottom-4 min-[900px]:left-1/2 min-[900px]:-translate-x-1/2
-          min-[900px]:max-w-md
-        `}
         style={{
+          position: "absolute",
+          bottom: 0,
+          left: "50%",
+          transform: isOpen ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(100%)",
+          width: "100%",
+          maxWidth: 480,
           maxHeight: "80vh",
           overflowY: "auto",
           borderRadius: "20px 20px 0 0",
@@ -165,13 +164,14 @@ export function BirdInfoCard() {
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           boxShadow: "0 -8px 40px rgba(0, 0, 0, 0.15), 0 -2px 10px rgba(0, 0, 0, 0.08)",
+          transition: "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       >
         {bird && (
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {/* === ImageHeader === */}
+            {/* ImageHeader */}
             <div
-              style={{ position: "relative", height: 180, width: "100%", overflow: "hidden", borderRadius: "20px 20px 0 0" }}
+              style={{ position: "relative", height: 180, width: "100%", overflow: "hidden", borderRadius: "20px 20px 0 0", flexShrink: 0 }}
               className="bg-linear-to-br from-sky-300 via-teal-200 to-emerald-300"
             >
               <img
@@ -186,12 +186,11 @@ export function BirdInfoCard() {
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.35), transparent)" }} />
 
               {bird.rarity && bird.rarity !== "common" && (
-                <div style={{ position: "absolute", left: SPACING.md, top: SPACING.sm }}>
+                <div style={{ position: "absolute", left: SP.md, top: SP.sm }}>
                   <RarityBadge rarity={bird.rarity} language={language} />
                 </div>
               )}
 
-              {/* Close button */}
               <button
                 ref={closeButtonRef}
                 onClick={handleClose}
@@ -221,45 +220,44 @@ export function BirdInfoCard() {
               </button>
             </div>
 
-            {/* === TitleSection === */}
-            <div style={{ padding: `${SPACING.md}px ${SPACING.lg}px ${SPACING.xs}px` }}>
-              <h2 style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.2, color: "#111827", margin: 0 }}>
+            {/* TitleSection */}
+            <div style={{ padding: `${SP.md}px ${SP.lg}px ${SP.xs}px` }}>
+              <h2 style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.2, color: "#111827", margin: 0, letterSpacing: "-0.01em" }}>
                 {bird.nameZh}
               </h2>
-              <p style={{ fontSize: 11, color: "#9ca3af", letterSpacing: "0.05em", margin: `2px 0 0` }}>
+              <p style={{ fontSize: 11, color: "#9ca3af", letterSpacing: "0.05em", margin: "2px 0 0", fontStyle: "italic" }}>
                 {bird.pinyin}
               </p>
-              <p style={{ fontSize: 16, fontWeight: 600, color: "#4b5563", margin: `2px 0 0` }}>
+              <p style={{ fontSize: 16, fontWeight: 600, color: "#4b5563", margin: "2px 0 0" }}>
                 {bird.nameEn}
               </p>
             </div>
 
-            {/* === FunFact === */}
-            <div style={{ padding: `0 ${SPACING.lg}px`, marginTop: SPACING.sm }}>
+            {/* FunFact */}
+            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.sm }}>
               <div style={{
                 borderRadius: 16,
                 background: "rgba(255, 251, 235, 0.8)",
-                padding: `${SPACING.sm}px ${SPACING.md}px`,
+                padding: `${SP.sm}px ${SP.md}px`,
                 border: "1px solid rgba(251, 191, 36, 0.25)",
               }}>
                 <p style={{ fontSize: 12, fontWeight: 600, color: "#b45309", margin: 0 }}>
                   {language === "zh" ? "🌟 你知道吗？" : "🌟 Did you know?"}
                 </p>
-                <p style={{ fontSize: 14, lineHeight: 1.6, color: "#374151", margin: `${SPACING.xs}px 0 0` }}>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: "#374151", margin: `${SP.xs}px 0 0` }}>
                   {funFact}
                 </p>
               </div>
             </div>
 
-            {/* === TagRow === */}
+            {/* TagRow */}
             <div style={{
-              padding: `0 ${SPACING.lg}px`,
-              marginTop: SPACING.md,
+              padding: `0 ${SP.lg}px`,
+              marginTop: SP.md,
               display: "flex",
               flexWrap: "wrap",
               gap: 8,
             }}>
-              {/* Continent tag — blue */}
               <span style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -276,7 +274,6 @@ export function BirdInfoCard() {
                 {language === "zh" ? regionNameZh(bird.region) : regionNameEn(bird.region)}
               </span>
 
-              {/* Habitat tag — green */}
               {bird.habitatType && (
                 <span style={{
                   display: "inline-flex",
@@ -294,7 +291,6 @@ export function BirdInfoCard() {
                 </span>
               )}
 
-              {/* Lifespan tag — orange */}
               {bird.lifespan && (
                 <span style={{
                   display: "inline-flex",
@@ -313,19 +309,19 @@ export function BirdInfoCard() {
               )}
             </div>
 
-            {/* === InfoGrid === */}
+            {/* InfoGrid */}
             <div style={{
-              padding: `0 ${SPACING.lg}px`,
-              marginTop: SPACING.md,
+              padding: `0 ${SP.lg}px`,
+              marginTop: SP.md,
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: SPACING.sm,
+              gap: SP.sm,
             }}>
               {bird.sizeCategory && (
                 <div style={{
                   borderRadius: 14,
                   background: "rgba(224, 242, 254, 0.7)",
-                  padding: SPACING.sm,
+                  padding: SP.sm,
                   border: "1px solid rgba(56, 189, 248, 0.2)",
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: "#0369a1", margin: 0 }}>
@@ -338,7 +334,7 @@ export function BirdInfoCard() {
                 <div style={{
                   borderRadius: 14,
                   background: "rgba(220, 252, 231, 0.7)",
-                  padding: SPACING.sm,
+                  padding: SP.sm,
                   border: "1px solid rgba(34, 197, 94, 0.2)",
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: "#15803d", margin: 0 }}>
@@ -356,16 +352,13 @@ export function BirdInfoCard() {
               )}
             </div>
 
-            {/* === Wingspan === */}
+            {/* Wingspan */}
             {bird.wingspanCm != null && bird.wingspanCm > 0 && (
-              <div style={{
-                padding: `0 ${SPACING.lg}px`,
-                marginTop: SPACING.sm,
-              }}>
+              <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.sm }}>
                 <div style={{
                   borderRadius: 14,
                   background: "rgba(237, 233, 254, 0.7)",
-                  padding: SPACING.sm,
+                  padding: SP.sm,
                   border: "1px solid rgba(139, 92, 246, 0.2)",
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: "#6d28d9", margin: 0 }}>
@@ -380,15 +373,14 @@ export function BirdInfoCard() {
               </div>
             )}
 
-            {/* === ActionButtons === */}
+            {/* ActionButtons */}
             <div style={{
-              padding: `0 ${SPACING.lg}px`,
-              marginTop: SPACING.lg,
-              marginBottom: SPACING.lg,
+              padding: `0 ${SP.lg}px`,
+              marginTop: SP.lg,
+              marginBottom: SP.lg,
               display: "flex",
-              gap: SPACING.sm,
+              gap: SP.sm,
             }}>
-              {/* Collect button */}
               <button
                 type="button"
                 onClick={handleCollect}
@@ -419,7 +411,6 @@ export function BirdInfoCard() {
                 {showSparkle && <CollectSparkle />}
               </button>
 
-              {/* Listen button */}
               <button
                 type="button"
                 onClick={handleListen}

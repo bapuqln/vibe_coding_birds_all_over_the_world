@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v10
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v11
 
+> **v11 changelog**: Full-scope upgrade — UI layout overhaul (strict flex-column card structure, zero-overlap enforcement, spacing tokens, tag row wrapping, sidebar button alignment, card scroll), 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 40+ species across all continents, bird sound playback feature with xeno-canto integration and lazy-loaded audio, bird discovery and collection system with "New bird discovered!" notification, exploration progress system with continent-level tracking and progress bars, bird animation interactions (wing flap, lift, rotate-to-camera on click), performance optimizations (model lazy loading, visibility culling, texture compression, max 15 simultaneous 3D models), child-friendly design polish (glass-morphism cards, habitat/continent/lifespan tag colors, wingspan visualization bar, typography hierarchy).
+>
 > **v10 changelog**: Major upgrade — UI layout overhaul (strict flex-column card structure, spacing tokens, tag row wrapping, sidebar button alignment, card scroll), 3D bird model system with GLTFLoader and LOD (level-of-detail) switching, bird dataset expansion to 30+ species across all continents, bird sound playback feature with xeno-canto integration, performance optimizations (model lazy loading, visibility culling, texture compression), child-friendly design polish (glass-morphism cards, habitat/continent/lifespan tag colors, wingspan visualization bar).
 >
 > **v9 changelog**: Educational exploration expansion — migration mode with animated arcs, guided discovery tour, AI bird guide character, enhanced learning quiz, bird rarity system, bird radar, story-based themed exploration sets. New data fields: `rarity`, `migration_path`, `storyTheme`. New components: `MigrationModePanel`, `GuidedTour`, `BirdGuide`, `BirdRadar`, `StoryExplorer`.
@@ -69,14 +71,26 @@ As a user, I can toggle between Chinese and English.
 ### US-17: Navigate Intuitively
 As a parent, I can hand the app to my child without explanation because the interface is self-evident.
 
-### US-18: See 3D Bird Models (v10)
+### US-18: See 3D Bird Models
 As a child, I see realistic 3D bird models on the globe that have idle animations and gentle floating motion.
 
-### US-19: Listen to Bird Sounds (v10)
+### US-19: Listen to Bird Sounds
 As a child, I can press a "Listen" button on the bird card to hear the bird's real call sound.
 
-### US-20: Explore Many Birds (v10)
-As a child, I can discover 30+ birds from every continent including South America, North America, Africa, Asia, Oceania, and polar regions.
+### US-20: Explore Many Birds (v11)
+As a child, I can discover 40+ birds from every continent including South America, North America, Africa, Asia, Oceania, and polar regions.
+
+### US-21: Discover New Birds (v11)
+As a child, when I click a bird for the first time, I see a "New bird discovered!" celebration message and the bird is marked as discovered.
+
+### US-22: Track Discovery Progress (v11)
+As a child, I can see my global bird discovery progress (e.g. "12/40 Birds Found") and continent-level progress bars.
+
+### US-23: View Bird Collection (v11)
+As a child, I can open a collection screen showing all discovered birds and locked birds not yet discovered, motivating me to explore more.
+
+### US-24: See Bird Click Animations (v11)
+As a child, when I click a bird marker, it plays a short animation — wings flap, bird lifts slightly, and rotates toward the camera.
 
 ## Requirements
 
@@ -91,7 +105,7 @@ As a child, I can discover 30+ birds from every continent including South Americ
 - Orbit controls with smooth damping.
 - Responsive — fills viewport on desktop and mobile.
 
-### R-2: Bird Data Model (v10 expanded)
+### R-2: Bird Data Model (v11 expanded)
 - Each bird entry follows the enhanced data model:
 ```json
 {
@@ -121,20 +135,21 @@ As a child, I can discover 30+ birds from every continent including South Americ
   "soundUrl": ""
 }
 ```
-- 30+ bird entries covering all major continents.
+- 40+ bird entries covering all major continents.
 - Rarity field: `"common"`, `"rare"`, `"legendary"`.
 - Story theme field for themed exploration sets.
 - `soundUrl` field for direct audio playback.
 
-### R-3: Animated Bird Markers (v10 — 3D models)
+### R-3: Animated Bird Markers (v11 — 3D models + click animations)
 - Use GLTFLoader to load 3D bird models in glTF/GLB format.
 - Birds display small idle animation (wing flap) and slow floating motion with gentle rotation.
 - Model scale: 0.2–0.3 relative to marker size.
 - LOD system: show simple icon marker when camera is far, load 3D model when camera zooms closer.
 - Clicking a bird temporarily pauses its movement.
 - Hover shows tooltip with bird name and region.
+- Click animation: bird flaps wings rapidly, lifts slightly into the air, and rotates toward the camera.
 
-### R-4: Bird Information Card (v10 redesign)
+### R-4: Bird Information Card (v11 redesign)
 - Strict flex-column layout with no absolute positioning inside the card.
 - Structure: ImageHeader → TitleSection → FunFact → TagRow → InfoGrid → ActionButtons.
 - Spacing tokens: xs=6px, sm=10px, md=16px, lg=24px, xl=32px.
@@ -147,78 +162,81 @@ As a child, I can discover 30+ birds from every continent including South Americ
 - Close button and click-outside-to-dismiss.
 - Springy slide-up animation.
 - Must not overlap with sidebar or right control panel.
+- Typography hierarchy: bird name large bold, English name medium, pinyin small subtle.
 
-### R-5: Bird Collection System (v8)
+### R-5: Bird Collection System (v11 enhanced)
 - Clicking "Collect" saves bird to localStorage.
 - "My Birds" panel shows collected birds with image and name.
 - Works like a bird discovery album.
 - Persists across browser sessions.
 - Visual feedback on collection (sparkle animation).
+- First-time discovery shows "New bird discovered!" notification.
+- Collection screen shows discovered birds and locked/undiscovered birds.
 
-### R-6: Region Filter (v8)
+### R-6: Region Filter
 - Filter controls for: All Birds, North America, South America, Europe, Africa, Asia, Oceania, Antarctica.
 - When selected: camera smoothly zooms to region center.
 - Only birds in that region appear (others fade out).
 - Region filter UI in the right control panel.
 
-### R-7: Kid Quest System (v8)
+### R-7: Kid Quest System
 - Simple discovery missions.
 - Example quests: "Find 3 birds in Africa", "Discover a bird in Antarctica", "Collect 5 birds".
 - Completing quests awards points and small badges.
 - Quest progress persisted in localStorage.
 - Quest panel accessible from right control panel.
 
-### R-8: Globe Visual Improvements (v8)
+### R-8: Globe Visual Improvements
 - Enhanced atmosphere glow effect.
 - Subtle lighting improvements.
 - Smoother camera transitions.
 - Optional cloud layer toggle.
 
-### R-9: Migration Mode (v9)
+### R-9: Migration Mode
 - Toggle migration exploration mode.
 - Visualize migration paths as animated arcs above the globe.
 - Example: Arctic Tern migration from Arctic to Antarctica.
 - Each route has distinct color.
 - Flying bird icon animates along the path.
 
-### R-10: Guided Discovery Tour (v9)
+### R-10: Guided Discovery Tour
 - Automated tour mode.
 - Camera automatically visits: Amazon Rainforest, African Savanna, Antarctica, etc.
 - During tour, show bird highlights with info cards.
 - "Welcome explorer!" introduction.
 - Pause/resume/skip controls.
 
-### R-11: AI Bird Guide (v9)
+### R-11: AI Bird Guide
 - Simple guide character (owl or parrot avatar).
 - Provides short explanations, fun facts, learning prompts.
 - Appears contextually when exploring.
 - Keep explanations short and child-friendly.
 - Positioned bottom-left, does not overlap other UI.
 
-### R-12: Learning Quiz Mode (v9 enhanced)
+### R-12: Learning Quiz Mode
 - Quiz questions: "Where does this bird live?" with multiple choice.
 - Immediate feedback (correct/wrong).
 - Confetti on correct, shake on wrong.
 - Score tracking per session.
 
-### R-13: Bird Rarity System (v9)
+### R-13: Bird Rarity System
 - Rarity classification: Common, Rare, Legendary.
 - Rare birds have subtle glow effect.
 - Legendary birds have special particle effect.
 - Rarity badge shown in info card and collection.
 
-### R-14: Bird Radar (v9)
+### R-14: Bird Radar
 - Small radar UI showing nearby birds in current camera view.
 - Circular radar display in corner.
 - Dots represent birds, pulsing when close to center of view.
 
-### R-15: Story-Based Exploration (v9)
+### R-15: Story-Based Exploration
 - Themed discovery sets: Rainforest Birds, Arctic Birds, Desert Birds, Ocean Birds.
 - Each theme has a set of birds to discover.
 - Completing a theme unlocks a badge.
 - Progress tracked in localStorage.
 
-### R-16: Audio Playback (v10 enhanced)
+### R-16: Audio Playback (v11 enhanced)
 - Bird sound playback via xeno-canto API or direct `soundUrl`.
 - Dedicated "Listen" button with speaker icon on bird info card.
 - Play/pause control with visual feedback (animated bars).
@@ -237,7 +255,7 @@ As a child, I can discover 30+ birds from every continent including South Americ
 - Region zoom for filter feature.
 - Minimum camera distance 1.15.
 
-### R-19: UI System (v10 CRITICAL overhaul)
+### R-19: UI System (v11 CRITICAL overhaul)
 
 #### Sidebar Buttons
 - All sidebar buttons must have identical width and height.
@@ -290,7 +308,7 @@ As a child, I can discover 30+ birds from every continent including South Americ
 - Modal cards: z-index 20
 - Loading: z-index 100
 
-### R-20: Performance (v10 enhanced)
+### R-20: Performance (v11 enhanced)
 - Model lazy loading: only load bird models when they enter the visible region.
 - Limit simultaneously visible 3D models to 15; fallback to icon markers for others.
 - Use KTX2 texture compression where possible.
@@ -299,7 +317,25 @@ As a child, I can discover 30+ birds from every continent including South Americ
 - Ensure smooth globe rotation.
 - Target ~60 FPS on mid-range laptop.
 
-## Extended Data Model (v10)
+### R-21: Bird Discovery System (v11 new)
+- First-time bird click triggers "New bird discovered!" notification with celebration animation.
+- Discovery state stored in localStorage separately from collection.
+- Discovery count displayed in UI: "12 / 40 birds discovered".
+- Continent-level discovery progress: "Asia: 3/8 birds discovered".
+
+### R-22: Exploration Progress System (v11 new)
+- Global progress bar: "Bird Discovery Progress — 12/40 Birds Found".
+- Continent progress breakdown with individual progress bars.
+- Progress indicator visible in HUD layer.
+- Updates in real-time as birds are discovered.
+
+### R-23: Bird Click Animation (v11 new)
+- On click: bird flaps wings rapidly for 0.5s.
+- Bird lifts slightly into the air (0.02 units along surface normal).
+- Bird rotates to face the camera direction.
+- Animation is short, playful, and does not block interaction.
+
+## Extended Data Model (v11)
 
 ### Bird type additions:
 ```typescript
@@ -367,7 +403,7 @@ type Rarity = "common" | "rare" | "legendary";
 
 ## Acceptance Criteria
 
-### AC-V10-1: UI Layout Fix
+### AC-V11-1: UI Layout Fix
 - [ ] No absolute positioning inside bird info card.
 - [ ] Card uses strict flex-column layout with spacing tokens.
 - [ ] Tag row wraps instead of overflowing.
@@ -377,24 +413,40 @@ type Rarity = "common" | "rare" | "legendary";
 - [ ] Sidebar buttons identical size, vertically aligned.
 - [ ] No UI overlap between any panels.
 
-### AC-V10-2: 3D Bird Models
+### AC-V11-2: 3D Bird Models
 - [ ] GLTFLoader loads bird models in GLB format.
 - [ ] Birds display idle animation and floating motion.
 - [ ] LOD: icon markers when far, 3D models when close.
 - [ ] Max 15 simultaneous 3D models.
+- [ ] Click animation: wing flap, lift, rotate toward camera.
 
-### AC-V10-3: Expanded Bird Dataset
-- [ ] 30+ birds in birds.json.
+### AC-V11-3: Expanded Bird Dataset
+- [ ] 40+ birds in birds.json.
 - [ ] Birds from South America, North America, Africa, Asia, Oceania, Polar regions.
 - [ ] Each bird has all required fields including soundUrl.
 
-### AC-V10-4: Bird Sound Feature
+### AC-V11-4: Bird Sound Feature
 - [ ] "Listen" button on bird info card.
 - [ ] Clicking plays bird call audio.
 - [ ] Audio lazy-loaded.
 - [ ] Graceful fallback on error.
 
-### AC-V10-5: Performance
+### AC-V11-5: Bird Discovery System
+- [ ] First-time click shows "New bird discovered!" notification.
+- [ ] Discovery state persisted in localStorage.
+- [ ] Collection screen shows discovered and locked birds.
+
+### AC-V11-6: Exploration Progress
+- [ ] Global progress bar: "12/40 Birds Found".
+- [ ] Continent-level progress displayed.
+- [ ] Progress updates in real-time.
+
+### AC-V11-7: Bird Click Animation
+- [ ] Wing flap animation on click.
+- [ ] Bird lifts slightly on click.
+- [ ] Bird rotates toward camera on click.
+
+### AC-V11-8: Performance
 - [ ] Model lazy loading implemented.
 - [ ] Max 15 visible 3D models.
 - [ ] ~60 FPS maintained.
