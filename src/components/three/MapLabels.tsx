@@ -16,9 +16,11 @@ const FULL_VISIBLE_DISTANCE = 1.6;
 function GlobeLabel({
   label,
   isOcean,
+  onClick,
 }: {
   label: MapLabel;
   isOcean: boolean;
+  onClick?: () => void;
 }) {
   const language = useAppStore((s) => s.language);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,16 +43,18 @@ function GlobeLabel({
   });
 
   const text = language === "zh" ? label.nameZh : label.nameEn;
+  const interactive = !isOcean && onClick;
 
   return (
     <Html
       position={position}
       center
       distanceFactor={3}
-      style={{ pointerEvents: "none" }}
+      style={{ pointerEvents: interactive ? "auto" : "none" }}
     >
       <div
         ref={containerRef}
+        onClick={interactive ? onClick : undefined}
         style={{
           color: isOcean ? "rgba(120, 180, 255, 0.5)" : "rgba(255, 255, 255, 0.6)",
           fontSize: isOcean ? "9px" : "11px",
@@ -62,6 +66,21 @@ function GlobeLabel({
           userSelect: "none",
           opacity: 0,
           transition: "opacity 0.3s",
+          cursor: interactive ? "pointer" : "default",
+          padding: interactive ? "4px 8px" : undefined,
+          borderRadius: interactive ? "8px" : undefined,
+        }}
+        onMouseEnter={(e) => {
+          if (interactive) {
+            (e.currentTarget as HTMLDivElement).style.color = "rgba(255, 255, 255, 0.9)";
+            (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.1)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (interactive) {
+            (e.currentTarget as HTMLDivElement).style.color = "rgba(255, 255, 255, 0.6)";
+            (e.currentTarget as HTMLDivElement).style.background = "transparent";
+          }
         }}
       >
         {text}
@@ -71,10 +90,17 @@ function GlobeLabel({
 }
 
 export function MapLabels() {
+  const setContinentPanelRegion = useAppStore((s) => s.setContinentPanelRegion);
+
   return (
     <group>
       {continentLabels.map((label) => (
-        <GlobeLabel key={label.id} label={label} isOcean={false} />
+        <GlobeLabel
+          key={label.id}
+          label={label}
+          isOcean={false}
+          onClick={() => setContinentPanelRegion(label.id)}
+        />
       ))}
       {oceanLabels.map((label) => (
         <GlobeLabel key={label.id} label={label} isOcean={true} />

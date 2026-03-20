@@ -73,7 +73,9 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const targetScale = hoveredRef.current ? 1.4 : 1.0;
     scaleRef.current += (targetScale - scaleRef.current) * 0.15;
     const s = scaleRef.current * BASE_SCALE;
-    meshRef.current.scale.set(s, s, s);
+
+    const wingFlap = 1 + 0.08 * Math.sin(clock.elapsedTime * (2 * Math.PI / 1.2) + phaseOffset);
+    meshRef.current.scale.set(s * wingFlap, s, s);
 
     const targetEmissive = hoveredRef.current ? 1.5 : 0.5;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;

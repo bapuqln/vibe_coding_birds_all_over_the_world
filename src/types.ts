@@ -1,3 +1,27 @@
+export type SizeCategory = "tiny" | "small" | "medium" | "large";
+
+export type HabitatType =
+  | "rainforest"
+  | "wetlands"
+  | "coast"
+  | "grassland"
+  | "forest"
+  | "polar";
+
+export type EvolutionEra =
+  | "mesozoic"
+  | "paleogene"
+  | "neogene"
+  | "quaternary";
+
+export type DietType =
+  | "insects"
+  | "fish"
+  | "seeds"
+  | "fruit"
+  | "meat"
+  | "omnivore";
+
 export interface Bird {
   id: string;
   nameZh: string;
@@ -13,6 +37,15 @@ export interface Bird {
   silhouette: string;
   region: string;
   audioUrl?: string;
+  sizeCategory?: SizeCategory;
+  habitatType?: HabitatType;
+  migrationDistanceKm?: number;
+  diet?: string;
+  wingspan?: string;
+  lifespan?: string;
+  evolutionEra?: EvolutionEra;
+  dietType?: DietType;
+  wingspanCm?: number;
 }
 
 export interface MigrationRoute {
@@ -21,6 +54,28 @@ export interface MigrationRoute {
   to: string;
   nameZh?: string;
   nameEn?: string;
+  migrationDistanceKm?: number;
+}
+
+export type QuizType = "geography" | "sound" | "size";
+
+export interface QuizQuestion {
+  type: QuizType;
+  prompt: string;
+  promptZh: string;
+  correctBirdId: string;
+  options?: string[];
+}
+
+export type QuizState = "idle" | "active" | "result";
+
+export type SoundGuessState = "idle" | "playing" | "guessing" | "result";
+
+export interface SoundGuessOption {
+  birdId: string;
+  photoUrl: string;
+  nameZh: string;
+  nameEn: string;
 }
 
 export type Language = "zh" | "en";

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { useAppStore } from "../../store";
 import birdsData from "../../data/birds.json";
-import type { Bird } from "../../types";
+import type { Bird, DietType, Language, SizeCategory } from "../../types";
+import { WingspanBar } from "./WingspanBar";
 
 const birds = birdsData as Bird[];
 const birdMap = new Map(birds.map((b) => [b.id, b]));
@@ -163,6 +164,56 @@ export function BirdInfoCard() {
                 </p>
               </div>
 
+              {/* Size comparison */}
+              {bird.sizeCategory && (
+                <div className="mt-4 rounded-2xl bg-sky-50/80 p-4 ring-1 ring-sky-200/50">
+                  <p className="text-sm font-semibold text-sky-700">
+                    {language === "zh" ? "📏 体型" : "📏 Size"}
+                  </p>
+                  <SizeBar category={bird.sizeCategory} language={language} />
+                </div>
+              )}
+
+              {/* Diet display */}
+              {bird.dietType && (
+                <div className="mt-4 rounded-2xl bg-emerald-50/80 p-4 ring-1 ring-emerald-200/50">
+                  <p className="text-sm font-semibold text-emerald-700">
+                    {language === "zh" ? "🍽️ 食性" : "🍽️ Diet"}
+                  </p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <span className="text-xl">{DIET_EMOJI[bird.dietType]}</span>
+                    <span className="text-sm text-emerald-800">
+                      {language === "zh"
+                        ? DIET_LABELS[bird.dietType].zh
+                        : DIET_LABELS[bird.dietType].en}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Wingspan bar */}
+              {bird.wingspanCm && (
+                <div className="mt-4 rounded-2xl bg-violet-50/80 p-4 ring-1 ring-violet-200/50">
+                  <p className="text-sm font-semibold text-violet-700">
+                    {language === "zh" ? "🦅 翼展" : "🦅 Wingspan"}
+                  </p>
+                  <WingspanBar
+                    wingspanCm={bird.wingspanCm}
+                    habitatType={bird.habitatType}
+                    language={language}
+                  />
+                </div>
+              )}
+
+              {/* Extra info */}
+              {bird.lifespan && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 ring-1 ring-rose-200/50">
+                    ⏳ {bird.lifespan}
+                  </span>
+                </div>
+              )}
+
               {/* Region tag */}
               <div className="mt-4">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3.5 py-1.5 text-xs font-semibold text-sky-700 ring-1 ring-sky-200/50">
@@ -243,4 +294,56 @@ function regionNameEn(region: string): string {
     antarctica: "Antarctica",
   };
   return map[region] || region;
+}
+
+const DIET_EMOJI: Record<DietType, string> = {
+  insects: "🐛",
+  fish: "🐟",
+  seeds: "🌾",
+  fruit: "🍎",
+  meat: "🥩",
+  omnivore: "🍽️",
+};
+
+const DIET_LABELS: Record<DietType, { zh: string; en: string }> = {
+  insects: { zh: "昆虫", en: "Insects" },
+  fish: { zh: "鱼类", en: "Fish" },
+  seeds: { zh: "种子", en: "Seeds" },
+  fruit: { zh: "水果", en: "Fruit" },
+  meat: { zh: "肉食", en: "Meat" },
+  omnivore: { zh: "杂食", en: "Omnivore" },
+};
+
+const SIZE_LABELS: Record<SizeCategory, { zh: string; en: string; icon: string }> = {
+  tiny: { zh: "微型（麻雀）", en: "Tiny (Sparrow)", icon: "🐦" },
+  small: { zh: "小型（鸽子）", en: "Small (Pigeon)", icon: "🕊" },
+  medium: { zh: "中型（鸭子）", en: "Medium (Duck)", icon: "🦆" },
+  large: { zh: "大型（鹰）", en: "Large (Eagle)", icon: "🦅" },
+};
+
+const SIZE_WIDTHS: Record<SizeCategory, string> = {
+  tiny: "25%",
+  small: "50%",
+  medium: "75%",
+  large: "100%",
+};
+
+function SizeBar({ category, language }: { category: SizeCategory; language: Language }) {
+  const label = SIZE_LABELS[category];
+  return (
+    <div className="mt-2">
+      <div className="flex items-center gap-2">
+        <span className="text-base">{label.icon}</span>
+        <span className="text-sm text-sky-800">
+          {language === "zh" ? label.zh : label.en}
+        </span>
+      </div>
+      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-sky-100">
+        <div
+          className="h-full rounded-full bg-sky-400 transition-all duration-500"
+          style={{ width: SIZE_WIDTHS[category] }}
+        />
+      </div>
+    </div>
+  );
 }

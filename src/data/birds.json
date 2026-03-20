@@ -12,7 +12,15 @@
     "funFactEn": "The White-bellied Sea Eagle is Singapore's largest raptor with a 2-metre wingspan! They soar above Sungei Buloh Wetland Reserve.",
     "photoUrl": "/images/birds/white-bellied-sea-eagle.jpg",
     "xenoCantoQuery": "Haliaeetus leucogaster",
-    "silhouette": "bald-eagle"
+    "silhouette": "bald-eagle",
+    "sizeCategory": "large",
+    "habitatType": "coast",
+    "diet": "Fish, sea snakes, turtles",
+    "wingspan": "178–218 cm",
+    "lifespan": "~30 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 198
   },
   {
     "id": "collared-kingfisher",
@@ -27,7 +35,15 @@
     "funFactEn": "Collared Kingfishers don't just eat fish! They also hunt crabs, lizards, and even small snakes — versatile hunters of Pulau Ubin.",
     "photoUrl": "/images/birds/collared-kingfisher.jpg",
     "xenoCantoQuery": "Todiramphus chloris",
-    "silhouette": "common-kingfisher"
+    "silhouette": "common-kingfisher",
+    "sizeCategory": "small",
+    "habitatType": "coast",
+    "diet": "Fish, crabs, lizards, insects",
+    "wingspan": "40–46 cm",
+    "lifespan": "~6 years",
+    "evolutionEra": "neogene",
+    "dietType": "omnivore",
+    "wingspanCm": 43
   },
   {
     "id": "white-stork-sg",
@@ -42,7 +58,16 @@
     "funFactEn": "White Storks are migration champions! They fly from Europe to Africa for winter, some even passing through Southeast Asia — over 20,000 km.",
     "photoUrl": "/images/birds/white-stork-sg.jpg",
     "xenoCantoQuery": "Ciconia ciconia",
-    "silhouette": "japanese-crane"
+    "silhouette": "japanese-crane",
+    "sizeCategory": "large",
+    "habitatType": "wetlands",
+    "migrationDistanceKm": 20000,
+    "diet": "Frogs, fish, insects, small mammals",
+    "wingspan": "155–215 cm",
+    "lifespan": "~25 years",
+    "evolutionEra": "paleogene",
+    "dietType": "omnivore",
+    "wingspanCm": 185
   },
   {
     "id": "pacific-golden-plover-sg",
@@ -57,7 +82,16 @@
     "funFactEn": "Pacific Golden Plovers fly from Siberia to Singapore's East Coast Park each winter — a non-stop journey of up to 5,000 km!",
     "photoUrl": "/images/birds/pacific-golden-plover-sg.jpg",
     "xenoCantoQuery": "Pluvialis fulva",
-    "silhouette": "kiwi"
+    "silhouette": "kiwi",
+    "sizeCategory": "small",
+    "habitatType": "coast",
+    "migrationDistanceKm": 5000,
+    "diet": "Insects, berries, crustaceans",
+    "wingspan": "60–72 cm",
+    "lifespan": "~12 years",
+    "evolutionEra": "neogene",
+    "dietType": "omnivore",
+    "wingspanCm": 66
   },
   {
     "id": "barn-swallow-sg",
@@ -72,7 +106,16 @@
     "funFactEn": "Barn Swallows are the world's most widespread swallow! They nest at Singapore Botanic Gardens and can fly at 56 km/h.",
     "photoUrl": "/images/birds/barn-swallow-sg.jpg",
     "xenoCantoQuery": "Hirundo rustica",
-    "silhouette": "fairy-pitta"
+    "silhouette": "fairy-pitta",
+    "sizeCategory": "tiny",
+    "habitatType": "grassland",
+    "migrationDistanceKm": 11000,
+    "diet": "Flying insects",
+    "wingspan": "32–34 cm",
+    "lifespan": "~4 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 33
   },
   {
     "id": "european-robin",
@@ -87,7 +130,15 @@
     "funFactEn": "The European Robin is Britain's national bird! They sing all year round, even at night under street lights.",
     "photoUrl": "/images/birds/european-robin.jpg",
     "xenoCantoQuery": "Erithacus rubecula",
-    "silhouette": "european-robin"
+    "silhouette": "european-robin",
+    "sizeCategory": "tiny",
+    "habitatType": "forest",
+    "diet": "Insects, worms, berries",
+    "wingspan": "20–22 cm",
+    "lifespan": "~2 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 21
   },
   {
     "id": "atlantic-puffin",
@@ -102,7 +153,15 @@
     "funFactEn": "Atlantic Puffins can hold over a dozen fish in their beak at once! Their colourful bill becomes even brighter during breeding season.",
     "photoUrl": "/images/birds/atlantic-puffin.jpg",
     "xenoCantoQuery": "Fratercula arctica",
-    "silhouette": "atlantic-puffin"
+    "silhouette": "atlantic-puffin",
+    "sizeCategory": "small",
+    "habitatType": "coast",
+    "diet": "Small fish, sand eels",
+    "wingspan": "47–63 cm",
+    "lifespan": "~20 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 55
   },
   {
     "id": "lilac-breasted-roller",
@@ -117,7 +176,15 @@
     "funFactEn": "The Lilac-breasted Roller is Kenya's national bird! It has up to 8 colours on its body — one of Africa's most beautiful birds.",
     "photoUrl": "/images/birds/lilac-breasted-roller.jpg",
     "xenoCantoQuery": "Coracias caudatus",
-    "silhouette": "lilac-breasted-roller"
+    "silhouette": "lilac-breasted-roller",
+    "sizeCategory": "small",
+    "habitatType": "grassland",
+    "diet": "Insects, lizards, small birds",
+    "wingspan": "50–58 cm",
+    "lifespan": "~10 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 54
   },
   {
     "id": "secretary-bird",
@@ -132,7 +199,15 @@
     "funFactEn": "Secretary Birds stomp their prey with powerful long legs! They can walk 20 km a day hunting snakes and lizards.",
     "photoUrl": "/images/birds/secretary-bird.jpg",
     "xenoCantoQuery": "Sagittarius serpentarius",
-    "silhouette": "secretary-bird"
+    "silhouette": "secretary-bird",
+    "sizeCategory": "large",
+    "habitatType": "grassland",
+    "diet": "Snakes, lizards, rodents, insects",
+    "wingspan": "191–220 cm",
+    "lifespan": "~15 years",
+    "evolutionEra": "paleogene",
+    "dietType": "meat",
+    "wingspanCm": 206
   },
   {
     "id": "bald-eagle",
@@ -147,7 +222,15 @@
     "funFactEn": "The Bald Eagle is America's national bird! Their nests can weigh up to 1 tonne — among the largest bird nests in the world.",
     "photoUrl": "/images/birds/bald-eagle.jpg",
     "xenoCantoQuery": "Haliaeetus leucocephalus",
-    "silhouette": "bald-eagle"
+    "silhouette": "bald-eagle",
+    "sizeCategory": "large",
+    "habitatType": "forest",
+    "diet": "Fish, waterfowl, small mammals",
+    "wingspan": "180–230 cm",
+    "lifespan": "~20 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 205
   },
   {
     "id": "northern-cardinal",
@@ -162,7 +245,15 @@
     "funFactEn": "Northern Cardinals are one of the few species where both males and females sing! The bright red male is unmistakable.",
     "photoUrl": "/images/birds/northern-cardinal.jpg",
     "xenoCantoQuery": "Cardinalis cardinalis",
-    "silhouette": "northern-cardinal"
+    "silhouette": "northern-cardinal",
+    "sizeCategory": "small",
+    "habitatType": "forest",
+    "diet": "Seeds, fruits, insects",
+    "wingspan": "25–31 cm",
+    "lifespan": "~3 years",
+    "evolutionEra": "neogene",
+    "dietType": "seeds",
+    "wingspanCm": 28
   },
   {
     "id": "toco-toucan",
@@ -177,7 +268,15 @@
     "funFactEn": "The Toco Toucan's huge bill is actually very light! It's made of hollow bone and helps regulate body temperature.",
     "photoUrl": "/images/birds/toco-toucan.jpg",
     "xenoCantoQuery": "Ramphastos toco",
-    "silhouette": "toco-toucan"
+    "silhouette": "toco-toucan",
+    "sizeCategory": "medium",
+    "habitatType": "rainforest",
+    "diet": "Fruits, insects, eggs",
+    "wingspan": "50–60 cm",
+    "lifespan": "~20 years",
+    "evolutionEra": "neogene",
+    "dietType": "fruit",
+    "wingspanCm": 55
   },
   {
     "id": "andean-condor",
@@ -192,7 +291,16 @@
     "funFactEn": "The Andean Condor has a wingspan of up to 3.3 metres — one of the world's largest flying birds! They can soar for hours without flapping.",
     "photoUrl": "/images/birds/andean-condor.jpg",
     "xenoCantoQuery": "Vultur gryphus",
-    "silhouette": "andean-condor"
+    "silhouette": "andean-condor",
+    "sizeCategory": "large",
+    "habitatType": "grassland",
+    "migrationDistanceKm": 200,
+    "diet": "Carrion",
+    "wingspan": "270–330 cm",
+    "lifespan": "~50 years",
+    "evolutionEra": "paleogene",
+    "dietType": "meat",
+    "wingspanCm": 300
   },
   {
     "id": "superb-fairywren",
@@ -207,7 +315,15 @@
     "funFactEn": "Male Superb Fairywrens turn brilliant blue during breeding season! They even pick flowers to present to females during courtship.",
     "photoUrl": "/images/birds/superb-fairywren.jpg",
     "xenoCantoQuery": "Malurus cyaneus",
-    "silhouette": "superb-fairywren"
+    "silhouette": "superb-fairywren",
+    "sizeCategory": "tiny",
+    "habitatType": "forest",
+    "diet": "Insects, seeds",
+    "wingspan": "15–17 cm",
+    "lifespan": "~5 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 16
   },
   {
     "id": "emperor-penguin",
@@ -222,6 +338,14 @@
     "funFactEn": "Emperor Penguins are the tallest penguins at up to 1.2 metres! Dads incubate eggs for 2 months in temperatures down to -60°C.",
     "photoUrl": "/images/birds/emperor-penguin.jpg",
     "xenoCantoQuery": "Aptenodytes forsteri",
-    "silhouette": "emperor-penguin"
+    "silhouette": "emperor-penguin",
+    "sizeCategory": "large",
+    "habitatType": "polar",
+    "diet": "Fish, squid, krill",
+    "wingspan": "76–89 cm",
+    "lifespan": "~20 years",
+    "evolutionEra": "paleogene",
+    "dietType": "fish",
+    "wingspanCm": 83
   }
 ]

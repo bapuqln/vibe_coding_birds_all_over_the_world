@@ -10,6 +10,8 @@ import { MigrationPaths } from "./MigrationPaths";
 import { CountryBorders } from "./CountryBorders";
 import { MapLabels } from "./MapLabels";
 import { CameraController } from "./CameraController";
+import { SoundRipple } from "./SoundRipple";
+import { HabitatHighlight } from "./HabitatHighlight";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 
@@ -36,6 +38,8 @@ export function GlobeScene() {
           ))}
         </Suspense>
         <MigrationPaths />
+        <SoundRipple />
+        <HabitatHighlight />
       </group>
       <MapLabels />
       <CameraController controlsRef={controlsRef} />

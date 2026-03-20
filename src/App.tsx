@@ -5,6 +5,13 @@ import { BirdInfoCard } from "./components/ui/BirdInfoCard";
 import { LangToggle } from "./components/ui/LangToggle";
 import { AudioPlayer } from "./components/ui/AudioPlayer";
 import { LoadingScreen } from "./components/ui/LoadingScreen";
+import { DiscoverButton } from "./components/ui/DiscoverButton";
+import { QuizPanel } from "./components/ui/QuizPanel";
+import { BirdEncyclopediaPanel } from "./components/ui/BirdEncyclopediaPanel";
+import { ContinentBirdPanel } from "./components/ui/ContinentBirdPanel";
+import { MigrationMapToggle } from "./components/ui/MigrationMapToggle";
+import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
+import { SoundGuessPanel } from "./components/ui/SoundGuessPanel";
 
 export default function App() {
   return (
@@ -23,6 +30,13 @@ export default function App() {
       <LangToggle />
       <BirdInfoCard />
       <AudioPlayer />
+      <DiscoverButton />
+      <QuizPanel />
+      <SoundGuessPanel />
+      <MigrationMapToggle />
+      <EvolutionTimeline />
+      <BirdEncyclopediaPanel />
+      <ContinentBirdPanel />
     </div>
   );
 }

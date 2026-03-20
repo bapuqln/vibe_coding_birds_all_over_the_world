@@ -4,27 +4,31 @@
     "from": "white-stork-sg",
     "to": "european-robin",
     "nameZh": "白鹳迁徙路线",
-    "nameEn": "White Stork Migration"
+    "nameEn": "White Stork Migration",
+    "migrationDistanceKm": 20000
   },
   {
     "id": "plover-fairywren",
     "from": "pacific-golden-plover-sg",
     "to": "superb-fairywren",
     "nameZh": "金斑鸻迁徙路线",
-    "nameEn": "Golden Plover Migration"
+    "nameEn": "Golden Plover Migration",
+    "migrationDistanceKm": 5000
   },
   {
     "id": "swallow-condor",
     "from": "barn-swallow-sg",
     "to": "andean-condor",
     "nameZh": "家燕迁徙路线",
-    "nameEn": "Barn Swallow Migration"
+    "nameEn": "Barn Swallow Migration",
+    "migrationDistanceKm": 11000
   },
   {
     "id": "eagle-baldeagle",
     "from": "white-bellied-sea-eagle",
     "to": "bald-eagle",
     "nameZh": "海雕迁徙路线",
-    "nameEn": "Sea Eagle Migration"
+    "nameEn": "Sea Eagle Migration",
+    "migrationDistanceKm": 15000
   }
 ]
