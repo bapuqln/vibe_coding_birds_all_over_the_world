@@ -83,7 +83,8 @@ export function SoundGuessPanel() {
     return (
       <button
         onClick={startSoundGuess}
-        className="fixed left-4 bottom-16 z-10 flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95 min-[900px]:bottom-16 min-[900px]:left-4"
+        className="fixed flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        style={{ left: "var(--safe-area)", bottom: "calc(var(--safe-area) + 48px)" }}
         aria-label={language === "zh" ? "听声辨鸟" : "Sound Guess"}
       >
         <span>🎵</span>
@@ -94,7 +95,7 @@ export function SoundGuessPanel() {
 
   if (soundGuessState === "result") {
     return (
-      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
         <div className="mx-4 w-full max-w-sm rounded-[20px] bg-white/95 p-6 text-center shadow-2xl backdrop-blur-xl">
           <p className="text-4xl">🎵</p>
           <h3 className="mt-2 text-xl font-bold text-gray-800">
@@ -123,7 +124,7 @@ export function SoundGuessPanel() {
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
       {showConfetti && <Confetti />}
       <div
         className={`mx-4 w-full max-w-md rounded-[20px] bg-white/95 p-6 shadow-2xl backdrop-blur-xl ${shake ? "animate-[shake_0.3s_ease-in-out]" : ""}`}
@@ -189,7 +190,7 @@ export function SoundGuessPanel() {
 
 function Confetti() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden">
       {Array.from({ length: 40 }).map((_, i) => (
         <div
           key={i}

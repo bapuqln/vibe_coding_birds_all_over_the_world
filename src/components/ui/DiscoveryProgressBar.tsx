@@ -37,9 +37,9 @@ export function DiscoveryProgressBar() {
 
   return (
     <div
-      className="pointer-events-auto fixed z-10"
+      className="pointer-events-auto fixed"
       style={{
-        left: 24,
+        left: "var(--safe-area)",
         top: 80,
         width: 200,
       }}

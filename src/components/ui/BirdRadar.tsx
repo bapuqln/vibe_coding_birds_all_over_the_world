@@ -22,7 +22,8 @@ export function BirdRadar() {
       <button
         type="button"
         onClick={() => setRadarOpen(true)}
-        className="fixed left-4 top-20 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/65 text-base text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        className="fixed flex h-10 w-10 items-center justify-center rounded-full bg-black/65 text-base text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        style={{ left: "var(--safe-area)", top: "var(--safe-area)" }}
         aria-label={language === "zh" ? "鸟类雷达" : "Bird Radar"}
       >
         📡
@@ -31,7 +32,7 @@ export function BirdRadar() {
   }
 
   return (
-    <div className="fixed left-4 top-20 z-10">
+    <div className="fixed" style={{ left: "var(--safe-area)", top: "var(--safe-area)" }}>
       <div className="relative h-36 w-36 overflow-hidden rounded-full border-2 border-green-400/30 bg-black/70 shadow-xl backdrop-blur-lg">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="h-px w-full bg-green-400/20" />

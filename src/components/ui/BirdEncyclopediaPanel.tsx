@@ -37,7 +37,8 @@ export function BirdEncyclopediaPanel() {
       <button
         type="button"
         onClick={() => setEncyclopediaOpen(true)}
-        className="fixed left-4 top-52 z-10 flex h-10 items-center gap-1.5 rounded-full bg-black/65 px-3 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        className="fixed flex h-10 items-center gap-1.5 rounded-full bg-black/65 px-3 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        style={{ left: "var(--safe-area)", top: 192 }}
         aria-label={language === "zh" ? "打开鸟类百科" : "Open Bird Encyclopedia"}
       >
         <span className="text-base">📖</span>
@@ -47,7 +48,7 @@ export function BirdEncyclopediaPanel() {
       </button>
 
       {encyclopediaOpen && (
-        <div className="fixed inset-0 z-20 flex">
+        <div className="pointer-events-auto fixed inset-0 flex" style={{ zIndex: "var(--z-modal)", animation: "panelSlideRight var(--panel-duration) var(--panel-ease)" }}>
           <button
             type="button"
             onClick={() => setEncyclopediaOpen(false)}

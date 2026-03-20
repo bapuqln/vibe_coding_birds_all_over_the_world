@@ -35,19 +35,19 @@ export function EvolutionTimeline() {
       <button
         onClick={() => setEvolutionTimelineOpen(!evolutionTimelineOpen)}
         className={`
-          fixed left-4 bottom-28 z-10
+          fixed
           flex h-[44px] min-w-[120px] items-center justify-center gap-2
           rounded-xl px-4 text-sm font-semibold
           shadow-lg backdrop-blur-lg
           transition-all duration-200
           hover:scale-105 active:scale-95
-          min-[900px]:bottom-28 min-[900px]:left-4
           ${
             evolutionTimelineOpen
               ? "bg-amber-500 text-white ring-2 ring-amber-300/50"
               : "bg-black/65 text-white hover:bg-black/75"
           }
         `}
+        style={{ left: "var(--safe-area)", bottom: "calc(var(--safe-area) + 96px)" }}
         aria-label={language === "zh" ? "时间线" : "Timeline"}
       >
         <span>🦕</span>
@@ -56,10 +56,11 @@ export function EvolutionTimeline() {
 
       <div
         className={`
-          fixed bottom-0 left-0 right-0 z-20
-          transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+          pointer-events-auto fixed bottom-0 left-0 right-0
+          transition-transform duration-300 ease-out
           ${evolutionTimelineOpen ? "translate-y-0" : "translate-y-full"}
         `}
+        style={{ zIndex: "var(--z-bottom-panel)" }}
       >
         <div className="mx-auto max-w-4xl rounded-t-[20px] bg-white/95 p-5 shadow-2xl backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between">

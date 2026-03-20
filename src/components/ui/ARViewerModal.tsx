@@ -73,7 +73,7 @@ export function ARViewerModal() {
 
   return (
     <div
-      className="fixed inset-0 z-30 flex items-center justify-center"
+      className="pointer-events-auto fixed inset-0 flex items-center justify-center"
       style={{ background: "rgba(0,0,0,0.9)" }}
     >
       {arState === "active" && (

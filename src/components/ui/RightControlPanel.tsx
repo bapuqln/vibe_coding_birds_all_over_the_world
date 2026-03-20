@@ -42,10 +42,10 @@ export function RightControlPanel() {
 
   return (
     <div
-      className="pointer-events-auto fixed z-10"
+      className="pointer-events-auto fixed"
       style={{
-        right: 16,
-        bottom: 16,
+        right: "var(--safe-area)",
+        bottom: "var(--safe-area)",
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",

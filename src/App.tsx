@@ -25,47 +25,73 @@ import { ARViewerModal } from "./components/ui/ARViewerModal";
 export default function App() {
   return (
     <div className="relative h-full w-full">
-      {/* 3D Canvas — z-index: 0 */}
-      <Canvas
-        camera={{ fov: 45, position: [0, 0, 2.5], near: 0.1, far: 100 }}
-        style={{ background: "#050a18" }}
+      {/* Layer 0 — Globe Canvas */}
+      <div className="absolute inset-0" style={{ zIndex: "var(--z-globe)" }}>
+        <Canvas
+          camera={{ fov: 45, position: [0, 0, 2.5], near: 0.1, far: 100 }}
+          style={{ background: "#050a18" }}
+        >
+          <Suspense fallback={null}>
+            <GlobeScene />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {/* Layer 2 — Sidebar Controls */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ zIndex: "var(--z-sidebar)" }}
       >
-        <Suspense fallback={null}>
-          <GlobeScene />
-        </Suspense>
-      </Canvas>
+        <AppTitle />
+        <LangToggle />
+        <DiscoveryProgressBar />
+        <RightControlPanel />
+        <BirdGuide />
+        <BirdRadar />
+        <StoryExplorer />
+        <BirdEncyclopediaPanel />
+        <QuizPanel />
+        <SoundGuessPanel />
+        <EvolutionTimeline />
+      </div>
 
-      {/* Loading — z-index: 100 */}
-      <LoadingScreen />
+      {/* Layer 3 — Bottom Panels */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ zIndex: "var(--z-bottom-panel)" }}
+      >
+        <GuidedTour />
+      </div>
 
-      {/* HUD layer — z-index: 10 */}
-      <AppTitle />
-      <LangToggle />
-      <DiscoveryProgressBar />
-      <RightControlPanel />
-      <BirdGuide />
-      <BirdRadar />
-      <StoryExplorer />
+      {/* Layer 4 — Information Cards */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ zIndex: "var(--z-card)" }}
+      >
+        <BirdInfoCard />
+        <DiscoveryNotification />
+      </div>
 
-      {/* Notification layer — z-index: 25 */}
-      <DiscoveryNotification />
+      {/* Layer 5 — Modal Dialogs */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ zIndex: "var(--z-modal)" }}
+      >
+        <MyBirdsPanel />
+        <RegionFilterPanel />
+        <QuestPanel />
+        <ContinentBirdPanel />
+        <ARViewerModal />
+      </div>
 
-      {/* Modal layer — z-index: 20 */}
-      <BirdInfoCard />
-      <MyBirdsPanel />
-      <RegionFilterPanel />
-      <QuestPanel />
-      <GuidedTour />
-      <QuizPanel />
-      <SoundGuessPanel />
-      <BirdEncyclopediaPanel />
-      <ContinentBirdPanel />
-      <EvolutionTimeline />
+      {/* Layer 6 — Full Screen Overlays */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ zIndex: "var(--z-overlay)" }}
+      >
+        <LoadingScreen />
+      </div>
 
-      {/* AR layer — z-index: 30 */}
-      <ARViewerModal />
-
-      {/* Invisible */}
       <AudioPlayer />
     </div>
   );
@@ -73,7 +99,10 @@ export default function App() {
 
 function AppTitle() {
   return (
-    <div className="pointer-events-none fixed left-4 top-4 z-10 select-none md:left-6 md:top-6">
+    <div
+      className="pointer-events-none fixed select-none"
+      style={{ left: "var(--safe-area)", top: "var(--safe-area)" }}
+    >
       <h1 className="text-xl font-bold tracking-wide text-white/90 drop-shadow-lg md:text-2xl">
         万羽拾音
       </h1>

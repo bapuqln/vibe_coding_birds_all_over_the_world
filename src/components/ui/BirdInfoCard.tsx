@@ -140,40 +140,36 @@ export function BirdInfoCard() {
 
   return (
     <div
-      className={`pointer-events-auto fixed inset-0 z-20 transition-opacity duration-300 ${
+      className={`pointer-events-auto fixed inset-0 transition-opacity duration-250 ${
         isOpen ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={handleBackdropClick}
       aria-hidden={!isOpen}
     >
+      {/* Desktop (>=1024px): right side panel. Tablet (768-1023): center modal. Mobile (<768): bottom sheet */}
       <div
         ref={cardRef}
         role="dialog"
         aria-modal="true"
         aria-label={bird ? `${bird.nameEn} - ${bird.nameZh}` : ""}
+        className="bird-info-card"
         style={{
           position: "absolute",
-          bottom: 0,
-          left: "50%",
-          transform: isOpen ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(100%)",
-          width: "100%",
-          maxWidth: 480,
           maxHeight: "80vh",
           overflowY: "auto",
-          borderRadius: "20px 20px 0 0",
-          background: "rgba(255, 255, 255, 0.92)",
+          background: "rgba(255, 255, 255, 0.95)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           boxShadow: "0 -8px 40px rgba(0, 0, 0, 0.15), 0 -2px 10px rgba(0, 0, 0, 0.08)",
-          transition: "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          transition: "transform 250ms ease-out, opacity 250ms ease-out",
         }}
       >
         {bird && (
           <div style={{ display: "flex", flexDirection: "column" }}>
             {/* ImageHeader */}
             <div
-              style={{ position: "relative", height: 180, width: "100%", overflow: "hidden", borderRadius: "20px 20px 0 0", flexShrink: 0 }}
-              className="bg-linear-to-br from-sky-300 via-teal-200 to-emerald-300"
+              style={{ position: "relative", height: 180, width: "100%", overflow: "hidden", flexShrink: 0 }}
+              className="bird-info-card-header bg-linear-to-br from-sky-300 via-teal-200 to-emerald-300"
             >
               <img
                 src={bird.photoUrl}
@@ -488,6 +484,56 @@ export function BirdInfoCard() {
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+
+        /* Desktop: right side panel */
+        @media (min-width: 1024px) {
+          .bird-info-card {
+            right: var(--safe-area);
+            top: var(--safe-area);
+            bottom: var(--safe-area);
+            width: 400px;
+            max-width: 400px;
+            border-radius: 20px;
+            transform: ${isOpen ? "translateX(0)" : "translateX(120%)"};
+            animation: ${isOpen ? "panelSlideRight var(--panel-duration) var(--panel-ease)" : "none"};
+          }
+          .bird-info-card-header {
+            border-radius: 20px 20px 0 0;
+          }
+        }
+
+        /* Tablet: center modal */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .bird-info-card {
+            left: 50%;
+            top: 50%;
+            transform: ${isOpen ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0.95)"};
+            width: 90%;
+            max-width: 480px;
+            border-radius: 20px;
+            animation: ${isOpen ? "panelScaleFade var(--panel-duration) var(--panel-ease)" : "none"};
+          }
+          .bird-info-card-header {
+            border-radius: 20px 20px 0 0;
+          }
+        }
+
+        /* Mobile: bottom sheet */
+        @media (max-width: 767px) {
+          .bird-info-card {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 20px 20px 0 0;
+            transform: ${isOpen ? "translateY(0)" : "translateY(100%)"};
+            animation: ${isOpen ? "panelSlideUp var(--panel-duration) var(--panel-ease)" : "none"};
+          }
+          .bird-info-card-header {
+            border-radius: 20px 20px 0 0;
+          }
         }
       `}</style>
     </div>

@@ -11,6 +11,20 @@ import type {
   TourState,
 } from "./types";
 
+export type PanelType =
+  | "birdCard"
+  | "collection"
+  | "regionFilter"
+  | "quests"
+  | "tour"
+  | "quiz"
+  | "soundGuess"
+  | "encyclopedia"
+  | "continentBird"
+  | "storyExplorer"
+  | "evolution"
+  | "ar";
+
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
 const STORY_KEY = "kids-bird-globe-stories";
@@ -89,6 +103,9 @@ interface AppStore {
   heatmapVisible: boolean;
   arViewerBirdId: string | null;
 
+  // v13: Panel collision avoidance
+  activePanel: PanelType | null;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -139,6 +156,9 @@ interface AppStore {
   // v12 actions
   setHeatmapVisible: (visible: boolean) => void;
   setARViewerBird: (birdId: string | null) => void;
+
+  // v13 actions
+  setActivePanel: (panel: PanelType | null) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -195,6 +215,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   heatmapVisible: false,
   arViewerBirdId: null,
+
+  activePanel: null,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -355,4 +377,38 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   setHeatmapVisible: (heatmapVisible) => set({ heatmapVisible }),
   setARViewerBird: (arViewerBirdId) => set({ arViewerBirdId }),
+
+  setActivePanel: (activePanel) => {
+    const state = get();
+    if (activePanel === state.activePanel) return;
+    const reset: Partial<AppStore> = { activePanel };
+    if (activePanel !== null && activePanel !== "birdCard") {
+      reset.selectedBirdId = null;
+    }
+    if (activePanel !== null && activePanel !== "collection") {
+      reset.isCollectionOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "regionFilter") {
+      reset.regionFilterOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "quests") {
+      reset.questsOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "storyExplorer") {
+      reset.storyExplorerOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "encyclopedia") {
+      reset.encyclopediaOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "continentBird") {
+      reset.continentPanelRegion = null;
+    }
+    if (activePanel !== null && activePanel !== "evolution") {
+      reset.evolutionTimelineOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "ar") {
+      reset.arViewerBirdId = null;
+    }
+    set(reset);
+  },
 }));

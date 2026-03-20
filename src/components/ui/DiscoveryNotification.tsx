@@ -26,9 +26,10 @@ export function DiscoveryNotification() {
 
   return (
     <div
-      className="pointer-events-auto fixed left-1/2 top-6 z-25 -translate-x-1/2"
+      className="pointer-events-auto fixed left-1/2 -translate-x-1/2"
       onClick={handleClick}
       style={{
+        top: "var(--safe-area)",
         animation: "discoverySlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
       }}
     >

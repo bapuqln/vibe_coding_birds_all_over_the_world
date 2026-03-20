@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v12
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v13
 
+> **v13 changelog**: Global UI Layer System — unified z-index hierarchy (7 layers from canvas z-0 to overlay z-100), refactored App root into layered container architecture (GlobeLayer → MarkerLayer → SidebarLayer → BottomPanelLayer → CardLayer → ModalLayer → OverlayLayer), panel collision avoidance system (only one panel type active at a time), bird info card repositioned to right side to prevent overlap with bottom panels, responsive layout rules (desktop: sidebar+bottom+right card, tablet: collapsed sidebar+center modal, mobile: full-screen sheets), safe area padding (20px all sides), modal priority system with semi-transparent overlay blocking lower layers, smooth panel animations (slide-up 250ms for bottom, slide-right 250ms for side, scale-fade 250ms for modal).
+>
 > **v12 changelog**: Full-scope expansion — dataset expanded to 50+ birds with comprehensive global coverage, migration visualization with animated arc lines and moving dots for Arctic Tern / Bar-tailed Godwit / Swallow routes, bird distribution heatmap layer with blue-green-red density visualization and toggle button, AR bird viewing mode via WebXR with camera overlay and 3D model placement, enhanced bird animations (wing flap, hop, look-toward-camera, circle flight), performance optimization with model lazy loading (max 15 simultaneous 3D models), KTX2 texture compression, educational wingspan visualization bar, fun fact section redesign. All UI layout issues resolved with strict flex-column card structure, spacing tokens, tag wrapping, sidebar alignment, and glass-morphism design.
 >
 > **v11 changelog**: Full-scope upgrade — UI layout overhaul (strict flex-column card structure, zero-overlap enforcement, spacing tokens, tag row wrapping, sidebar button alignment, card scroll), 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 40+ species across all continents, bird sound playback feature with xeno-canto integration and lazy-loaded audio, bird discovery and collection system with "New bird discovered!" notification, exploration progress system with continent-level tracking and progress bars, bird animation interactions (wing flap, lift, rotate-to-camera on click), performance optimizations (model lazy loading, visibility culling, texture compression, max 15 simultaneous 3D models), child-friendly design polish (glass-morphism cards, habitat/continent/lifespan tag colors, wingspan visualization bar, typography hierarchy).
@@ -272,19 +274,43 @@ As a child, I can see a visual bar comparing different birds' wingspan sizes in 
 - Region zoom for filter feature.
 - Minimum camera distance 1.15.
 
-### R-19: UI System (v12 CRITICAL)
+### R-19: UI System (v13 CRITICAL — Global UI Layer System)
+
+#### UI Layer Architecture
+- All UI components organized into strict layer hierarchy.
+- Layer 0: 3D Globe Canvas (z-index: 0)
+- Layer 1: Map markers (z-index: 5)
+- Layer 2: Left sidebar controls (z-index: 20)
+- Layer 3: Bottom panels (z-index: 40)
+- Layer 4: Information cards (z-index: 60)
+- Layer 5: Modal dialogs (z-index: 80)
+- Layer 6: Full screen overlays (z-index: 100)
+- No component may randomly assign z-index outside this hierarchy.
+
+#### UI Root Structure
+- AppRoot contains layered containers:
+  - GlobeLayer (Three.js canvas, z-0)
+  - UILayer (all floating UI):
+    - SidebarLayer (left controls, z-20)
+    - BottomPanelLayer (bottom panels, z-40)
+    - CardLayer (info cards, z-60)
+    - ModalLayer (modal dialogs, z-80)
+    - OverlayLayer (full-screen overlays, z-100)
+- All floating UI must live inside UILayer, never attached directly to globe container.
 
 #### Sidebar Buttons
 - All sidebar buttons must have identical width and height.
 - Vertically aligned, never overlap the globe.
-- Position: `fixed; left: 24px; top: 120px;`
+- Position: `fixed; left: 20px; top: 120px;`
 - Layout: `display: flex; flex-direction: column; gap: 16px;`
+- Z-index: 20 (sidebar layer).
 
 #### Right Control Panel
 - All action buttons in a single container.
-- Position: absolute, right: 16px, bottom: 16px.
+- Position: fixed, right: 20px, bottom: 20px.
 - Flex column, gap: 8px, align-items: flex-end.
-- Buttons: Discover, Birds, Regions, Migration, Heatmap, Quests, Tour, AR, Reset.
+- Buttons: Discover, Birds, Regions, Migration, Heatmap, Quests, Tour, Reset.
+- Z-index: 20 (sidebar layer).
 - No other UI may overlap this panel.
 
 #### Card Layout Structure
@@ -311,19 +337,37 @@ As a child, I can see a visual bar comparing different birds' wingspan sizes in 
 - Habitat tags = green.
 - Lifespan tags = orange.
 
-#### Mobile Safe Area Support
-- bottom: calc(env(safe-area-inset-bottom) + 16px)
-- right: calc(env(safe-area-inset-right) + 16px)
+#### Safe Area Rules (v13)
+- Every floating panel must respect screen safe area.
+- Top safe area: 20px padding.
+- Left safe area: 20px padding.
+- Right safe area: 20px padding.
+- Bottom safe area: 20px padding.
+- Plus device safe-area-inset values where applicable.
 
-#### Responsive Layout
-- Screen width < 900px: convert right panel to horizontal layout.
+#### Responsive Layout (v13)
+- Desktop (>= 1024px): Left sidebar + Bottom discovery panel + Right info card.
+- Tablet (768px–1023px): Sidebar collapses, info card becomes center modal.
+- Mobile (< 768px): Panels become full-screen sheets.
 
-#### Z-Index Hierarchy
-- 3D canvas: z-index 0
-- Bird markers: z-index 1
-- HUD panels: z-index 10
-- Modal cards: z-index 20
-- Loading: z-index 100
+#### Panel Collision Avoidance (v13)
+- Only one panel type can be active at a time.
+- Bird card open → hide discovery panel.
+- Modal open → hide all panels.
+- Settings open → hide bird card.
+- Managed via `activePanel` state in store.
+
+#### Modal Priority (v13)
+- Modal dialogs always appear above all panels.
+- Modals block interaction with lower layers.
+- Semi-transparent overlay backdrop.
+- Overlay z-index: 80, Modal content z-index: 80.
+
+#### Panel Animation Rules (v13)
+- Bottom panel: slide up, 250ms ease-out.
+- Side panel: slide from right, 250ms ease-out.
+- Modal: scale fade, 250ms ease-out.
+- All animations use CSS transitions or keyframes.
 
 ### R-20: Performance (v12 enhanced)
 - Model lazy loading: only load bird models when they enter the visible region.
@@ -445,6 +489,46 @@ type Rarity = "common" | "rare" | "legendary";
 - High-resolution GeoJSON.
 
 ## Acceptance Criteria
+
+### AC-V13-1: Global UI Layer System
+- [ ] Unified z-index hierarchy with 7 defined layers.
+- [ ] All components use layer-appropriate z-index values.
+- [ ] No random z-index assignments outside the hierarchy.
+
+### AC-V13-2: UI Root Structure
+- [ ] App root refactored into layered container architecture.
+- [ ] All floating UI lives inside UILayer containers.
+- [ ] GlobeLayer, SidebarLayer, BottomPanelLayer, CardLayer, ModalLayer, OverlayLayer defined.
+
+### AC-V13-3: Panel Collision Avoidance
+- [ ] Only one panel type active at a time.
+- [ ] Bird card open hides discovery panel.
+- [ ] Modal open hides all panels.
+- [ ] activePanel state manages panel exclusivity.
+
+### AC-V13-4: Bird Panel Behavior
+- [ ] Bird info card opens from right side (desktop) or bottom center (mobile).
+- [ ] Bird card and bottom panels never overlap.
+- [ ] Left side: navigation. Bottom: discovery panel. Right: bird info card.
+
+### AC-V13-5: Responsive Layout
+- [ ] Desktop: sidebar + bottom panel + right card.
+- [ ] Tablet: collapsed sidebar, center modal card.
+- [ ] Mobile: full-screen sheet panels.
+
+### AC-V13-6: Safe Area Rules
+- [ ] 20px padding on all sides for floating panels.
+- [ ] Device safe-area-inset respected.
+
+### AC-V13-7: Modal Priority
+- [ ] Modals appear above all panels.
+- [ ] Semi-transparent overlay blocks lower layers.
+- [ ] Overlay and modal use z-index 80+.
+
+### AC-V13-8: Panel Animations
+- [ ] Bottom panels slide up (250ms).
+- [ ] Side panels slide from right (250ms).
+- [ ] Modals scale-fade in (250ms).
 
 ### AC-V12-1: Expanded Dataset
 - [ ] 50+ birds in birds.json.

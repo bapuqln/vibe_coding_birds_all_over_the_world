@@ -21,7 +21,8 @@ export function StoryExplorer() {
       <button
         type="button"
         onClick={() => setStoryExplorerOpen(true)}
-        className="fixed left-4 top-36 z-10 flex h-10 items-center gap-1.5 rounded-full bg-black/65 px-3 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        className="fixed flex h-10 items-center gap-1.5 rounded-full bg-black/65 px-3 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        style={{ left: "var(--safe-area)", top: 140 }}
         aria-label={language === "zh" ? "主题探索" : "Stories"}
       >
         <span>📚</span>
@@ -33,7 +34,7 @@ export function StoryExplorer() {
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center p-4">
+    <div className="pointer-events-auto fixed inset-0 flex items-center justify-center p-5" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
       <button
         type="button"
         onClick={() => setStoryExplorerOpen(false)}

@@ -1,10 +1,111 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v12)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v13)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
 > v10 phases (76–84) are complete.
 > v11 phases (85–92) are complete.
-> v12 phases (93–100) are new.
+> v12 phases (93–100) are complete.
+> v13 phases (101–108) are new.
+
+---
+
+# v13 Tasks (Global UI Layer System)
+
+---
+
+## Phase 101: Global UI Layer System — CSS & Z-Index
+
+- [x] **101.1** Define CSS custom properties for z-index layers in `index.css` (--z-globe: 0, --z-marker: 5, --z-sidebar: 20, --z-bottom-panel: 40, --z-card: 60, --z-modal: 80, --z-overlay: 100).
+- [x] **101.2** Add layer utility classes in `index.css` for each z-index tier.
+- [x] **101.3** Add panel animation keyframes in `index.css` (slideUp, slideRight, scaleFade).
+
+---
+
+## Phase 102: Layered Container Architecture
+
+- [x] **102.1** Refactor `App.tsx` into layered container structure: GlobeLayer, UILayer (SidebarLayer, BottomPanelLayer, CardLayer, ModalLayer, OverlayLayer).
+- [x] **102.2** Move all HUD components into SidebarLayer container.
+- [x] **102.3** Move bottom panels into BottomPanelLayer container.
+- [x] **102.4** Move info cards into CardLayer container.
+- [x] **102.5** Move all modal panels into ModalLayer container.
+- [x] **102.6** Move LoadingScreen into OverlayLayer container.
+
+---
+
+## Phase 103: Panel Collision Avoidance
+
+- [x] **103.1** Add `activePanel` state and `PanelType` type to Zustand store.
+- [x] **103.2** Add `setActivePanel(panel)` action to store.
+- [x] **103.3** Update all panel open actions to use `setActivePanel`.
+- [x] **103.4** Verify only one panel type is active at any time.
+
+---
+
+## Phase 104: Bird Info Card Repositioning
+
+- [x] **104.1** Refactor `BirdInfoCard.tsx` to open from right side on desktop (>=1024px).
+- [x] **104.2** Keep bottom-sheet behavior on mobile (<768px).
+- [x] **104.3** Center modal behavior on tablet (768–1023px).
+- [x] **104.4** Ensure bird card never overlaps with bottom panels or left sidebar.
+
+---
+
+## Phase 105: Update All Component Z-Indexes
+
+- [x] **105.1** Update `AppTitle` to z-20 (sidebar layer).
+- [x] **105.2** Update `LangToggle` to z-20 (sidebar layer).
+- [x] **105.3** Update `DiscoveryProgressBar` to z-20 (sidebar layer).
+- [x] **105.4** Update `RightControlPanel` to z-20 (sidebar layer).
+- [x] **105.5** Update `BirdGuide` to z-20 (sidebar layer).
+- [x] **105.6** Update `BirdRadar` to z-20 (sidebar layer).
+- [x] **105.7** Update `StoryExplorer` launcher to z-20, modal to z-80.
+- [x] **105.8** Update `BirdEncyclopediaPanel` launcher to z-20, modal to z-80.
+- [x] **105.9** Update `QuizPanel` launcher to z-20, active/result to z-80.
+- [x] **105.10** Update `SoundGuessPanel` launcher to z-20, active/result to z-80.
+- [x] **105.11** Update `EvolutionTimeline` launcher to z-20, sheet to z-40.
+- [x] **105.12** Update `BirdInfoCard` to z-60 (card layer).
+- [x] **105.13** Update `DiscoveryNotification` to z-60 (card layer).
+- [x] **105.14** Update `MyBirdsPanel` to z-80 (modal layer).
+- [x] **105.15** Update `RegionFilterPanel` to z-80 (modal layer).
+- [x] **105.16** Update `QuestPanel` to z-80 (modal layer).
+- [x] **105.17** Update `GuidedTour` intro to z-80, touring panel to z-40.
+- [x] **105.18** Update `ContinentBirdPanel` to z-80 (modal layer).
+- [x] **105.19** Update `ARViewerModal` to z-80 (modal layer).
+- [x] **105.20** Verify `LoadingScreen` at z-[100] (overlay layer).
+
+---
+
+## Phase 106: Responsive Layout Rules
+
+- [x] **106.1** Implement desktop layout: left sidebar + bottom panel + right info card.
+- [x] **106.2** Implement tablet layout: collapsed sidebar, center modal card.
+- [x] **106.3** Implement mobile layout: full-screen sheet panels.
+
+---
+
+## Phase 107: Safe Area & Animation Rules
+
+- [x] **107.1** Add 20px safe area padding to all floating panels.
+- [x] **107.2** Implement slide-up animation for bottom panels (250ms).
+- [x] **107.3** Implement slide-right animation for side panels (250ms).
+- [x] **107.4** Implement scale-fade animation for modals (250ms).
+
+---
+
+## Phase 108: Final Verification (v13)
+
+- [x] **108.1** Unified z-index hierarchy with 7 layers. (AC-V13-1)
+- [x] **108.2** All components use layer-appropriate z-index. (AC-V13-1)
+- [x] **108.3** App root uses layered container architecture. (AC-V13-2)
+- [x] **108.4** Panel collision avoidance works. (AC-V13-3)
+- [x] **108.5** Bird info card opens from right (desktop). (AC-V13-4)
+- [x] **108.6** No panel overlap at any viewport size. (AC-V13-4)
+- [x] **108.7** Desktop responsive layout correct. (AC-V13-5)
+- [x] **108.8** Tablet responsive layout correct. (AC-V13-5)
+- [x] **108.9** Mobile responsive layout correct. (AC-V13-5)
+- [x] **108.10** 20px safe area padding applied. (AC-V13-6)
+- [x] **108.11** Modals appear above all panels. (AC-V13-7)
+- [x] **108.12** Panel animations smooth (250ms). (AC-V13-8)
 
 ---
 
@@ -195,10 +296,19 @@
 
 ---
 
-## Summary (v12)
+## Summary (v13)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
+| Global UI Layer System (v13) | 101.1–101.3 | Complete |
+| Layered Container Architecture (v13) | 102.1–102.6 | Complete |
+| Panel Collision Avoidance (v13) | 103.1–103.4 | Complete |
+| Bird Info Card Repositioning (v13) | 104.1–104.4 | Complete |
+| Update All Component Z-Indexes (v13) | 105.1–105.20 | Complete |
+| Responsive Layout Rules (v13) | 106.1–106.3 | Complete |
+| Safe Area & Animation Rules (v13) | 107.1–107.4 | Complete |
+| Final Verification (v13) | 108.1–108.12 | Complete |
+| **Total v13 tasks** | **52 tasks** | **52 complete** |
 | Dataset Expansion 50+ (v12) | 93.1–93.9 | Complete |
 | Migration Route Enhancement (v12) | 94.1–94.7 | Complete |
 | Bird Distribution Heatmap (v12) | 95.1–95.7 | Complete |
@@ -210,4 +320,4 @@
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total all tasks (v1–v12)** | **~729 tasks** | **~729 complete** |
+| **Total all tasks (v1–v13)** | **~781 tasks** | **~781 complete** |

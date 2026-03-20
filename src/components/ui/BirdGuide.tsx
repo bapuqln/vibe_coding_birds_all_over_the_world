@@ -83,8 +83,12 @@ export function BirdGuide() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-24 left-4 z-10 max-w-xs animate-[slideInLeft_0.4s_ease-out] min-[900px]:bottom-4"
-      style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      className="pointer-events-none fixed max-w-xs animate-[slideInLeft_0.4s_ease-out]"
+      style={{
+        left: "var(--safe-area)",
+        bottom: "calc(var(--safe-area) + 80px)",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+      }}
     >
       <div className="flex items-start gap-3 rounded-2xl bg-white/95 p-3 shadow-xl backdrop-blur-xl">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xl">

@@ -81,7 +81,7 @@ export function GuidedTour() {
 
   if (tourState === "intro") {
     return (
-      <div className="pointer-events-auto fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
         <div className="mx-4 max-w-sm rounded-3xl bg-white/95 p-8 text-center shadow-2xl backdrop-blur-xl">
           <p className="text-5xl">🧭</p>
           <h2 className="mt-3 text-2xl font-bold text-gray-800">
@@ -107,7 +107,7 @@ export function GuidedTour() {
   }
 
   return (
-    <div className="pointer-events-auto fixed bottom-24 left-1/2 z-20 -translate-x-1/2 min-[900px]:bottom-auto min-[900px]:left-4 min-[900px]:top-20 min-[900px]:translate-x-0">
+    <div className="pointer-events-auto fixed" style={{ left: "var(--safe-area)", bottom: "calc(var(--safe-area) + 60px)", zIndex: "var(--z-bottom-panel)" }}>
       <div className="w-72 rounded-[20px] bg-white/95 p-4 shadow-2xl backdrop-blur-xl">
         {currentWaypoint && (
           <>

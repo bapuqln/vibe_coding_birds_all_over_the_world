@@ -57,7 +57,7 @@ export function MyBirdsPanel() {
   const totalDiscovered = discoveredBirds.length;
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center p-4">
+    <div className="pointer-events-auto fixed inset-0 flex items-center justify-center p-5" style={{ animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
       <button
         type="button"
         onClick={() => setCollectionOpen(false)}

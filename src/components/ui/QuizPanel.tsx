@@ -97,8 +97,8 @@ export function QuizPanel() {
       <button
         onClick={handleStartQuiz}
         aria-label={language === "zh" ? "开始答题" : "Start Quiz"}
-        className="fixed left-4 bottom-4 z-10 flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95 min-[900px]:bottom-4 min-[900px]:left-4"
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        className="fixed flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95"
+        style={{ left: "var(--safe-area)", bottom: "var(--safe-area)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <span>🎮</span>
         <span>{language === "zh" ? "答题" : "Quiz"}</span>
@@ -108,7 +108,7 @@ export function QuizPanel() {
 
   if (quizState === "result") {
     return (
-      <div className="pointer-events-auto fixed inset-0 z-20 flex items-center justify-center bg-black/50 p-4">
+      <div className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/50 p-5" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
         <div className="flex max-w-sm flex-col items-center gap-6 rounded-[20px] bg-white/95 p-8 shadow-2xl backdrop-blur-xl">
           <p className="text-2xl font-bold text-amber-800">
             {language === "zh" ? "太棒了！" : "Great job!"}
@@ -142,14 +142,14 @@ export function QuizPanel() {
   const options = currentQuestion!.options ?? [];
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-20 flex items-center justify-center bg-black/50 p-4">
+    <div className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/50 p-5" style={{ zIndex: "var(--z-modal)", animation: "panelScaleFade var(--panel-duration) var(--panel-ease)" }}>
       <div
         className={`flex max-w-md flex-col gap-6 rounded-[20px] bg-white/95 p-6 shadow-2xl backdrop-blur-xl transition-all ${
           feedback === "correct" ? "animate-quiz-correct" : ""
         } ${feedback === "wrong" ? "animate-quiz-shake" : ""}`}
       >
         {feedback === "correct" && (
-          <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
+          <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
             {CONFETTI_DOTS.map((dot, i) => (
               <div
                 key={i}
