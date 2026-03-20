@@ -19,6 +19,7 @@ export function BirdInfoCard() {
   const markStoryBirdDiscovered = useAppStore((s) => s.markStoryBirdDiscovered);
   const setAudioStatus = useAppStore((s) => s.setAudioStatus);
   const discoverBird = useAppStore((s) => s.discoverBird);
+  const setARViewerBird = useAppStore((s) => s.setARViewerBird);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -379,74 +380,105 @@ export function BirdInfoCard() {
               marginTop: SP.lg,
               marginBottom: SP.lg,
               display: "flex",
+              flexDirection: "column",
               gap: SP.sm,
             }}>
-              <button
-                type="button"
-                onClick={handleCollect}
-                disabled={isCollected}
-                style={{
-                  position: "relative",
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  borderRadius: 14,
-                  padding: "12px 0",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  border: "none",
-                  cursor: isCollected ? "default" : "pointer",
-                  transition: "transform 0.15s",
-                  background: isCollected ? "#dcfce7" : "#f59e0b",
-                  color: isCollected ? "#15803d" : "white",
-                }}
-              >
-                {isCollected ? (
-                  <>{language === "zh" ? "✓ 已收集" : "✓ Collected"}</>
-                ) : (
-                  <>{language === "zh" ? "⭐ 收集" : "⭐ Collect"}</>
-                )}
-                {showSparkle && <CollectSparkle />}
-              </button>
+              <div style={{ display: "flex", gap: SP.sm }}>
+                <button
+                  type="button"
+                  onClick={handleCollect}
+                  disabled={isCollected}
+                  style={{
+                    position: "relative",
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    borderRadius: 14,
+                    padding: "12px 0",
+                    fontSize: 14,
+                    fontWeight: 700,
+                    border: "none",
+                    cursor: isCollected ? "default" : "pointer",
+                    transition: "transform 0.15s",
+                    background: isCollected ? "#dcfce7" : "#f59e0b",
+                    color: isCollected ? "#15803d" : "white",
+                  }}
+                >
+                  {isCollected ? (
+                    <>{language === "zh" ? "✓ 已收集" : "✓ Collected"}</>
+                  ) : (
+                    <>{language === "zh" ? "⭐ 收集" : "⭐ Collect"}</>
+                  )}
+                  {showSparkle && <CollectSparkle />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleListen}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    borderRadius: 14,
+                    padding: "12px 16px",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "transform 0.15s, background 0.15s",
+                    background: audioStatus === "playing" ? "#0ea5e9" : "#e0f2fe",
+                    color: audioStatus === "playing" ? "white" : "#0369a1",
+                  }}
+                  aria-label={language === "zh" ? "播放声音" : "Listen"}
+                >
+                  {audioStatus === "loading" ? (
+                    <span style={{
+                      display: "inline-block",
+                      width: 16,
+                      height: 16,
+                      border: "2px solid rgba(3,105,161,0.3)",
+                      borderTopColor: "#0369a1",
+                      borderRadius: "50%",
+                      animation: "spin 0.6s linear infinite",
+                    }} />
+                  ) : audioStatus === "playing" ? (
+                    <AudioBars />
+                  ) : (
+                    "🔊"
+                  )}
+                  <span>{language === "zh" ? "聆听" : "Listen"}</span>
+                </button>
+              </div>
 
               <button
                 type="button"
-                onClick={handleListen}
+                onClick={() => {
+                  if (selectedBirdId) {
+                    setARViewerBird(selectedBirdId);
+                  }
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 6,
                   borderRadius: 14,
-                  padding: "12px 16px",
+                  padding: "12px 0",
                   fontSize: 14,
                   fontWeight: 600,
                   border: "none",
                   cursor: "pointer",
                   transition: "transform 0.15s, background 0.15s",
-                  background: audioStatus === "playing" ? "#0ea5e9" : "#e0f2fe",
-                  color: audioStatus === "playing" ? "white" : "#0369a1",
+                  background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
+                  color: "white",
                 }}
-                aria-label={language === "zh" ? "播放声音" : "Listen"}
+                aria-label={language === "zh" ? "AR查看" : "View in AR"}
               >
-                {audioStatus === "loading" ? (
-                  <span style={{
-                    display: "inline-block",
-                    width: 16,
-                    height: 16,
-                    border: "2px solid rgba(3,105,161,0.3)",
-                    borderTopColor: "#0369a1",
-                    borderRadius: "50%",
-                    animation: "spin 0.6s linear infinite",
-                  }} />
-                ) : audioStatus === "playing" ? (
-                  <AudioBars />
-                ) : (
-                  "🔊"
-                )}
-                <span>{language === "zh" ? "聆听" : "Listen"}</span>
+                <span>📱</span>
+                <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
               </button>
             </div>
           </div>

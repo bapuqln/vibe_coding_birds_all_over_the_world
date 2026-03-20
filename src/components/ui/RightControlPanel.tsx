@@ -26,6 +26,8 @@ export function RightControlPanel() {
   const startTour = useAppStore((s) => s.startTour);
   const tourState = useAppStore((s) => s.tourState);
   const setActiveRegion = useAppStore((s) => s.setActiveRegion);
+  const heatmapVisible = useAppStore((s) => s.heatmapVisible);
+  const setHeatmapVisible = useAppStore((s) => s.setHeatmapVisible);
 
   const handleDiscover = () => {
     const bird = pickRandomBird(selectedBirdId);
@@ -86,6 +88,15 @@ export function RightControlPanel() {
         ariaLabel={language === "zh" ? "迁徙模式" : "Migration"}
       >
         {language === "zh" ? "迁徙" : "Migration"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setHeatmapVisible(!heatmapVisible)}
+        active={heatmapVisible}
+        icon="🗺️"
+        ariaLabel={language === "zh" ? "鸟类分布" : "Heatmap"}
+      >
+        {language === "zh" ? "分布" : "Heatmap"}
       </ActionButton>
 
       <ActionButton

@@ -23,7 +23,9 @@
     "wingspanCm": 198,
     "rarity": "rare",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "collared-kingfisher",
@@ -49,7 +51,9 @@
     "wingspanCm": 43,
     "rarity": "common",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "red-crowned-crane",
@@ -57,8 +61,8 @@
     "pinyin": "dān dǐng hè",
     "nameEn": "Red-crowned Crane",
     "scientificName": "Grus japonensis",
-    "lat": 43.0,
-    "lng": 145.0,
+    "lat": 43,
+    "lng": 145,
     "region": "asia",
     "funFactZh": "丹顶鹤是世界上最优雅的鸟之一！它们会跳美丽的求偶舞蹈，在日本被视为长寿的象征。",
     "funFactEn": "Red-crowned Cranes are among the world's most elegant birds! They perform beautiful courtship dances and symbolize longevity in Japan.",
@@ -75,7 +79,9 @@
     "wingspanCm": 235,
     "rarity": "legendary",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "mandarin-duck",
@@ -101,7 +107,9 @@
     "wingspanCm": 70,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "great-hornbill",
@@ -127,7 +135,9 @@
     "wingspanCm": 155,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "himalayan-monal",
@@ -153,7 +163,9 @@
     "wingspanCm": 80,
     "rarity": "rare",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "indian-peafowl",
@@ -179,7 +191,9 @@
     "wingspanCm": 150,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "european-robin",
@@ -205,7 +219,9 @@
     "wingspanCm": 21,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "atlantic-puffin",
@@ -231,7 +247,9 @@
     "wingspanCm": 55,
     "rarity": "rare",
     "storyTheme": "arctic",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "lilac-breasted-roller",
@@ -257,7 +275,9 @@
     "wingspanCm": 54,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "secretary-bird",
@@ -283,7 +303,9 @@
     "wingspanCm": 206,
     "rarity": "legendary",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "african-grey-parrot",
@@ -309,7 +331,9 @@
     "wingspanCm": 49,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "shoebill",
@@ -335,7 +359,9 @@
     "wingspanCm": 245,
     "rarity": "legendary",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "marabou-stork",
@@ -343,7 +369,7 @@
     "pinyin": "fēi zhōu tū guàn",
     "nameEn": "Marabou Stork",
     "scientificName": "Leptoptilos crumenifer",
-    "lat": -6.3690,
+    "lat": -6.369,
     "lng": 34.8888,
     "region": "africa",
     "funFactZh": "非洲秃鹳是非洲最大的飞行鸟之一！它们的翼展可达3.7米，比一辆小汽车还宽。",
@@ -361,7 +387,9 @@
     "wingspanCm": 300,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "bald-eagle",
@@ -387,7 +415,9 @@
     "wingspanCm": 205,
     "rarity": "legendary",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "snowy-owl",
@@ -413,7 +443,9 @@
     "wingspanCm": 138,
     "rarity": "rare",
     "storyTheme": "arctic",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "peregrine-falcon",
@@ -439,7 +471,9 @@
     "wingspanCm": 97,
     "rarity": "rare",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "canada-goose",
@@ -465,7 +499,9 @@
     "wingspanCm": 156,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
   },
   {
     "id": "california-condor",
@@ -491,7 +527,9 @@
     "wingspanCm": 285,
     "rarity": "legendary",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "northern-cardinal",
@@ -517,7 +555,9 @@
     "wingspanCm": 28,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "andean-condor",
@@ -544,7 +584,9 @@
     "wingspanCm": 300,
     "rarity": "legendary",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "harpy-eagle",
@@ -570,7 +612,9 @@
     "wingspanCm": 200,
     "rarity": "legendary",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "scarlet-macaw",
@@ -596,7 +640,9 @@
     "wingspanCm": 105,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "hoatzin",
@@ -605,7 +651,7 @@
     "nameEn": "Hoatzin",
     "scientificName": "Opisthocomus hoazin",
     "lat": -3.4653,
-    "lng": -60.0,
+    "lng": -60,
     "region": "south-america",
     "funFactZh": "麝雉是一种非常古老的鸟！它的幼鸟翅膀上有爪子，可以像小恐龙一样爬树。",
     "funFactEn": "Hoatzins are ancient birds! Their chicks have claws on their wings and can climb trees like little dinosaurs.",
@@ -622,7 +668,9 @@
     "wingspanCm": 63,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "toco-toucan",
@@ -648,7 +696,9 @@
     "wingspanCm": 55,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "kookaburra",
@@ -674,7 +724,9 @@
     "wingspanCm": 61,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "cassowary",
@@ -700,7 +752,9 @@
     "wingspanCm": 0,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "kiwi",
@@ -726,7 +780,9 @@
     "wingspanCm": 0,
     "rarity": "rare",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "sulphur-crested-cockatoo",
@@ -752,7 +808,9 @@
     "wingspanCm": 90,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "superb-fairywren",
@@ -778,7 +836,9 @@
     "wingspanCm": 16,
     "rarity": "common",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "emperor-penguin",
@@ -804,7 +864,9 @@
     "wingspanCm": 83,
     "rarity": "legendary",
     "storyTheme": "arctic",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "wandering-albatross",
@@ -812,8 +874,8 @@
     "pinyin": "piāo bó xìn tiān wēng",
     "nameEn": "Wandering Albatross",
     "scientificName": "Diomedea exulans",
-    "lat": -54.0,
-    "lng": -38.0,
+    "lat": -54,
+    "lng": -38,
     "region": "antarctica",
     "funFactZh": "漂泊信天翁拥有世界上最大的翼展，可达3.5米！它们可以在海上飞行数年不着陆。",
     "funFactEn": "Wandering Albatrosses have the largest wingspan of any bird — up to 3.5 metres! They can fly over the ocean for years without landing.",
@@ -830,7 +892,9 @@
     "wingspanCm": 300,
     "rarity": "rare",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
   },
   {
     "id": "arctic-tern",
@@ -838,8 +902,8 @@
     "pinyin": "běi jí yàn ōu",
     "nameEn": "Arctic Tern",
     "scientificName": "Sterna paradisaea",
-    "lat": 66.0,
-    "lng": -18.0,
+    "lat": 66,
+    "lng": -18,
     "region": "europe",
     "funFactZh": "北极燕鸥是世界上迁徙距离最长的鸟！它们每年从北极飞到南极再飞回来，一生飞行距离相当于往返月球三次。",
     "funFactEn": "Arctic Terns have the longest migration of any bird! They fly from Arctic to Antarctic and back each year — a lifetime distance equal to 3 trips to the Moon and back.",
@@ -857,7 +921,9 @@
     "wingspanCm": 70,
     "rarity": "rare",
     "storyTheme": "arctic",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
   },
   {
     "id": "resplendent-quetzal",
@@ -883,7 +949,9 @@
     "wingspanCm": 58,
     "rarity": "legendary",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "blue-footed-booby",
@@ -909,7 +977,9 @@
     "wingspanCm": 155,
     "rarity": "rare",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "greater-flamingo",
@@ -935,7 +1005,9 @@
     "wingspanCm": 155,
     "rarity": "common",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "golden-eagle",
@@ -961,7 +1033,9 @@
     "wingspanCm": 203,
     "rarity": "rare",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "barn-owl",
@@ -987,7 +1061,9 @@
     "wingspanCm": 88,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "ostrich",
@@ -995,8 +1071,8 @@
     "pinyin": "tuó niǎo",
     "nameEn": "Ostrich",
     "scientificName": "Struthio camelus",
-    "lat": -2.0,
-    "lng": 30.0,
+    "lat": -2,
+    "lng": 30,
     "region": "africa",
     "funFactZh": "鸵鸟是世界上最大的鸟！虽然不会飞，但它们跑得比马还快，时速可达70公里。",
     "funFactEn": "Ostriches are the world's largest birds! They can't fly but run faster than horses — up to 70 km/h.",
@@ -1013,7 +1089,9 @@
     "wingspanCm": 0,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "emu",
@@ -1039,7 +1117,9 @@
     "wingspanCm": 0,
     "rarity": "common",
     "storyTheme": "grassland",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "kakapo",
@@ -1065,7 +1145,9 @@
     "wingspanCm": 0,
     "rarity": "legendary",
     "storyTheme": "rainforest",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "magnificent-frigatebird",
@@ -1074,7 +1156,7 @@
     "nameEn": "Magnificent Frigatebird",
     "scientificName": "Fregata magnificens",
     "lat": 0.3,
-    "lng": -91.0,
+    "lng": -91,
     "region": "south-america",
     "funFactZh": "华丽军舰鸟的雄鸟有一个鲜红色的喉囊，求偶时会像气球一样膨胀起来！",
     "funFactEn": "Male Magnificent Frigatebirds have a bright red throat pouch that inflates like a balloon during courtship!",
@@ -1091,7 +1173,9 @@
     "wingspanCm": 230,
     "rarity": "rare",
     "storyTheme": "ocean",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   },
   {
     "id": "king-penguin",
@@ -1117,6 +1201,260 @@
     "wingspanCm": 0,
     "rarity": "rare",
     "storyTheme": "arctic",
-    "soundUrl": ""
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
+  },
+  {
+    "id": "barn-swallow",
+    "nameZh": "家燕",
+    "pinyin": "jiā yàn",
+    "nameEn": "Barn Swallow",
+    "scientificName": "Hirundo rustica",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "region": "europe",
+    "funFactZh": "家燕每年从欧洲飞到非洲过冬，往返距离超过2万公里！它们能在飞行中捕捉昆虫。",
+    "funFactEn": "Barn Swallows migrate from Europe to Africa each year — over 20,000 km round trip! They catch insects while flying.",
+    "photoUrl": "/images/birds/barn-swallow.jpg",
+    "xenoCantoQuery": "Hirundo rustica",
+    "silhouette": "fairy-pitta",
+    "sizeCategory": "small",
+    "habitatType": "grassland",
+    "diet": "Flying insects",
+    "wingspan": "32–35 cm",
+    "lifespan": "~4 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 34,
+    "rarity": "common",
+    "storyTheme": "grassland",
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
+  },
+  {
+    "id": "bar-tailed-godwit",
+    "nameZh": "斑尾塍鹬",
+    "pinyin": "bān wěi chéng yù",
+    "nameEn": "Bar-tailed Godwit",
+    "scientificName": "Limosa lapponica",
+    "lat": -36.8485,
+    "lng": 174.7633,
+    "region": "oceania",
+    "funFactZh": "斑尾塍鹬创造了不间断飞行的世界纪录！它们可以连续飞行11天，从阿拉斯加到新西兰，不吃不喝不休息。",
+    "funFactEn": "Bar-tailed Godwits hold the record for longest non-stop flight! They fly 11 days straight from Alaska to New Zealand without eating, drinking, or resting.",
+    "photoUrl": "/images/birds/bar-tailed-godwit.jpg",
+    "xenoCantoQuery": "Limosa lapponica",
+    "silhouette": "japanese-crane",
+    "sizeCategory": "medium",
+    "habitatType": "coast",
+    "diet": "Worms, shellfish, insects",
+    "wingspan": "62–75 cm",
+    "lifespan": "~25 years",
+    "evolutionEra": "neogene",
+    "dietType": "omnivore",
+    "wingspanCm": 69,
+    "rarity": "rare",
+    "storyTheme": "ocean",
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
+  },
+  {
+    "id": "snowy-egret",
+    "nameZh": "雪鹭",
+    "pinyin": "xuě lù",
+    "nameEn": "Snowy Egret",
+    "scientificName": "Egretta thula",
+    "lat": 29.7604,
+    "lng": -95.3698,
+    "region": "north-america",
+    "funFactZh": "雪鹭会用金黄色的脚在水中搅动来吸引鱼类！它们曾因美丽的羽毛差点被猎杀灭绝。",
+    "funFactEn": "Snowy Egrets wiggle their golden feet in water to attract fish! They were nearly hunted to extinction for their beautiful plumes.",
+    "photoUrl": "/images/birds/snowy-egret.jpg",
+    "xenoCantoQuery": "Egretta thula",
+    "silhouette": "japanese-crane",
+    "sizeCategory": "medium",
+    "habitatType": "wetlands",
+    "diet": "Fish, crustaceans, insects",
+    "wingspan": "92–105 cm",
+    "lifespan": "~16 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 99,
+    "rarity": "common",
+    "storyTheme": "ocean",
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
+  },
+  {
+    "id": "ruby-throated-hummingbird",
+    "nameZh": "红喉蜂鸟",
+    "pinyin": "hóng hóu fēng niǎo",
+    "nameEn": "Ruby-throated Hummingbird",
+    "scientificName": "Archilochus colubris",
+    "lat": 35.2271,
+    "lng": -80.8431,
+    "region": "north-america",
+    "funFactZh": "红喉蜂鸟每秒钟可以拍打翅膀53次！它们是唯一能向后飞行的鸟类，体重只有一枚硬币那么重。",
+    "funFactEn": "Ruby-throated Hummingbirds beat their wings 53 times per second! They're the only birds that can fly backwards, and weigh less than a coin.",
+    "photoUrl": "/images/birds/ruby-throated-hummingbird.jpg",
+    "xenoCantoQuery": "Archilochus colubris",
+    "silhouette": "superb-fairywren",
+    "sizeCategory": "tiny",
+    "habitatType": "forest",
+    "diet": "Nectar, insects",
+    "wingspan": "8–11 cm",
+    "lifespan": "~5 years",
+    "evolutionEra": "neogene",
+    "dietType": "insects",
+    "wingspanCm": 10,
+    "rarity": "common",
+    "storyTheme": "rainforest",
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
+  },
+  {
+    "id": "galapagos-penguin",
+    "nameZh": "加拉帕戈斯企鹅",
+    "pinyin": "jiā lā pà gē sī qǐ é",
+    "nameEn": "Galápagos Penguin",
+    "scientificName": "Spheniscus mendiculus",
+    "lat": -0.9538,
+    "lng": -90.9656,
+    "region": "south-america",
+    "funFactZh": "加拉帕戈斯企鹅是唯一生活在赤道以北的企鹅！它们是世界上最稀有的企鹅之一。",
+    "funFactEn": "Galápagos Penguins are the only penguins found north of the equator! They're among the rarest penguins in the world.",
+    "photoUrl": "/images/birds/galapagos-penguin.jpg",
+    "xenoCantoQuery": "Spheniscus mendiculus",
+    "silhouette": "emperor-penguin",
+    "sizeCategory": "small",
+    "habitatType": "coast",
+    "diet": "Small fish, crustaceans",
+    "wingspan": "0 cm (flightless)",
+    "lifespan": "~15 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 0,
+    "rarity": "legendary",
+    "storyTheme": "ocean",
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
+  },
+  {
+    "id": "superb-lyrebird",
+    "nameZh": "华丽琴鸟",
+    "pinyin": "huá lì qín niǎo",
+    "nameEn": "Superb Lyrebird",
+    "scientificName": "Menura novaehollandiae",
+    "lat": -33.7,
+    "lng": 150.3,
+    "region": "oceania",
+    "funFactZh": "华丽琴鸟是自然界最厉害的模仿者！它们可以模仿电锯、汽车警报器甚至相机快门的声音。",
+    "funFactEn": "Superb Lyrebirds are nature's greatest mimics! They can imitate chainsaws, car alarms, and even camera shutters.",
+    "photoUrl": "/images/birds/superb-lyrebird.jpg",
+    "xenoCantoQuery": "Menura novaehollandiae",
+    "silhouette": "northern-cardinal",
+    "sizeCategory": "large",
+    "habitatType": "rainforest",
+    "diet": "Insects, worms, spiders",
+    "wingspan": "70–80 cm",
+    "lifespan": "~15 years",
+    "evolutionEra": "paleogene",
+    "dietType": "insects",
+    "wingspanCm": 75,
+    "rarity": "rare",
+    "storyTheme": "rainforest",
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
+  },
+  {
+    "id": "white-stork",
+    "nameZh": "白鹳",
+    "pinyin": "bái guàn",
+    "nameEn": "White Stork",
+    "scientificName": "Ciconia ciconia",
+    "lat": 52.52,
+    "lng": 13.405,
+    "region": "europe",
+    "funFactZh": "白鹳是欧洲最受欢迎的鸟之一！传说中它们会给家庭带来好运和新生的婴儿。",
+    "funFactEn": "White Storks are among Europe's most beloved birds! Legend says they bring good luck and deliver babies to families.",
+    "photoUrl": "/images/birds/white-stork.jpg",
+    "xenoCantoQuery": "Ciconia ciconia",
+    "silhouette": "japanese-crane",
+    "sizeCategory": "large",
+    "habitatType": "wetlands",
+    "diet": "Frogs, fish, insects",
+    "wingspan": "155–215 cm",
+    "lifespan": "~25 years",
+    "evolutionEra": "neogene",
+    "dietType": "omnivore",
+    "wingspanCm": 185,
+    "rarity": "common",
+    "storyTheme": "grassland",
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
+  },
+  {
+    "id": "toucan-barbet",
+    "nameZh": "巨嘴拟啄木鸟",
+    "pinyin": "jù zuǐ nǐ zhuó mù niǎo",
+    "nameEn": "Toucan Barbet",
+    "scientificName": "Semnornis ramphastinus",
+    "lat": 0.1807,
+    "lng": -78.4678,
+    "region": "south-america",
+    "funFactZh": "巨嘴拟啄木鸟有着彩虹般的羽毛！它们是少数会合作筑巢的鸟类，一家人住在同一个树洞里。",
+    "funFactEn": "Toucan Barbets have rainbow-colored plumage! They're among the few birds that nest cooperatively — the whole family shares one tree hole.",
+    "photoUrl": "/images/birds/toucan-barbet.jpg",
+    "xenoCantoQuery": "Semnornis ramphastinus",
+    "silhouette": "toco-toucan",
+    "sizeCategory": "small",
+    "habitatType": "rainforest",
+    "diet": "Fruit, insects",
+    "wingspan": "30–35 cm",
+    "lifespan": "~12 years",
+    "evolutionEra": "neogene",
+    "dietType": "fruit",
+    "wingspanCm": 33,
+    "rarity": "rare",
+    "storyTheme": "rainforest",
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
+  },
+  {
+    "id": "african-fish-eagle",
+    "nameZh": "非洲鱼鹰",
+    "pinyin": "fēi zhōu yú yīng",
+    "nameEn": "African Fish Eagle",
+    "scientificName": "Haliaeetus vocifer",
+    "lat": -15.4167,
+    "lng": 28.2833,
+    "region": "africa",
+    "funFactZh": "非洲鱼鹰的叫声是非洲最具标志性的声音之一！它们可以在飞行中从水面抓起2公斤重的鱼。",
+    "funFactEn": "The African Fish Eagle's call is one of Africa's most iconic sounds! They can snatch fish weighing up to 2 kg from the water while flying.",
+    "photoUrl": "/images/birds/african-fish-eagle.jpg",
+    "xenoCantoQuery": "Haliaeetus vocifer",
+    "silhouette": "bald-eagle",
+    "sizeCategory": "large",
+    "habitatType": "wetlands",
+    "diet": "Fish, waterbirds",
+    "wingspan": "175–210 cm",
+    "lifespan": "~24 years",
+    "evolutionEra": "neogene",
+    "dietType": "fish",
+    "wingspanCm": 193,
+    "rarity": "rare",
+    "storyTheme": "ocean",
+    "soundUrl": "",
+    "migration": false,
+    "model": ""
   }
 ]

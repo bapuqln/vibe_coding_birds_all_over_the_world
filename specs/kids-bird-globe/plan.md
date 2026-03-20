@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v11)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v12)
 
+> **v12 changelog**: Full-scope expansion — dataset to 50+ birds, migration visualization with animated arcs and moving dots, bird distribution heatmap layer, AR bird viewing mode, enhanced bird click animations (flap, hop, look, circle flight), performance optimization with KTX2 textures and lazy loading, educational features (wingspan bar, fun facts).
+>
 > **v11 changelog**: Full-scope upgrade — UI layout overhaul with strict flex-column card structure and spacing tokens, 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 40+ species, bird sound playback feature, bird discovery system with "New bird discovered!" notification, exploration progress system with continent-level tracking, bird click animations (wing flap, lift, rotate), performance optimizations (lazy loading, visibility culling), child-friendly design polish (glass-morphism, tag colors, wingspan bar).
 >
 > **v10 changelog**: Major upgrade — UI layout overhaul with strict flex-column card structure and spacing tokens, 3D bird model system with GLTFLoader and LOD switching, bird dataset expansion to 30+ species, bird sound playback feature, performance optimizations (lazy loading, visibility culling), child-friendly design polish (glass-morphism, tag colors, wingspan bar).
@@ -8,7 +10,7 @@
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
 
-## High-Level Architecture (v11)
+## High-Level Architecture (v12)
 
 ```
 App.tsx
@@ -23,9 +25,10 @@ App.tsx
 │           │   ├── CloudLayer
 │           │   ├── CountryBorders (GeoJSON)
 │           │   ├── HabitatHighlight
-│           │   ├── BirdMarker × 40+ (3D model + LOD + tooltip + click animation) [z-index: 1]
+│           │   ├── BirdMarker × 50+ (3D model + LOD + tooltip + click animation) [z-index: 1]
 │           │   ├── SoundRipple
-│           │   ├── MigrationPaths (all-routes + migration mode)
+│           │   ├── MigrationPaths (animated arcs + moving dots)
+│           │   ├── HeatmapLayer (bird density visualization)
 │           │   └── RarityEffects (glow/particles for rare birds)
 │           ├── MapLabels (Html, zoom-dependent, clickable)
 │           ├── CameraController (fly-to, auto-rotate, region zoom, tour)
@@ -42,6 +45,7 @@ App.tsx
 │   ├── ActionButton "Birds" → BirdEncyclopediaPanel
 │   ├── ActionButton "Regions" → RegionFilterPanel
 │   ├── ActionButton "Migration" → MigrationModePanel
+│   ├── ActionButton "Heatmap" → toggle heatmap layer
 │   ├── ActionButton "Quests" → QuestPanel
 │   ├── ActionButton "Tour" → GuidedTour
 │   └── ActionButton "Reset" → reset view
@@ -52,8 +56,10 @@ App.tsx
 │   ├── FunFact (amber card with "Did you know?")
 │   ├── TagRow (continent=blue, habitat=green, lifespan=orange)
 │   ├── InfoGrid (size, diet, wingspan bar)
-│   ├── ActionButtons (Collect + Listen)
+│   ├── ActionButtons (Collect + Listen + View in AR)
 │   └── Close button
+│
+├── ARViewerModal (camera overlay + 3D model) [z-index: 30]
 │
 ├── DiscoveryNotification ("New bird discovered!") [z-index: 25]
 │
@@ -73,206 +79,115 @@ App.tsx
 └── BirdTooltip [z-index: 15]
 ```
 
-## Key Technical Decisions (v11)
+## Key Technical Decisions (v12)
+
+### TD-77: Dataset Expansion to 50+
+**Problem**: 47 birds is insufficient for the target of 50+ with comprehensive global coverage.
+**Solution**: Add additional birds to reach 50+ total: Barn Swallow (Europe/Africa migration), Bar-tailed Godwit (record migration), Snowy Egret (North America), Ruby-throated Hummingbird (North America), Galápagos Penguin (South America), Superb Lyrebird (Oceania). Each with complete data fields including migration flag and model path.
+
+### TD-78: Migration Route Visualization Enhancement
+**Problem**: Current migration routes reference non-existent bird IDs and lack visual impact.
+**Solution**: Fix migration data to reference actual bird IDs. Add Arctic Tern (Arctic to Antarctic), Bar-tailed Godwit (Alaska to New Zealand), Barn Swallow (Europe to Africa) routes. Enhance visualization with glowing arc lines (emissive shader) and animated moving dots along the path. Each route has a distinct color.
+
+### TD-79: Bird Distribution Heatmap
+**Problem**: No visualization of global bird diversity patterns.
+**Solution**: Create `HeatmapLayer` component that renders a semi-transparent sphere overlay slightly above the globe. Generate heatmap from bird coordinates using Gaussian kernel density estimation. Color gradient: blue (few birds) → green (moderate) → red (high diversity). Toggle via "Bird Diversity Map" button in control panel. Implemented as a custom shader on a sphere mesh.
+
+### TD-80: AR Bird Viewing Mode
+**Problem**: No way to view birds in real-world context.
+**Solution**: Add `ARViewerModal` component. On supported devices, use `navigator.mediaDevices.getUserMedia` to access camera feed, overlay 3D bird model using a secondary Three.js canvas. Touch controls for rotate/zoom. Graceful fallback: show 3D model viewer without camera background on unsupported devices. Button appears on bird info card.
+
+### TD-81: Enhanced Bird Click Animations
+**Problem**: Click animation is limited to wing flap, lift, and rotate.
+**Solution**: Extend animation sequence: (1) rapid wing flap 0.3s, (2) short hop upward 0.2s, (3) rotate to face camera 0.3s, (4) brief circle flight around position 0.5s. Total animation ~1.3s. Implemented via state machine in `useFrame` with phase tracking. Animations feel playful and child-friendly.
+
+### TD-82: Performance — KTX2 Textures
+**Problem**: Texture loading can be slow on mobile devices.
+**Solution**: Where possible, use KTX2 compressed textures via `@react-three/drei`'s `useKTX2` or manual KTX2Loader. Fallback to standard textures if KTX2 not supported. Maintain max 15 simultaneous 3D models with distance-based culling.
+
+## Key Technical Decisions (v11 — preserved)
 
 ### TD-73: Bird Discovery System
-**Problem**: No first-time discovery mechanic — children have no sense of achievement when finding new birds.
-**Solution**: Track discovered birds separately in localStorage. When a bird is clicked for the first time, show "New bird discovered!" notification with celebration animation. Discovery count displayed as "12/40 birds discovered". Collection screen shows discovered birds with details and locked/undiscovered birds as silhouettes.
+**Problem**: No first-time discovery mechanic.
+**Solution**: Track discovered birds in localStorage. Show "New bird discovered!" notification on first click. Discovery count: "12/50 birds discovered". Collection screen shows discovered and locked birds.
 
 ### TD-74: Exploration Progress System
 **Problem**: No global or continent-level progress tracking.
-**Solution**: Add `DiscoveryProgressBar` component showing global progress ("Bird Discovery Progress — 12/40 Birds Found") with a visual progress bar. Add continent-level breakdown (e.g. "Asia: 3/8", "Africa: 2/6"). Progress updates in real-time as birds are discovered. Data derived from discovery state in localStorage.
+**Solution**: `DiscoveryProgressBar` showing global progress with continent breakdown. Real-time updates.
 
 ### TD-75: Bird Click Animation
 **Problem**: Clicking a bird has no visual feedback beyond pausing movement.
-**Solution**: On click, trigger a short animation sequence: (1) rapid wing flap for 0.5s, (2) bird lifts 0.02 units along surface normal, (3) bird rotates to face camera direction. Animation is playful and does not block interaction. Implemented in `useFrame` with click timestamp tracking.
+**Solution**: On click, trigger animation: wing flap, lift, rotate to camera. Implemented in `useFrame`.
 
-### TD-76: Dataset Expansion to 40+
-**Problem**: 30 birds is insufficient for a rich educational experience.
-**Solution**: Expand to 40+ birds with additional species: Resplendent Quetzal, Blue-footed Booby, Flamingo, Golden Eagle, Barn Owl, Ostrich, Emu, Kakapo, Frigatebird, King Penguin, Snowy Egret, Toucan Barbet. Each with full data fields.
+### TD-76: Dataset Expansion
+**Problem**: Dataset needs more birds for educational value.
+**Solution**: Expand to 50+ birds covering all continents with complete data fields.
 
 ## Key Technical Decisions (v10 — preserved)
 
 ### TD-63: UI Layout Overhaul — Strict Flex-Column Card
-**Problem**: Bird info card sections overlap each other, bottom tags overflow the card container, layout breaks on smaller screens.
-**Solution**: Refactor BirdInfoCard to use strict flex-column layout with no absolute positioning inside the card. Structure: ImageHeader → TitleSection → FunFact → TagRow → InfoGrid → ActionButtons. Use spacing tokens (xs=6px, sm=10px, md=16px, lg=24px, xl=32px). Tag row uses `flex-wrap: wrap; gap: 8px`. Card uses `max-height: 80vh; overflow-y: auto`. Glass-morphism with `border-radius: 20px`.
+**Problem**: Bird info card sections overlap.
+**Solution**: Strict flex-column layout. Structure: ImageHeader → TitleSection → FunFact → TagRow → InfoGrid → ActionButtons. Spacing tokens. Tag row wraps. Card scrolls at 80vh. Glass-morphism with border-radius 20px.
 
-### TD-64: Tag Row Overflow Fix
-**Problem**: Tags overflow the card container on narrow screens.
-**Solution**: Tag row uses `display: flex; flex-wrap: wrap; gap: 8px`. Tags wrap to next line instead of overflowing. Tag colors: continent=blue, habitat=green, lifespan=orange.
+### TD-64–TD-72: (preserved from v10/v11)
+See previous plan versions for details on tag overflow fix, sidebar alignment, 3D model system, LOD, sound feature, performance, and design polish.
 
-### TD-65: Sidebar Button Alignment
-**Problem**: Floating sidebar buttons have inconsistent sizes and may overlap the globe.
-**Solution**: All sidebar buttons have identical width and height. Position: `fixed; left: 24px; top: 120px`. Layout: `flex; flex-direction: column; gap: 16px`. Buttons never overlap the globe.
-
-### TD-66: Card Scroll Behavior
-**Problem**: Bird information panel content overflows the container.
-**Solution**: Card uses `max-height: 80vh; overflow-y: auto`. Content scrolls within the container and never overflows.
-
-### TD-67: 3D Bird Model System
-**Problem**: App uses simple colored meshes instead of realistic bird models.
-**Solution**: Use Three.js GLTFLoader via `@react-three/drei`'s `useGLTF` to load GLB bird models. Each bird location displays a small 3D model with idle animation (wing flap), slow floating motion, and gentle rotation. Scale: 0.2–0.3 relative to marker size. Sources: Sketchfab free models, PolyPizza, Google Poly archive.
-
-### TD-68: LOD (Level of Detail) System
-**Problem**: Loading 40+ 3D models simultaneously is too expensive.
-**Solution**: When camera is far from a bird location, show a simple icon marker (sphere with emissive material). When camera zooms closer, load and display the 3D bird model. Limit max simultaneous 3D models to 15. Use distance-based culling to determine which birds get 3D models.
-
-### TD-69: Bird Dataset Expansion
-**Problem**: Current dataset needs more birds for educational value.
-**Solution**: Expand to 40+ birds covering all continents: South America (Andean Condor, Harpy Eagle, Scarlet Macaw, Hoatzin, Toco Toucan), North America (Bald Eagle, Snowy Owl, Peregrine Falcon, Canada Goose, California Condor), Africa (Secretary Bird, African Grey Parrot, Shoebill, Marabou Stork, Lilac-breasted Roller), Asia (Red-crowned Crane, Mandarin Duck, Great Hornbill, Himalayan Monal, Indian Peafowl), Oceania (Kookaburra, Cassowary, Kiwi, Sulphur-crested Cockatoo), Polar (Emperor Penguin, Albatross, Puffin, Arctic Tern), plus additional species.
-
-### TD-70: Bird Sound Feature
-**Problem**: No dedicated sound playback button on bird card.
-**Solution**: Add "Listen" button with speaker icon on bird info card. Clicking plays bird call audio via xeno-canto API or direct soundUrl. Audio files lazy-loaded and compressed. Visual feedback with animated audio bars during playback.
-
-### TD-71: Performance — Model Lazy Loading
-**Problem**: Loading all bird models at once causes performance issues.
-**Solution**: Only load bird models when they enter the visible region. Limit simultaneously visible models to 15. If more birds are nearby, fallback to icon markers. Use texture compression (KTX2) where possible.
-
-### TD-72: Child-Friendly Design Polish
-**Problem**: Card style needs more visual appeal for children.
-**Solution**: Glass-morphism cards with `border-radius: 20px`, soft shadow, semi-transparent background. Tag color rules: continent=blue, habitat=green, lifespan=orange. Fun Fact section with "Did you know?" prompt. Habitat tags displayed prominently. Wingspan visualization bar showing comparison to child's arm span.
-
-## Key Technical Decisions (v8+v9 — preserved)
-
-### TD-47: UI System Overhaul — ActionButton Component
-**Problem**: Buttons have inconsistent width, overlap each other, no defined layout zones.
-**Solution**: Create reusable `ActionButton` component with fixed dimensions (h-44px, min-w-120px, rounded-12px, glass-morphism bg). All action buttons live inside `RightControlPanel` container positioned at bottom-right with flex-column layout and 8px gap. Mobile responsive: horizontal layout below 900px.
-
-### TD-48: Z-Index Hierarchy
-**Problem**: UI elements overlap unpredictably.
-**Solution**: Enforce strict z-index layers: canvas=0, markers=1, HUD panels=10, tooltips=15, modal cards=20, loading=100. All components use these exact values.
-
-### TD-49: Bird Information Card Redesign
-**Problem**: Current card slides from side, blocks globe view.
-**Solution**: Redesign as center-bottom modal panel that slides up. Max height 80vh. Includes sound playback button and collect button. Does not overlap right control panel.
-
-### TD-50: Animated Bird Markers
-**Problem**: Static markers feel lifeless.
-**Solution**: Add subtle circular/floating flight animation to BirdMarker. Each bird orbits a small radius around its position using `useFrame`. Clicking pauses animation for 3 seconds. Keep animation lightweight — simple sin/cos position offset.
-
-### TD-51: Bird Collection System
-**Problem**: No way to save discovered birds.
-**Solution**: `useCollection` hook manages localStorage persistence. Collect button in info card triggers save with sparkle animation. `MyBirdsPanel` displays grid of collected bird thumbnails.
-
-### TD-52: Region Filter
-**Problem**: No way to explore birds by geographic region.
-**Solution**: `RegionFilterPanel` with 8 region buttons. Selecting a region triggers camera zoom and filters visible birds.
-
-### TD-53: Kid Quest System
-**Problem**: No gamification or goals for children.
-**Solution**: `QuestManager` system generates quests from templates. Quest types: find_region, collect_count, discover_bird. Progress tracked in localStorage.
-
-### TD-54: Migration Mode
-**Problem**: No dedicated migration exploration mode.
-**Solution**: `MigrationModePanel` provides focused migration exploration with animated routes and flying bird icons.
-
-### TD-55: Guided Discovery Tour
-**Problem**: Children may not know where to start exploring.
-**Solution**: `GuidedTour` orchestrates automated camera tour visiting predefined waypoints with featured birds.
-
-### TD-56: AI Bird Guide
-**Problem**: No contextual help or educational prompts.
-**Solution**: `BirdGuide` renders owl avatar at bottom-left with contextual messages. Auto-dismisses after 5 seconds.
-
-### TD-57: Bird Rarity System
-**Problem**: All birds feel equally important.
-**Solution**: Rarity field (common/rare/legendary) with visual effects: golden glow for rare, particle sparkle for legendary.
-
-### TD-58: Bird Radar
-**Problem**: Children may miss birds in their current view.
-**Solution**: `BirdRadar` renders circular radar in corner showing nearby bird positions.
-
-### TD-59: Story-Based Exploration
-**Problem**: No themed discovery experience.
-**Solution**: `StoryExplorer` offers themed bird sets with discovery progress and badge rewards.
-
-## Component Inventory (v11 additions)
+## Component Inventory (v12 additions)
 
 ### New Components
 | Component | Purpose | Version |
 |-----------|---------|---------|
-| `DiscoveryProgressBar.tsx` | Global + continent discovery progress display | v11 |
-| `DiscoveryNotification.tsx` | "New bird discovered!" celebration notification | v11 |
+| `HeatmapLayer.tsx` | Bird density heatmap overlay on globe | v12 |
+| `ARViewerModal.tsx` | AR bird viewing with camera overlay | v12 |
 
 ### Modified Components
 | Component | Changes | Version |
 |-----------|---------|---------|
-| `BirdInfoCard.tsx` | Strict flex-column layout, spacing tokens, tag colors, glass-morphism, Listen button, 80vh scroll, typography hierarchy | v11 |
-| `BirdMarker.tsx` | 3D model support, LOD system, enhanced animations, click animation (flap/lift/rotate) | v11 |
-| `RightControlPanel.tsx` | Consistent button sizing, no overlap | v11 |
-| `ActionButton.tsx` | Identical width/height enforcement | v11 |
-| `MyBirdsPanel.tsx` | Shows discovered + locked birds, discovery count | v11 |
-| `LoadingScreen.tsx` | Enhanced progress stages for 40+ birds | v11 |
+| `BirdInfoCard.tsx` | Add "View in AR" button, enhanced fun fact styling | v12 |
+| `BirdMarker.tsx` | Enhanced click animation (hop, circle flight) | v12 |
+| `RightControlPanel.tsx` | Add Heatmap toggle button | v12 |
+| `MigrationPaths.tsx` | Fix route references, add new migration routes | v12 |
+| `GlobeScene.tsx` | Add HeatmapLayer component | v12 |
 
 ### Data Files
 | File | Changes | Version |
 |------|---------|---------|
-| `birds.json` | Expanded to 40+ birds, added soundUrl field | v11 |
-| `stories.json` | Updated with new bird IDs | v11 |
+| `birds.json` | Expanded to 50+ birds, added migration/model fields | v12 |
+| `migrations.json` | Fixed references, added Arctic Tern/Godwit/Swallow routes | v12 |
 
 ### Store Changes
 | State | Changes | Version |
 |-------|---------|---------|
-| `discoveredBirds` | New: Set of discovered bird IDs in localStorage | v11 |
-| `discoveryNotification` | New: Currently showing discovery notification bird ID | v11 |
+| `heatmapVisible` | New: toggle for heatmap layer | v12 |
+| `arViewerBirdId` | New: bird ID for AR viewer modal | v12 |
 
-## State Management (v11)
+## State Management (v12)
 
 New Zustand store additions:
-- `discoveredBirds: string[]` — list of discovered bird IDs, persisted in localStorage.
-- `discoveryNotification: string | null` — bird ID for active "New bird discovered!" notification.
-- `discoverBird(birdId)` — marks bird as discovered, triggers notification.
-- `dismissDiscoveryNotification()` — clears notification.
+- `heatmapVisible: boolean` — toggle for bird distribution heatmap.
+- `setHeatmapVisible(visible)` — sets heatmap visibility.
+- `arViewerBirdId: string | null` — bird ID for AR viewer.
+- `setARViewerBird(birdId)` — opens AR viewer for bird.
 
-## Implementation Phases (v11)
+## Implementation Phases (v12)
 
-- Phase 85: Bird Discovery System — localStorage tracking, notification component → R-21
-- Phase 86: Exploration Progress — DiscoveryProgressBar, continent breakdown → R-22
-- Phase 87: Bird Click Animation — wing flap, lift, rotate in BirdMarker → R-23
-- Phase 88: Dataset Expansion to 40+ — additional birds in birds.json → R-2
-- Phase 89: UI Layout Hardening — verify zero overlap, spacing tokens, tag wrapping → R-4, R-19
-- Phase 90: MyBirdsPanel Enhancement — discovered/locked bird display → R-5
-- Phase 91: Performance Tuning — lazy loading verification, 60 FPS → R-20
-- Phase 92: Final Verification → All v11 ACs
+- Phase 93: Dataset Expansion to 50+ — additional birds in birds.json → R-2
+- Phase 94: Migration Route Fix & Enhancement — fix references, add new routes, glowing arcs → R-9
+- Phase 95: Bird Distribution Heatmap — HeatmapLayer component, toggle button → R-24
+- Phase 96: AR Bird Viewing Mode — ARViewerModal, camera overlay → R-25
+- Phase 97: Enhanced Bird Click Animations — hop, circle flight → R-23
+- Phase 98: UI Layout Hardening — verify all layout rules → R-4, R-19
+- Phase 99: Performance Optimization — KTX2, lazy loading verification → R-20
+- Phase 100: Final Verification → All v12 ACs
+
+## Implementation Phases (v11 — preserved)
+
+- Phase 85–92: See v11 plan for discovery system, progress, click animation, dataset expansion, UI hardening, MyBirdsPanel, performance, verification.
 
 ## Implementation Phases (v10 — preserved)
 
-- Phase 76: UI Layout Fix — BirdInfoCard strict flex-column, spacing tokens, tag colors → R-4, R-19
-- Phase 77: UI Layout Fix — Tag row overflow, card scroll, glass-morphism → R-4, R-19
-- Phase 78: UI Layout Fix — Sidebar buttons, right control panel alignment → R-19
-- Phase 79: 3D Bird Model System — GLTFLoader, LOD, animations → R-3
-- Phase 80: Bird Dataset Expansion — 30+ birds in birds.json → R-2
-- Phase 81: Bird Sound Feature — Listen button, audio playback → R-16
-- Phase 82: Performance Optimization — Lazy loading, visibility culling → R-20
-- Phase 83: Child-Friendly Design Polish — Glass-morphism, tag colors, wingspan bar → R-4
-- Phase 84: Final Verification → All v10 ACs
+- Phase 76–84: See v10 plan for UI layout, 3D models, dataset, sound, performance, design polish, verification.
 
-## Implementation Phases (v8 — preserved)
+## Implementation Phases (v8+v9 — preserved)
 
-- Phase 56: Data Model Extension (v8) → R-2
-- Phase 57: UI System — ActionButton + RightControlPanel → R-19
-- Phase 58: Bird Info Card Redesign → R-4
-- Phase 59: Animated Bird Markers + Tooltip → R-3
-- Phase 60: Bird Collection System → R-5
-- Phase 61: Region Filter → R-6
-- Phase 62: Kid Quest System → R-7
-- Phase 63: Loading UI Enhancement → R-19
-- Phase 64: Globe Visual Improvements → R-8
-
-## Implementation Phases (v9 — preserved)
-
-- Phase 65: Migration Mode → R-9
-- Phase 66: Guided Discovery Tour → R-10
-- Phase 67: AI Bird Guide → R-11
-- Phase 68: Enhanced Learning Quiz → R-12
-- Phase 69: Bird Rarity System → R-13
-- Phase 70: Bird Radar → R-14
-- Phase 71: Story-Based Exploration → R-15
-
-## Implementation Phases (Refactor + Polish — preserved)
-
-- Phase 72: UI Consistency Pass → R-19
-- Phase 73: Mobile Responsive + Safe Areas → R-19
-- Phase 74: Performance Optimization → R-20
-- Phase 75: Final Verification → All ACs
+- Phase 56–75: See v8/v9 plan for data model, UI system, info card, animated markers, collection, region filter, quests, loading, globe visuals, migration, tour, guide, quiz, rarity, radar, stories, consistency, responsive, performance, verification.

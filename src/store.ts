@@ -85,6 +85,10 @@ interface AppStore {
   discoveredBirds: string[];
   discoveryNotification: string | null;
 
+  // v12: Heatmap and AR
+  heatmapVisible: boolean;
+  arViewerBirdId: string | null;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -131,6 +135,10 @@ interface AppStore {
   // v11 actions
   discoverBird: (birdId: string) => void;
   dismissDiscoveryNotification: () => void;
+
+  // v12 actions
+  setHeatmapVisible: (visible: boolean) => void;
+  setARViewerBird: (birdId: string | null) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -184,6 +192,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   discoveredBirds: loadFromStorage<string[]>(DISCOVERY_KEY, []),
   discoveryNotification: null,
+
+  heatmapVisible: false,
+  arViewerBirdId: null,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -341,4 +352,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ discoveredBirds: updated, discoveryNotification: birdId });
   },
   dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
+
+  setHeatmapVisible: (heatmapVisible) => set({ heatmapVisible }),
+  setARViewerBird: (arViewerBirdId) => set({ arViewerBirdId }),
 }));

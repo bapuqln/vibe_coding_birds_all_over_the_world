@@ -18,8 +18,12 @@ const FLIGHT_RADIUS = 0.015;
 const FLIGHT_SPEED = 0.4;
 const LOD_DISTANCE = 2.5;
 const MAX_3D_MODELS = 15;
-const CLICK_ANIM_DURATION = 500;
+const CLICK_ANIM_DURATION = 1300;
 const CLICK_LIFT_HEIGHT = 0.02;
+const PHASE_FLAP = 300;
+const PHASE_HOP = 500;
+const PHASE_LOOK = 800;
+const PHASE_CIRCLE = 1300;
 
 useGLTF.preload(MODEL_PATH);
 
@@ -113,9 +117,12 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
 
     let wingFlapFreq = 2 * Math.PI / 1.2;
     let wingFlapAmp = 0.08;
-    if (isClickAnimating) {
-      wingFlapFreq = 2 * Math.PI / 0.15;
-      wingFlapAmp = 0.2;
+    if (isClickAnimating && clickElapsed < PHASE_FLAP) {
+      wingFlapFreq = 2 * Math.PI / 0.12;
+      wingFlapAmp = 0.25;
+    } else if (isClickAnimating && clickElapsed < PHASE_HOP) {
+      wingFlapFreq = 2 * Math.PI / 0.2;
+      wingFlapAmp = 0.15;
     }
     const wingFlap = 1 + wingFlapAmp * Math.sin(clock.elapsedTime * wingFlapFreq + phaseOffset);
     meshRef.current.scale.set(s * wingFlap, s, s);
@@ -127,7 +134,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     if (shouldUse3D) {
       const q = quaternion.clone();
 
-      if (isClickAnimating) {
+      if (isClickAnimating && clickElapsed >= PHASE_HOP) {
         const camDir = new Vector3().subVectors(camera.position, posVec).normalize();
         const projectedDir = camDir.clone().sub(normal.clone().multiplyScalar(camDir.dot(normal))).normalize();
         const forward = new Vector3(1, 0, 0).applyQuaternion(quaternion);
@@ -135,11 +142,18 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
           projectedDir.clone().cross(forward).dot(normal),
           projectedDir.dot(forward),
         );
-        const t = Math.min(clickElapsed / CLICK_ANIM_DURATION, 1);
-        const eased = t * t * (3 - 2 * t);
+        const lookT = Math.min((clickElapsed - PHASE_HOP) / (PHASE_LOOK - PHASE_HOP), 1);
+        const eased = lookT * lookT * (3 - 2 * lookT);
         const rotQ = new Quaternion().setFromAxisAngle(normal, -angle * eased);
         q.multiply(rotQ);
-      } else {
+
+        if (clickElapsed >= PHASE_LOOK) {
+          const circleT = (clickElapsed - PHASE_LOOK) / (PHASE_CIRCLE - PHASE_LOOK);
+          const circleAngle = circleT * Math.PI * 2 * 0.6;
+          const circleRotQ = new Quaternion().setFromAxisAngle(normal, circleAngle);
+          q.multiply(circleRotQ);
+        }
+      } else if (!isClickAnimating) {
         const rotQ = new Quaternion().setFromAxisAngle(normal, gentleRotation);
         q.multiply(rotQ);
       }
@@ -165,15 +179,35 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     let bob = floatAmplitude * Math.sin(clock.elapsedTime * floatSpeed + phaseOffset);
 
     if (isClickAnimating) {
-      const clickT = clickElapsed / CLICK_ANIM_DURATION;
-      const liftCurve = Math.sin(clickT * Math.PI);
-      bob += CLICK_LIFT_HEIGHT * liftCurve;
+      if (clickElapsed < PHASE_FLAP) {
+        const flapT = clickElapsed / PHASE_FLAP;
+        bob += CLICK_LIFT_HEIGHT * 0.5 * Math.sin(flapT * Math.PI);
+      } else if (clickElapsed < PHASE_HOP) {
+        const hopT = (clickElapsed - PHASE_FLAP) / (PHASE_HOP - PHASE_FLAP);
+        const hopCurve = Math.sin(hopT * Math.PI);
+        bob += CLICK_LIFT_HEIGHT * 1.5 * hopCurve;
+      } else if (clickElapsed < PHASE_LOOK) {
+        bob += CLICK_LIFT_HEIGHT * 0.8;
+      } else {
+        const circleT = (clickElapsed - PHASE_LOOK) / (PHASE_CIRCLE - PHASE_LOOK);
+        bob += CLICK_LIFT_HEIGHT * 0.8 * (1 - circleT * 0.5);
+      }
+    }
+
+    let circleX = 0;
+    let circleZ = 0;
+    if (isClickAnimating && clickElapsed >= PHASE_LOOK) {
+      const circleT = (clickElapsed - PHASE_LOOK) / (PHASE_CIRCLE - PHASE_LOOK);
+      const circleAngle = circleT * Math.PI * 2 * 0.6;
+      const circleRadius = FLIGHT_RADIUS * 2;
+      circleX = Math.sin(circleAngle) * circleRadius;
+      circleZ = Math.cos(circleAngle) * circleRadius * 0.6;
     }
 
     meshRef.current.position.set(
-      position[0] + normal.x * bob + tangent1.x * flightX + tangent2.x * flightZ,
-      position[1] + normal.y * bob + tangent1.y * flightX + tangent2.y * flightZ,
-      position[2] + normal.z * bob + tangent1.z * flightX + tangent2.z * flightZ,
+      position[0] + normal.x * bob + tangent1.x * (flightX + circleX) + tangent2.x * (flightZ + circleZ),
+      position[1] + normal.y * bob + tangent1.y * (flightX + circleX) + tangent2.y * (flightZ + circleZ),
+      position[2] + normal.z * bob + tangent1.z * (flightX + circleX) + tangent2.z * (flightZ + circleZ),
     );
 
     const targetOpacity = isVisible ? 1 : 0.1;

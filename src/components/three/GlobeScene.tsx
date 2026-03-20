@@ -12,6 +12,7 @@ import { MapLabels } from "./MapLabels";
 import { CameraController } from "./CameraController";
 import { SoundRipple } from "./SoundRipple";
 import { HabitatHighlight } from "./HabitatHighlight";
+import { HeatmapLayer } from "./HeatmapLayer";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 import { useAppStore } from "../../store";
@@ -47,6 +48,7 @@ export function GlobeScene() {
         <MigrationPaths />
         <SoundRipple />
         <HabitatHighlight />
+        <HeatmapLayer />
       </group>
       <MapLabels />
       <CameraController controlsRef={controlsRef} />

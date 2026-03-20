@@ -1,34 +1,56 @@
 [
   {
-    "id": "stork-robin",
-    "from": "white-stork-sg",
-    "to": "european-robin",
-    "nameZh": "白鹳迁徙路线",
-    "nameEn": "White Stork Migration",
-    "migrationDistanceKm": 20000
+    "id": "arctic-tern-migration",
+    "from": "arctic-tern",
+    "to": "emperor-penguin",
+    "nameZh": "北极燕鸥迁徙路线",
+    "nameEn": "Arctic Tern Migration",
+    "migrationDistanceKm": 71000,
+    "color": "#f87171"
   },
   {
-    "id": "plover-fairywren",
-    "from": "pacific-golden-plover-sg",
-    "to": "superb-fairywren",
-    "nameZh": "金斑鸻迁徙路线",
-    "nameEn": "Golden Plover Migration",
-    "migrationDistanceKm": 5000
+    "id": "godwit-migration",
+    "from": "bar-tailed-godwit",
+    "to": "snowy-owl",
+    "nameZh": "斑尾塍鹬迁徙路线",
+    "nameEn": "Bar-tailed Godwit Migration",
+    "migrationDistanceKm": 11000,
+    "color": "#34d399"
   },
   {
-    "id": "swallow-condor",
-    "from": "barn-swallow-sg",
-    "to": "andean-condor",
+    "id": "swallow-migration",
+    "from": "barn-swallow",
+    "to": "lilac-breasted-roller",
     "nameZh": "家燕迁徙路线",
     "nameEn": "Barn Swallow Migration",
-    "migrationDistanceKm": 11000
+    "migrationDistanceKm": 20000,
+    "color": "#a78bfa"
   },
   {
-    "id": "eagle-baldeagle",
+    "id": "stork-migration",
+    "from": "white-stork",
+    "to": "secretary-bird",
+    "nameZh": "白鹳迁徙路线",
+    "nameEn": "White Stork Migration",
+    "migrationDistanceKm": 20000,
+    "color": "#fbbf24"
+  },
+  {
+    "id": "eagle-migration",
     "from": "white-bellied-sea-eagle",
     "to": "bald-eagle",
     "nameZh": "海雕迁徙路线",
     "nameEn": "Sea Eagle Migration",
-    "migrationDistanceKm": 15000
+    "migrationDistanceKm": 15000,
+    "color": "#fb923c"
+  },
+  {
+    "id": "goose-migration",
+    "from": "canada-goose",
+    "to": "greater-flamingo",
+    "nameZh": "加拿大雁迁徙路线",
+    "nameEn": "Canada Goose Migration",
+    "migrationDistanceKm": 5000,
+    "color": "#38bdf8"
   }
 ]

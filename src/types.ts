@@ -64,6 +64,7 @@ export interface MigrationRoute {
   nameZh?: string;
   nameEn?: string;
   migrationDistanceKm?: number;
+  color?: string;
 }
 
 export type QuizType = "geography" | "sound" | "size";

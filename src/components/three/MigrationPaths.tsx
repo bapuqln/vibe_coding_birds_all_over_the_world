@@ -244,7 +244,7 @@ function MigrationLabel({ route }: MigrationLabelProps) {
   );
 }
 
-const ROUTE_COLORS = ["#fbbf24", "#f87171", "#34d399", "#a78bfa"];
+const ROUTE_COLORS_FALLBACK = ["#fbbf24", "#f87171", "#34d399", "#a78bfa", "#fb923c", "#38bdf8"];
 
 export function MigrationPaths() {
   const showAllRoutes = useAppStore((s) => s.showAllRoutes);
@@ -267,7 +267,7 @@ export function MigrationPaths() {
         if (!visible) return null;
 
         const dimmed = showAllRoutes && selectedBirdId && !isSelected;
-        const routeColor = showAllRoutes ? ROUTE_COLORS[idx % ROUTE_COLORS.length] : undefined;
+        const routeColor = route.color || (showAllRoutes ? ROUTE_COLORS_FALLBACK[idx % ROUTE_COLORS_FALLBACK.length] : undefined);
 
         return (
           <group key={route.id}>

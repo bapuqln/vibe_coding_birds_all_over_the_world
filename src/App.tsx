@@ -20,6 +20,7 @@ import { ContinentBirdPanel } from "./components/ui/ContinentBirdPanel";
 import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
 import { DiscoveryNotification } from "./components/ui/DiscoveryNotification";
 import { DiscoveryProgressBar } from "./components/ui/DiscoveryProgressBar";
+import { ARViewerModal } from "./components/ui/ARViewerModal";
 
 export default function App() {
   return (
@@ -60,6 +61,9 @@ export default function App() {
       <BirdEncyclopediaPanel />
       <ContinentBirdPanel />
       <EvolutionTimeline />
+
+      {/* AR layer — z-index: 30 */}
+      <ARViewerModal />
 
       {/* Invisible */}
       <AudioPlayer />
