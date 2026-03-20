@@ -20,7 +20,9 @@
     "lifespan": "~30 years",
     "evolutionEra": "neogene",
     "dietType": "fish",
-    "wingspanCm": 198
+    "wingspanCm": 198,
+    "rarity": "rare",
+    "storyTheme": "ocean"
   },
   {
     "id": "collared-kingfisher",
@@ -43,7 +45,9 @@
     "lifespan": "~6 years",
     "evolutionEra": "neogene",
     "dietType": "omnivore",
-    "wingspanCm": 43
+    "wingspanCm": 43,
+    "rarity": "common",
+    "storyTheme": "ocean"
   },
   {
     "id": "white-stork-sg",
@@ -67,7 +71,9 @@
     "lifespan": "~25 years",
     "evolutionEra": "paleogene",
     "dietType": "omnivore",
-    "wingspanCm": 185
+    "wingspanCm": 185,
+    "rarity": "rare",
+    "storyTheme": "grassland"
   },
   {
     "id": "pacific-golden-plover-sg",
@@ -91,7 +97,9 @@
     "lifespan": "~12 years",
     "evolutionEra": "neogene",
     "dietType": "omnivore",
-    "wingspanCm": 66
+    "wingspanCm": 66,
+    "rarity": "common",
+    "storyTheme": "ocean"
   },
   {
     "id": "barn-swallow-sg",
@@ -115,7 +123,9 @@
     "lifespan": "~4 years",
     "evolutionEra": "neogene",
     "dietType": "insects",
-    "wingspanCm": 33
+    "wingspanCm": 33,
+    "rarity": "common",
+    "storyTheme": "grassland"
   },
   {
     "id": "european-robin",
@@ -138,7 +148,9 @@
     "lifespan": "~2 years",
     "evolutionEra": "neogene",
     "dietType": "insects",
-    "wingspanCm": 21
+    "wingspanCm": 21,
+    "rarity": "common",
+    "storyTheme": "rainforest"
   },
   {
     "id": "atlantic-puffin",
@@ -161,7 +173,9 @@
     "lifespan": "~20 years",
     "evolutionEra": "neogene",
     "dietType": "fish",
-    "wingspanCm": 55
+    "wingspanCm": 55,
+    "rarity": "rare",
+    "storyTheme": "arctic"
   },
   {
     "id": "lilac-breasted-roller",
@@ -184,7 +198,9 @@
     "lifespan": "~10 years",
     "evolutionEra": "neogene",
     "dietType": "insects",
-    "wingspanCm": 54
+    "wingspanCm": 54,
+    "rarity": "common",
+    "storyTheme": "grassland"
   },
   {
     "id": "secretary-bird",
@@ -207,7 +223,9 @@
     "lifespan": "~15 years",
     "evolutionEra": "paleogene",
     "dietType": "meat",
-    "wingspanCm": 206
+    "wingspanCm": 206,
+    "rarity": "legendary",
+    "storyTheme": "grassland"
   },
   {
     "id": "bald-eagle",
@@ -230,7 +248,9 @@
     "lifespan": "~20 years",
     "evolutionEra": "neogene",
     "dietType": "fish",
-    "wingspanCm": 205
+    "wingspanCm": 205,
+    "rarity": "legendary",
+    "storyTheme": "rainforest"
   },
   {
     "id": "northern-cardinal",
@@ -253,7 +273,9 @@
     "lifespan": "~3 years",
     "evolutionEra": "neogene",
     "dietType": "seeds",
-    "wingspanCm": 28
+    "wingspanCm": 28,
+    "rarity": "common",
+    "storyTheme": "rainforest"
   },
   {
     "id": "toco-toucan",
@@ -276,7 +298,9 @@
     "lifespan": "~20 years",
     "evolutionEra": "neogene",
     "dietType": "fruit",
-    "wingspanCm": 55
+    "wingspanCm": 55,
+    "rarity": "rare",
+    "storyTheme": "rainforest"
   },
   {
     "id": "andean-condor",
@@ -300,7 +324,9 @@
     "lifespan": "~50 years",
     "evolutionEra": "paleogene",
     "dietType": "meat",
-    "wingspanCm": 300
+    "wingspanCm": 300,
+    "rarity": "legendary",
+    "storyTheme": "grassland"
   },
   {
     "id": "superb-fairywren",
@@ -323,7 +349,9 @@
     "lifespan": "~5 years",
     "evolutionEra": "neogene",
     "dietType": "insects",
-    "wingspanCm": 16
+    "wingspanCm": 16,
+    "rarity": "common",
+    "storyTheme": "rainforest"
   },
   {
     "id": "emperor-penguin",
@@ -346,6 +374,8 @@
     "lifespan": "~20 years",
     "evolutionEra": "paleogene",
     "dietType": "fish",
-    "wingspanCm": 83
+    "wingspanCm": 83,
+    "rarity": "legendary",
+    "storyTheme": "arctic"
   }
 ]

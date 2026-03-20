@@ -22,6 +22,8 @@ export type DietType =
   | "meat"
   | "omnivore";
 
+export type Rarity = "common" | "rare" | "legendary";
+
 export interface Bird {
   id: string;
   nameZh: string;
@@ -46,6 +48,8 @@ export interface Bird {
   evolutionEra?: EvolutionEra;
   dietType?: DietType;
   wingspanCm?: number;
+  rarity?: Rarity;
+  storyTheme?: string;
 }
 
 export interface MigrationRoute {
@@ -94,4 +98,52 @@ export interface XenoCantoRecording {
 export interface XenoCantoResponse {
   numRecordings: string;
   recordings: XenoCantoRecording[];
+}
+
+export interface CollectedBird {
+  birdId: string;
+  collectedAt: number;
+}
+
+export interface Quest {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  type: "find_region" | "collect_count" | "discover_bird";
+  target: string | number;
+  reward: number;
+  badge: string;
+}
+
+export interface QuestProgress {
+  questId: string;
+  current: number;
+  completed: boolean;
+  completedAt?: number;
+}
+
+export interface StoryTheme {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  birdIds: string[];
+  badge: string;
+}
+
+export type TourState = "idle" | "intro" | "touring" | "paused" | "complete";
+
+export interface TourWaypoint {
+  lat: number;
+  lng: number;
+  zoom: number;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  featuredBirdId?: string;
+  durationMs: number;
 }

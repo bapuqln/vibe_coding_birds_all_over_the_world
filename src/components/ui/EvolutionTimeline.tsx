@@ -35,34 +35,33 @@ export function EvolutionTimeline() {
       <button
         onClick={() => setEvolutionTimelineOpen(!evolutionTimelineOpen)}
         className={`
-          fixed bottom-48 right-4 z-30
-          flex items-center gap-1.5
-          rounded-full px-4 py-2.5
-          text-sm font-semibold shadow-lg
+          fixed left-4 bottom-28 z-10
+          flex h-[44px] min-w-[120px] items-center justify-center gap-2
+          rounded-xl px-4 text-sm font-semibold
+          shadow-lg backdrop-blur-lg
           transition-all duration-200
-          min-h-12 min-w-12
+          hover:scale-105 active:scale-95
+          min-[900px]:bottom-28 min-[900px]:left-4
           ${
             evolutionTimelineOpen
-              ? "bg-amber-500 text-white ring-2 ring-amber-300"
-              : "bg-white/90 text-gray-700 ring-1 ring-gray-200/50 backdrop-blur-sm hover:bg-white"
+              ? "bg-amber-500 text-white ring-2 ring-amber-300/50"
+              : "bg-black/65 text-white hover:bg-black/75"
           }
         `}
         aria-label={language === "zh" ? "时间线" : "Timeline"}
       >
-        <span className="text-base">🦕</span>
-        <span className="hidden sm:inline">
-          {language === "zh" ? "时间线" : "Timeline"}
-        </span>
+        <span>🦕</span>
+        <span>{language === "zh" ? "时间线" : "Timeline"}</span>
       </button>
 
       <div
         className={`
-          fixed bottom-0 left-0 right-0 z-40
+          fixed bottom-0 left-0 right-0 z-20
           transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
           ${evolutionTimelineOpen ? "translate-y-0" : "translate-y-full"}
         `}
       >
-        <div className="mx-auto max-w-4xl rounded-t-[28px] bg-white/95 p-5 shadow-2xl backdrop-blur-xl">
+        <div className="mx-auto max-w-4xl rounded-t-[20px] bg-white/95 p-5 shadow-2xl backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-lg font-bold text-gray-800">
               {language === "zh" ? "🦕 鸟类演化时间线" : "🦕 Bird Evolution Timeline"}
@@ -77,12 +76,11 @@ export function EvolutionTimeline() {
           </div>
 
           <div className="overflow-x-auto pb-2">
-            <div className="relative min-w-150">
+            <div className="relative min-w-[600px]">
               <div className="flex h-8">
                 {(Object.entries(ERA_CONFIG) as [EvolutionEra, (typeof ERA_CONFIG)[EvolutionEra]][]).map(
                   ([era, config]) => {
-                    const widthPct =
-                      ((config.startMya - config.endMya) / TOTAL_MYA) * 100;
+                    const widthPct = ((config.startMya - config.endMya) / TOTAL_MYA) * 100;
                     return (
                       <div
                         key={era}
@@ -101,7 +99,7 @@ export function EvolutionTimeline() {
                 )}
               </div>
 
-              <div className="mt-1 flex justify-between text-[10px] text-gray-400 px-1">
+              <div className="mt-1 flex justify-between px-1 text-[10px] text-gray-400">
                 <span>150 Mya</span>
                 <span>66 Mya</span>
                 <span>23 Mya</span>
@@ -130,7 +128,7 @@ export function EvolutionTimeline() {
                           className="h-full w-full object-cover"
                         />
                       </div>
-                      <span className="max-w-15 truncate text-[9px] font-medium text-gray-600">
+                      <span className="max-w-[60px] truncate text-[9px] font-medium text-gray-600">
                         {language === "zh" ? bird.nameZh : bird.nameEn}
                       </span>
                     </button>

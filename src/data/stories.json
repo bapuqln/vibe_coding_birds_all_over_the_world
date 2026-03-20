@@ -1,0 +1,38 @@
+[
+  {
+    "id": "rainforest",
+    "titleZh": "雨林鸟类",
+    "titleEn": "Rainforest Birds",
+    "descriptionZh": "探索热带雨林中色彩斑斓的鸟类",
+    "descriptionEn": "Discover colorful birds of the tropical rainforest",
+    "birdIds": ["toco-toucan", "bald-eagle", "european-robin", "northern-cardinal", "superb-fairywren"],
+    "badge": "🌴"
+  },
+  {
+    "id": "arctic",
+    "titleZh": "极地鸟类",
+    "titleEn": "Arctic Birds",
+    "descriptionZh": "发现生活在冰天雪地中的勇敢鸟类",
+    "descriptionEn": "Find brave birds living in the frozen wilderness",
+    "birdIds": ["emperor-penguin", "atlantic-puffin"],
+    "badge": "❄️"
+  },
+  {
+    "id": "grassland",
+    "titleZh": "草原鸟类",
+    "titleEn": "Grassland Birds",
+    "descriptionZh": "探索广阔草原上的飞行高手",
+    "descriptionEn": "Explore the flying masters of the vast grasslands",
+    "birdIds": ["secretary-bird", "lilac-breasted-roller", "andean-condor", "white-stork-sg", "barn-swallow-sg"],
+    "badge": "🌾"
+  },
+  {
+    "id": "ocean",
+    "titleZh": "海洋鸟类",
+    "titleEn": "Ocean Birds",
+    "descriptionZh": "发现在海岸和海洋上翱翔的鸟类",
+    "descriptionEn": "Discover birds soaring over coasts and oceans",
+    "birdIds": ["white-bellied-sea-eagle", "collared-kingfisher", "pacific-golden-plover-sg"],
+    "badge": "🌊"
+  }
+]

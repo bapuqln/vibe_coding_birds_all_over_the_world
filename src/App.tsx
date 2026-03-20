@@ -5,17 +5,24 @@ import { BirdInfoCard } from "./components/ui/BirdInfoCard";
 import { LangToggle } from "./components/ui/LangToggle";
 import { AudioPlayer } from "./components/ui/AudioPlayer";
 import { LoadingScreen } from "./components/ui/LoadingScreen";
-import { DiscoverButton } from "./components/ui/DiscoverButton";
+import { RightControlPanel } from "./components/ui/RightControlPanel";
+import { MyBirdsPanel } from "./components/ui/MyBirdsPanel";
+import { RegionFilterPanel } from "./components/ui/RegionFilterPanel";
+import { QuestPanel } from "./components/ui/QuestPanel";
+import { GuidedTour } from "./components/ui/GuidedTour";
+import { BirdGuide } from "./components/ui/BirdGuide";
+import { BirdRadar } from "./components/ui/BirdRadar";
+import { StoryExplorer } from "./components/ui/StoryExplorer";
 import { QuizPanel } from "./components/ui/QuizPanel";
+import { SoundGuessPanel } from "./components/ui/SoundGuessPanel";
 import { BirdEncyclopediaPanel } from "./components/ui/BirdEncyclopediaPanel";
 import { ContinentBirdPanel } from "./components/ui/ContinentBirdPanel";
-import { MigrationMapToggle } from "./components/ui/MigrationMapToggle";
 import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
-import { SoundGuessPanel } from "./components/ui/SoundGuessPanel";
 
 export default function App() {
   return (
     <div className="relative h-full w-full">
+      {/* 3D Canvas — z-index: 0 */}
       <Canvas
         camera={{ fov: 45, position: [0, 0, 2.5], near: 0.1, far: 100 }}
         style={{ background: "#050a18" }}
@@ -25,25 +32,38 @@ export default function App() {
         </Suspense>
       </Canvas>
 
+      {/* Loading — z-index: 100 */}
       <LoadingScreen />
+
+      {/* HUD layer — z-index: 10 */}
       <AppTitle />
       <LangToggle />
+      <RightControlPanel />
+      <BirdGuide />
+      <BirdRadar />
+      <StoryExplorer />
+
+      {/* Modal layer — z-index: 20 */}
       <BirdInfoCard />
-      <AudioPlayer />
-      <DiscoverButton />
+      <MyBirdsPanel />
+      <RegionFilterPanel />
+      <QuestPanel />
+      <GuidedTour />
       <QuizPanel />
       <SoundGuessPanel />
-      <MigrationMapToggle />
-      <EvolutionTimeline />
       <BirdEncyclopediaPanel />
       <ContinentBirdPanel />
+      <EvolutionTimeline />
+
+      {/* Invisible */}
+      <AudioPlayer />
     </div>
   );
 }
 
 function AppTitle() {
   return (
-    <div className="pointer-events-none fixed left-4 top-4 z-30 select-none md:left-6 md:top-6">
+    <div className="pointer-events-none fixed left-4 top-4 z-10 select-none md:left-6 md:top-6">
       <h1 className="text-xl font-bold tracking-wide text-white/90 drop-shadow-lg md:text-2xl">
         万羽拾音
       </h1>

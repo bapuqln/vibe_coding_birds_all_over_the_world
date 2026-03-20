@@ -1,4 +1,4 @@
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useEffect } from "react";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Globe } from "./Globe";
@@ -14,11 +14,18 @@ import { SoundRipple } from "./SoundRipple";
 import { HabitatHighlight } from "./HabitatHighlight";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
+import { useAppStore } from "../../store";
 
 const birds = birdsData as Bird[];
 
 export function GlobeScene() {
   const controlsRef = useRef<OrbitControlsImpl>(null);
+  const migrationModeActive = useAppStore((s) => s.migrationModeActive);
+  const setShowAllRoutes = useAppStore((s) => s.setShowAllRoutes);
+
+  useEffect(() => {
+    setShowAllRoutes(migrationModeActive);
+  }, [migrationModeActive, setShowAllRoutes]);
 
   return (
     <>

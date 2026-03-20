@@ -1,290 +1,246 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v7)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v9)
 
-> **v7 changelog**: Global migration map overlay, bird evolution timeline UI, bird diet visualization, wingspan comparison bar, sound guess gameplay mode, improved starfield with parallax depth layers. Extended data model with `evolutionEra`, `dietType`, `wingspanCm`. New systems: `MigrationMapSystem`, `SoundGuessManager`. New components: `EvolutionTimeline`, `WingspanBar`, `SoundGuessPanel`, `MigrationMapToggle`.
+> **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
-> **v6 changelog**: Sound ripple system, habitat highlight rendering, discovery gameplay mode, quiz gameplay system, migration story animation, bird size comparison, continent learning panel, wing flap animation, bird encyclopedia panel. Extended data model. All new systems follow declarative R3F patterns.
->
-> **v5 changelog**: Fix OrbitControls target lock to [0,0,0], replace low-quality bird model, fix useGLTF hooks violation, add country borders via GeoJSON, add zoom-dependent map labels, improve lighting with hemisphere light, improve atmosphere with Fresnel shell, enforce declarative R3F patterns throughout.
+> **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
 
-## High-Level Architecture
+## High-Level Architecture (v9)
 
 ```
 App.tsx
-├── Canvas (camera, background)
+├── Canvas (camera, background) [z-index: 0]
 │   └── Suspense
 │       └── GlobeScene
 │           ├── Lighting (ambient + directional + hemisphere)
-│           ├── Starfield (3-layer parallax: far/mid/near + twinkle)
-│           ├── AtmosphereShell (Fresnel BackSide sphere)
-│           ├── group (earth group — all children rotate together)
+│           ├── Starfield (3-layer parallax)
+│           ├── AtmosphereShell (Fresnel)
+│           ├── group (earth group)
 │           │   ├── Globe (textured sphere)
-│           │   ├── CloudLayer (semi-transparent sphere)
-│           │   ├── CountryBorders (GeoJSON line segments)
-│           │   ├── HabitatHighlight (colored glow patch on globe)
-│           │   ├── BirdMarker × 15 (GLTF models + wing flap)
-│           │   ├── SoundRipple (expanding rings at bird position)
-│           │   └── MigrationPaths (supports all-routes mode)
-│           │       ├── MigrationArc × N (dashed animated lines, colored)
-│           │       ├── FlyingBirdIcon × N (moving sphere along arc)
-│           │       └── MigrationLabel × N (Html distance text)
-│           ├── MapLabels (Html elements, zoom-dependent, clickable)
-│           ├── CameraController (useFrame animation)
+│           │   ├── CloudLayer
+│           │   ├── CountryBorders (GeoJSON)
+│           │   ├── HabitatHighlight
+│           │   ├── BirdMarker × 15 (animated flight + tooltip) [z-index: 1]
+│           │   ├── SoundRipple
+│           │   ├── MigrationPaths (all-routes + migration mode)
+│           │   └── RarityEffects (glow/particles for rare birds)
+│           ├── MapLabels (Html, zoom-dependent, clickable)
+│           ├── CameraController (fly-to, auto-rotate, region zoom, tour)
 │           └── OrbitControls (target=[0,0,0], locked)
-├── LoadingScreen
-├── AppTitle
-├── LangToggle
-├── BirdInfoCard (size bar + diet icons + wingspan bar)
-├── AudioPlayer
-├── DiscoverButton (random bird selection)
-├── QuizPanel (quiz UI + confetti + shake)
-├── SoundGuessPanel (sound guessing game)
-├── BirdEncyclopediaPanel (scrollable bird list)
-├── ContinentBirdPanel (birds by continent)
-├── EvolutionTimeline (horizontal timeline panel)
-└── MigrationMapToggle (all-routes toggle button)
+│
+├── LoadingScreen (progress indicator) [z-index: 100]
+├── AppTitle [z-index: 10]
+├── LangToggle [z-index: 10]
+│
+├── RightControlPanel [z-index: 10]
+│   ├── ActionButton "Birds" → BirdEncyclopediaPanel
+│   ├── ActionButton "Regions" → RegionFilterPanel
+│   ├── ActionButton "Migration" → MigrationModePanel
+│   ├── ActionButton "Quests" → QuestPanel
+│   ├── ActionButton "Tour" → GuidedTour
+│   └── ActionButton "Reset" → reset view
+│
+├── BirdInfoCard (center-bottom modal) [z-index: 20]
+│   ├── Bird image, name, region, habitat, fun fact
+│   ├── Sound playback button
+│   ├── Collect button
+│   ├── Rarity badge
+│   ├── Size comparison, diet, wingspan
+│   └── Close button
+│
+├── MyBirdsPanel (collection album) [z-index: 20]
+├── RegionFilterPanel [z-index: 20]
+├── QuestPanel [z-index: 20]
+├── MigrationModePanel [z-index: 20]
+├── GuidedTour overlay [z-index: 20]
+├── BirdGuide (bottom-left character) [z-index: 10]
+├── BirdRadar (corner radar) [z-index: 10]
+├── StoryExplorer [z-index: 20]
+├── QuizPanel [z-index: 20]
+├── SoundGuessPanel [z-index: 20]
+├── BirdEncyclopediaPanel [z-index: 20]
+├── ContinentBirdPanel [z-index: 20]
+├── EvolutionTimeline [z-index: 20]
+├── AudioPlayer (invisible)
+└── BirdTooltip [z-index: 15]
 ```
 
-## Key Technical Decisions
+## Key Technical Decisions (v8+v9)
 
-### TD-25: OrbitControls target locked to [0,0,0]
-**Problem**: v4 CameraController lerps `controls.target` toward bird position, causing rotation pivot drift.
-**Solution**: Never modify `controls.target`. Camera zoom-to-bird only changes camera position (direction + distance). Remove all `controls.target.lerp()` calls. OrbitControls target prop is `[0, 0, 0]` and never changes.
+### TD-47: UI System Overhaul — ActionButton Component
+**Problem**: Buttons have inconsistent width, overlap each other, no defined layout zones.
+**Solution**: Create reusable `ActionButton` component with fixed dimensions (h-44px, min-w-120px, rounded-12px, glass-morphism bg). All action buttons live inside `RightControlPanel` container positioned at bottom-right with flex-column layout and 8px gap. Mobile responsive: horizontal layout below 900px.
 
-### TD-26: Declarative R3F patterns
-**Problem**: v4 uses imperative patterns (try-catch around hooks, `new Material()` in useMemo, `primitive object=`).
-**Solution**: Use declarative JSX for materials and geometry. Use `<meshStandardMaterial>` instead of `new MeshStandardMaterial()`. Use `<Suspense>` + error boundaries for loading states. Call hooks unconditionally.
+### TD-48: Z-Index Hierarchy
+**Problem**: UI elements overlap unpredictably.
+**Solution**: Enforce strict z-index layers: canvas=0, markers=1, HUD panels=10, tooltips=15, modal cards=20, loading=100. All components use these exact values.
 
-### TD-27: Atmosphere as Fresnel shell
-**Problem**: v4 `onBeforeCompile` rim glow is fragile and hard to tune.
-**Solution**: Dedicated `<AtmosphereShell>` component — a BackSide sphere at scale 1.025 with custom ShaderMaterial using smooth Fresnel falloff (exponent 3.0, opacity 0.15, additive blending).
+### TD-49: Bird Information Card Redesign
+**Problem**: Current card slides from side, blocks globe view.
+**Solution**: Redesign as center-bottom modal panel that slides up. Max height 60vh. Includes sound playback button and collect button. Does not overlap right control panel.
 
-### TD-28: Country borders via GeoJSON
-**Problem**: Globe has no geographic reference points.
-**Solution**: Load simplified Natural Earth GeoJSON (110m resolution). Project coordinates to 3D at radius 1.001. Render as `<Line>` segments from drei. Thin, semi-transparent white lines.
+### TD-50: Animated Bird Markers
+**Problem**: Static markers feel lifeless.
+**Solution**: Add subtle circular/floating flight animation to BirdMarker. Each bird orbits a small radius around its position using `useFrame`. Clicking pauses animation for 3 seconds. Keep animation lightweight — simple sin/cos position offset.
 
-### TD-29: Zoom-dependent map labels
-**Problem**: No continent/ocean names on globe.
-**Solution**: Use `<Html>` from drei positioned at continent/ocean centers. Visibility controlled by camera distance (< 2.0). Opacity fades smoothly. Bilingual text from language store.
+### TD-51: Bird Collection System
+**Problem**: No way to save discovered birds.
+**Solution**: `useCollection` hook manages localStorage persistence. Collect button in info card triggers save with sparkle animation. `MyBirdsPanel` displays grid of collected bird thumbnails. Store: `collectedBirds: CollectedBird[]`, `isCollectionOpen: boolean`.
 
-### TD-30: Improved lighting
-**Problem**: Flat lighting (ambient 0.4 + two directionals) lacks depth.
-**Solution**: Reduce ambient to 0.3, add `<hemisphereLight>` for sky-ground gradient, keep directionals for sun/fill.
-
-### TD-31: Higher-quality bird model
-**Problem**: Generated bird.glb is crude geometric shapes.
-**Solution**: Source a quality stylized bird GLB from free asset library or create a proper one. Must look recognizable at 0.03 scale.
-
-### TD-32: Sound ripple system *(v6)*
-**Problem**: No visual feedback when bird audio plays.
-**Solution**: `<SoundRipple>` component renders expanding `RingGeometry` meshes at bird position when `audioStatus === "playing"`. Uses `useFrame` for radius/opacity animation. 2-3 concurrent rings with staggered timing. Positioned at bird marker height, oriented along surface normal.
-
-### TD-33: Habitat highlight rendering *(v6)*
-**Problem**: No visual indication of bird habitat type on globe.
-**Solution**: `<HabitatHighlight>` component renders a `CircleGeometry` glow patch at radius 1.003 when a bird is selected. Color mapped from `habitatType` field. `MeshBasicMaterial` with additive blending, transparent. Fades in/out on selection change.
-
-### TD-34: Discovery gameplay mode *(v6)*
-**Problem**: Children may not know which bird to explore next.
-**Solution**: `<DiscoverButton>` UI component selects a random bird from `birds.json`, calls `setSelectedBird()`. Positioned bottom-right, bilingual label, large tap target. Reuses existing camera fly-to and info card systems.
-
-### TD-35: Quiz gameplay system *(v6)*
-**Problem**: No way to test what children have learned.
-**Solution**: `QuizManager.ts` generates 3 questions per round from 3 types (geography, sound, size). `<QuizPanel>` renders quiz UI with idle/active/result states. Zustand store manages `quizState`, `quizQuestions`, `quizCurrentIndex`, `quizScore`, `quizLastCorrect`. Confetti on correct, shake on wrong.
-
-### TD-36: Migration story animation *(v6)*
-**Problem**: Migration arcs are static dashed lines — not engaging for children.
-**Solution**: Add `FlyingBirdIcon` (small sphere) that traverses each arc over 3 seconds using `useFrame` + curve sampling. Add `MigrationLabel` using `<Html>` at arc midpoint showing distance text. Labels only visible when camera distance < 2.5.
-
-### TD-37: Bird size comparison *(v6)*
-**Problem**: Children can't visualize bird sizes.
-**Solution**: Add `sizeCategory` field to bird data. Display horizontal size bar in `BirdInfoCard` with reference icons (sparrow → eagle). Categories: tiny, small, medium, large.
-
-### TD-38: Continent learning panel *(v6)*
+### TD-52: Region Filter
 **Problem**: No way to explore birds by geographic region.
-**Solution**: `<ContinentBirdPanel>` slides in when a continent label is clicked. Lists all birds in that continent's region. Click entry → fly to bird. Uses `continentPanelRegion` state in Zustand.
+**Solution**: `RegionFilterPanel` with 8 region buttons. Selecting a region: (1) sets `activeRegion` in store, (2) triggers camera zoom to region center coordinates, (3) filters visible birds. Region centers defined as lat/lng constants. Camera animation reuses existing CameraController infrastructure.
 
-### TD-39: Wing flap animation *(v6)*
-**Problem**: Bird markers feel static.
-**Solution**: In `BirdMarker.tsx`, add Y-axis scale oscillation via `useFrame`. Period ~1.2s, small amplitude. Does not affect click targets.
+### TD-53: Kid Quest System
+**Problem**: No gamification or goals for children.
+**Solution**: `QuestManager` system generates quests from templates. Quest types: find_region (find N birds in region), collect_count (collect N total birds), discover_bird (find specific bird). Progress tracked in localStorage. Points and emoji badges awarded. `QuestPanel` shows active quests with progress bars.
 
-### TD-40: Bird encyclopedia panel *(v6)*
-**Problem**: No overview of all available birds.
-**Solution**: `<BirdEncyclopediaPanel>` slides in from left. Scrollable list of all 15 birds with thumbnail, Chinese name, English name. Click entry → fly to bird + open info card. Toggle via "📖" button. Uses `encyclopediaOpen` state in Zustand.
+### TD-54: Migration Mode
+**Problem**: Migration paths always visible or toggled per-route — no dedicated exploration mode.
+**Solution**: `MigrationModePanel` provides a focused migration exploration experience. When active, all migration routes render with distinct colors and animated flying bird icons. Reuses existing `MigrationPaths` component with `showAllRoutes` state.
 
-### TD-41: Global migration map visualization *(v7)*
-**Problem**: Children can only see migration routes one at a time — no sense of global migration scale.
-**Solution**: Add `showAllRoutes` boolean to Zustand store. When toggled, `MigrationPaths.tsx` renders all routes simultaneously with distinct colors from a warm palette. Selected bird's route highlights at full opacity; others dim to 0.3. `<MigrationMapToggle>` UI button controls the toggle.
+### TD-55: Guided Discovery Tour
+**Problem**: Children may not know where to start exploring.
+**Solution**: `GuidedTour` component orchestrates an automated camera tour. Visits predefined waypoints (Amazon, Africa, Antarctica, etc.). At each stop, highlights a featured bird with info card. Tour state machine: idle → intro → touring → paused → complete. Camera animation via CameraController with waypoint queue.
 
-### TD-42: Bird evolution timeline *(v7)*
-**Problem**: No temporal context for birds — children don't know how old bird species are.
-**Solution**: `<EvolutionTimeline>` panel slides up from bottom. Horizontal scrollable timeline from 150 Mya to present. Birds placed at positions based on `evolutionEra` field. Click bird avatar → fly to bird on globe. Uses `evolutionTimelineOpen` state in Zustand.
+### TD-56: AI Bird Guide
+**Problem**: No contextual help or educational prompts.
+**Solution**: `BirdGuide` component renders a small owl/parrot avatar at bottom-left. Shows contextual messages based on user actions (selected bird, region, idle). Messages are short, child-friendly fun facts. Auto-dismisses after 5 seconds. Does not block interaction.
 
-### TD-43: Bird diet visualization *(v7)*
-**Problem**: Diet information is plain text — not engaging for children.
-**Solution**: Add `dietType` structured field to bird data. Map each type to an emoji icon. Display in `BirdInfoCard` as a compact icon + label row. Bilingual labels.
+### TD-57: Bird Rarity System
+**Problem**: All birds feel equally important.
+**Solution**: Add `rarity` field to bird data. Common birds: normal appearance. Rare birds: subtle golden glow. Legendary birds: particle sparkle effect. Rarity badge displayed in info card and collection panel.
 
-### TD-44: Wingspan comparison bar *(v7)*
-**Problem**: Wingspan numbers are abstract — children can't visualize them.
-**Solution**: Add `wingspanCm` numeric field to bird data. Display horizontal bar in `BirdInfoCard` showing wingspan relative to a child's arm span (120 cm reference line). Bar color matches habitat color. `<WingspanBar>` sub-component.
+### TD-58: Bird Radar
+**Problem**: Children may miss birds in their current view.
+**Solution**: `BirdRadar` component renders a small circular radar in top-right corner. Uses camera frustum to detect visible birds. Dots on radar represent bird positions relative to camera direction. Pulsing animation for birds near center of view.
 
-### TD-45: Sound guess gameplay *(v7)*
-**Problem**: Quiz mode tests knowledge but doesn't train listening skills.
-**Solution**: `SoundGuessManager.ts` generates rounds: play random bird audio, show 3 photo options. `<SoundGuessPanel>` renders game UI. 5 rounds per session. Reuses confetti/shake from quiz. State: `soundGuessState`, `soundGuessRound`, `soundGuessScore`, `soundGuessOptions`, `soundGuessCorrectId`.
+### TD-59: Story-Based Exploration
+**Problem**: No themed discovery experience.
+**Solution**: `StoryExplorer` panel offers themed bird sets (Rainforest, Arctic, Desert, Ocean). Each theme lists its birds with discovery progress. Completing all birds in a theme unlocks a badge. Progress persisted in localStorage.
 
-### TD-46: Improved starfield with parallax depth *(v7)*
-**Problem**: Single-layer starfield feels flat.
-**Solution**: Replace `Starfield.tsx` with 3-layer parallax system. Far layer (3000 stars, radius 15–20), mid layer (1500 stars, radius 10–15), near layer (500 stars, radius 6–10). Each layer rotates at slightly different speed relative to camera. 10% of stars have slow opacity twinkle via `useFrame`. Total ~5000 particles.
+### TD-60: Mobile Safe Areas
+**Problem**: UI elements hidden behind notches/home indicators.
+**Solution**: RightControlPanel and all fixed UI use `env(safe-area-inset-*)` CSS functions. Bottom padding: `calc(env(safe-area-inset-bottom) + 16px)`.
 
-## Component Inventory
+### TD-61: Bird Tooltip
+**Problem**: No quick identification of birds without clicking.
+**Solution**: HTML tooltip rendered via `<Html>` from drei on bird hover. Shows bird name and region. Positioned above the bird marker. Fades in/out on hover.
 
-### 3D Components (src/components/three/)
+### TD-62: Loading UI Enhancement
+**Problem**: Loading screen lacks progress information.
+**Solution**: Enhanced `LoadingScreen` with staged progress: "Loading Earth..." → "Loading Birds..." → "Ready!". Animated progress bar. Smooth fade-out transition.
+
+## Component Inventory (v8+v9 additions)
+
+### UI Components (new)
 | Component | Purpose | Version |
 |-----------|---------|---------|
-| `GlobeScene.tsx` | Scene orchestrator: lights, globe, markers, paths, labels, camera | v1+ |
-| `Globe.tsx` | Earth sphere mesh with texture | v1+ |
-| `CloudLayer.tsx` | Semi-transparent cloud sphere | v3+ |
-| `Starfield.tsx` | 3-layer parallax star background with twinkle | v1+ (v7: parallax) |
-| `AtmosphereShell.tsx` | Fresnel atmosphere glow | v5+ |
-| `CountryBorders.tsx` | GeoJSON country boundary lines | v5+ |
-| `MapLabels.tsx` | Continent/ocean labels (Html) | v5+ |
-| `BirdMarker.tsx` | GLTF bird model with interactions + wing flap | v1+ (v6: wing flap) |
-| `MigrationPaths.tsx` | Migration arcs + flying icon + labels + all-routes mode | v3+ (v7: all-routes) |
-| `SoundRipple.tsx` | Expanding ring waves at bird position | v6 |
-| `HabitatHighlight.tsx` | Colored habitat glow on globe | v6 |
-| `CameraController.tsx` | Camera fly-to, auto-rotate, zoom | v2+ |
+| `ActionButton.tsx` | Reusable glass-morphism button | v8 |
+| `RightControlPanel.tsx` | Container for all action buttons | v8 |
+| `MyBirdsPanel.tsx` | Bird collection album | v8 |
+| `RegionFilterPanel.tsx` | Region filter controls | v8 |
+| `QuestPanel.tsx` | Quest missions and progress | v8 |
+| `MigrationModePanel.tsx` | Migration exploration toggle | v9 |
+| `GuidedTour.tsx` | Automated tour overlay | v9 |
+| `BirdGuide.tsx` | AI guide character | v9 |
+| `BirdRadar.tsx` | Nearby bird radar | v9 |
+| `StoryExplorer.tsx` | Themed exploration sets | v9 |
+| `BirdTooltip.tsx` | Hover tooltip for birds | v8 |
 
-### UI Components (src/components/ui/)
-| Component | Purpose | Version |
-|-----------|---------|---------|
-| `BirdInfoCard.tsx` | Bird info overlay with size, diet, wingspan | v1+ (v7: diet + wingspan) |
-| `LangToggle.tsx` | Language switch button | v1+ |
-| `LoadingScreen.tsx` | Asset loading screen | v1+ |
-| `AudioPlayer.tsx` | Audio playback controller | v1+ |
-| `DiscoverButton.tsx` | Random bird discovery button | v6 |
-| `QuizPanel.tsx` | Quiz UI (idle/active/result) | v6 |
-| `BirdEncyclopediaPanel.tsx` | Scrollable bird list panel | v6 |
-| `ContinentBirdPanel.tsx` | Birds-by-continent panel | v6 |
-| `EvolutionTimeline.tsx` | Horizontal bird evolution timeline panel | v7 |
-| `WingspanBar.tsx` | Wingspan comparison bar sub-component | v7 |
-| `SoundGuessPanel.tsx` | Sound guessing game UI | v7 |
-| `MigrationMapToggle.tsx` | All-routes toggle button | v7 |
-
-### Systems (src/systems/)
+### Systems (new)
 | System | Purpose | Version |
 |--------|---------|---------|
-| `QuizManager.ts` | Quiz question generation (geography/sound/size) | v6 |
-| `SoundGuessManager.ts` | Sound guess round generation | v7 |
+| `QuestManager.ts` | Quest generation and progress tracking | v8 |
+| `CollectionManager.ts` | localStorage bird collection | v8 |
+| `TourManager.ts` | Guided tour waypoint management | v9 |
 
-## State Management
+### Hooks (new)
+| Hook | Purpose | Version |
+|------|---------|---------|
+| `useCollection.ts` | Bird collection localStorage hook | v8 |
+| `useQuests.ts` | Quest progress management hook | v8 |
 
-Zustand store shape (v7):
+## State Management (v8+v9 additions)
+
 ```typescript
 interface AppStore {
-  // Core state
-  selectedBirdId: string | null;
-  language: Language;
-  audioStatus: AudioStatus;
-  globeReady: boolean;
-  modelsReady: boolean;
+  // ... existing v7 state ...
 
-  // v6: Encyclopedia
-  encyclopediaOpen: boolean;
+  // v8: Collection
+  collectedBirds: CollectedBird[];
+  isCollectionOpen: boolean;
+  collectBird: (birdId: string) => void;
+  setCollectionOpen: (open: boolean) => void;
 
-  // v6: Continent learning
-  continentPanelRegion: string | null;
+  // v8: Region filter
+  activeRegion: string | null;
+  setActiveRegion: (region: string | null) => void;
 
-  // v6: Quiz
-  quizState: QuizState;
-  quizQuestions: QuizQuestion[];
-  quizCurrentIndex: number;
-  quizScore: number;
-  quizLastCorrect: boolean | null;
+  // v8: Quests
+  questsOpen: boolean;
+  setQuestsOpen: (open: boolean) => void;
 
-  // v7: Global migration map
-  showAllRoutes: boolean;
+  // v9: Guided tour
+  tourState: "idle" | "intro" | "touring" | "paused" | "complete";
+  tourStep: number;
+  startTour: () => void;
+  pauseTour: () => void;
+  resumeTour: () => void;
+  nextTourStep: () => void;
+  endTour: () => void;
 
-  // v7: Evolution timeline
-  evolutionTimelineOpen: boolean;
+  // v9: Bird guide
+  guideMessage: string | null;
+  guideMessageZh: string | null;
+  setGuideMessage: (en: string | null, zh: string | null) => void;
 
-  // v7: Sound guess
-  soundGuessState: "idle" | "playing" | "guessing" | "result";
-  soundGuessRound: number;
-  soundGuessScore: number;
-  soundGuessOptions: SoundGuessOption[];
-  soundGuessCorrectId: string | null;
+  // v9: Migration mode
+  migrationModeActive: boolean;
+  setMigrationModeActive: (active: boolean) => void;
 
-  // Actions (existing)
-  setSelectedBird: (id: string | null) => void;
-  toggleLanguage: () => void;
-  setAudioStatus: (status: AudioStatus) => void;
-  setGlobeReady: (ready: boolean) => void;
-  setModelsReady: (ready: boolean) => void;
-  setEncyclopediaOpen: (open: boolean) => void;
-  setContinentPanelRegion: (region: string | null) => void;
-  startQuiz: (questions: QuizQuestion[]) => void;
-  answerQuiz: (correct: boolean) => void;
-  nextQuizQuestion: () => void;
-  endQuiz: () => void;
+  // v9: Story explorer
+  storyExplorerOpen: boolean;
+  setStoryExplorerOpen: (open: boolean) => void;
 
-  // Actions (v7)
-  setShowAllRoutes: (show: boolean) => void;
-  setEvolutionTimelineOpen: (open: boolean) => void;
-  startSoundGuess: () => void;
-  setSoundGuessOptions: (options: SoundGuessOption[], correctId: string) => void;
-  answerSoundGuess: (birdId: string) => void;
-  nextSoundGuessRound: () => void;
-  endSoundGuess: () => void;
+  // v9: Bird radar
+  radarOpen: boolean;
+  setRadarOpen: (open: boolean) => void;
+
+  // UI: Tooltip
+  hoveredBirdId: string | null;
+  setHoveredBird: (id: string | null) => void;
+
+  // UI: Region filter panel
+  regionFilterOpen: boolean;
+  setRegionFilterOpen: (open: boolean) => void;
 }
 ```
 
-## Data Files
+## Implementation Phases (v8)
 
-### `src/data/birds.json`
-15 bird entries with v7 extended fields: `sizeCategory`, `habitatType`, `migrationDistanceKm`, `diet`, `wingspan`, `lifespan`, `evolutionEra`, `dietType`, `wingspanCm`.
+- Phase 56: Data Model Extension (v8) → R-2
+- Phase 57: UI System — ActionButton + RightControlPanel → R-19
+- Phase 58: Bird Info Card Redesign → R-4
+- Phase 59: Animated Bird Markers + Tooltip → R-3
+- Phase 60: Bird Collection System → R-5
+- Phase 61: Region Filter → R-6
+- Phase 62: Kid Quest System → R-7
+- Phase 63: Loading UI Enhancement → R-19
+- Phase 64: Globe Visual Improvements → R-8
 
-### `src/data/migrations.json`
-4 migration routes with `migrationDistanceKm`.
+## Implementation Phases (v9)
 
-### `src/data/labels.ts`
-Continent and ocean label positions with bilingual names.
+- Phase 65: Migration Mode → R-9
+- Phase 66: Guided Discovery Tour → R-10
+- Phase 67: AI Bird Guide → R-11
+- Phase 68: Enhanced Learning Quiz → R-12
+- Phase 69: Bird Rarity System → R-13
+- Phase 70: Bird Radar → R-14
+- Phase 71: Story-Based Exploration → R-15
 
-### `public/data/countries-110m.json`
-Simplified Natural Earth GeoJSON for country borders.
+## Implementation Phases (Refactor + Polish)
 
-## Implementation Phases (v5 — completed)
-
-- Phase 26: Fix OrbitControls Target Lock ✅
-- Phase 27: Improve Lighting ✅
-- Phase 28: Replace Atmosphere with Fresnel Shell ✅
-- Phase 29: Fix BirdMarker Hooks & Declarative Pattern ✅
-- Phase 30: Replace Bird Model ✅
-- Phase 31: Improve Migration Paths ✅
-- Phase 32: Add Country Borders ✅
-- Phase 33: Add Map Labels ✅
-- Phase 34: Final Verification (v5) ✅
-
-## Implementation Phases (v6 — completed)
-
-- Phase 35: Sound Ripple System ✅ → R-14, AC-12
-- Phase 36: Habitat Highlight Rendering ✅ → R-15, AC-13
-- Phase 37: Discovery Gameplay Mode ✅ → R-16, AC-14
-- Phase 38: Migration Story Animation ✅ → R-17, AC-15
-- Phase 39: Bird Size Comparison ✅ → R-18, AC-16
-- Phase 40: Continent Learning Panel ✅ → R-19, AC-17
-- Phase 41: Quiz Gameplay System ✅ → R-20, AC-18
-- Phase 42: Wing Flap Animation ✅ → R-21, AC-19
-- Phase 43: Bird Encyclopedia Panel ✅ → R-22, AC-20
-- Phase 44: Extended Data Model ✅ → Bird + MigrationRoute type extensions
-- Phase 45: Final Verification (v6) ✅ → AC-12 through AC-20, AC-ARCH
-
-## Implementation Phases (v7)
-
-- Phase 46: Extended Data Model (v7) → Bird type + data extensions
-- Phase 47: Improved Starfield Depth → R-28, AC-26
-- Phase 48: Global Migration Map → R-23, AC-21
-- Phase 49: Bird Diet Visualization → R-25, AC-23
-- Phase 50: Wingspan Comparison Bar → R-26, AC-24
-- Phase 51: Bird Evolution Timeline → R-24, AC-22
-- Phase 52: Sound Guess Mode → R-27, AC-25
-- Phase 53: BirdInfoCard v7 Integration → R-25, R-26
-- Phase 54: Refactor & Clean Up → AC-ARCH
-- Phase 55: Final Verification (v7) → AC-21 through AC-26, AC-ARCH
+- Phase 72: UI Consistency Pass → R-19
+- Phase 73: Mobile Responsive + Safe Areas → R-19
+- Phase 74: Performance Optimization → R-20
+- Phase 75: Final Verification → All ACs

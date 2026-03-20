@@ -82,9 +82,7 @@ export function QuizPanel() {
           try {
             await play(bird.audioUrl);
             return;
-          } catch {
-            /* fall through */
-          }
+          } catch { /* fall through */ }
         }
         const url = await fetchBirdAudio(bird.xenoCantoQuery, controller.signal);
         if (url) await play(url);
@@ -99,7 +97,8 @@ export function QuizPanel() {
       <button
         onClick={handleStartQuiz}
         aria-label={language === "zh" ? "开始答题" : "Start Quiz"}
-        className="pointer-events-auto fixed bottom-20 right-4 z-40 flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-3 text-base font-bold text-amber-950 shadow-lg transition-all hover:scale-105 hover:bg-amber-400 active:scale-95 md:bottom-6 md:right-6"
+        className="fixed left-4 bottom-4 z-10 flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95 min-[900px]:bottom-4 min-[900px]:left-4"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <span>🎮</span>
         <span>{language === "zh" ? "答题" : "Quiz"}</span>
@@ -109,8 +108,8 @@ export function QuizPanel() {
 
   if (quizState === "result") {
     return (
-      <div className="pointer-events-auto fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="flex max-w-sm flex-col items-center gap-6 rounded-2xl bg-amber-50 p-8 shadow-xl">
+      <div className="pointer-events-auto fixed inset-0 z-20 flex items-center justify-center bg-black/50 p-4">
+        <div className="flex max-w-sm flex-col items-center gap-6 rounded-[20px] bg-white/95 p-8 shadow-2xl backdrop-blur-xl">
           <p className="text-2xl font-bold text-amber-800">
             {language === "zh" ? "太棒了！" : "Great job!"}
           </p>
@@ -120,13 +119,13 @@ export function QuizPanel() {
           <div className="flex gap-4">
             <button
               onClick={handlePlayAgain}
-              className="min-h-12 min-w-30 rounded-xl bg-amber-500 px-6 py-3 font-bold text-amber-950 transition-all hover:bg-amber-400 active:scale-95"
+              className="h-[44px] min-w-[100px] rounded-xl bg-amber-500 px-6 font-bold text-white transition-all hover:bg-amber-600 active:scale-95"
             >
               {language === "zh" ? "再玩一次" : "Play Again"}
             </button>
             <button
               onClick={handleClose}
-              className="min-h-12 min-w-25 rounded-xl bg-amber-200 px-6 py-3 font-bold text-amber-900 transition-all hover:bg-amber-300 active:scale-95"
+              className="h-[44px] min-w-[80px] rounded-xl bg-gray-100 px-6 font-bold text-gray-600 transition-all hover:bg-gray-200 active:scale-95"
             >
               {language === "zh" ? "关闭" : "Close"}
             </button>
@@ -143,17 +142,14 @@ export function QuizPanel() {
   const options = currentQuestion!.options ?? [];
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="pointer-events-auto fixed inset-0 z-20 flex items-center justify-center bg-black/50 p-4">
       <div
-        className={`flex max-w-md flex-col gap-6 rounded-2xl bg-amber-50 p-6 shadow-xl transition-all ${
+        className={`flex max-w-md flex-col gap-6 rounded-[20px] bg-white/95 p-6 shadow-2xl backdrop-blur-xl transition-all ${
           feedback === "correct" ? "animate-quiz-correct" : ""
         } ${feedback === "wrong" ? "animate-quiz-shake" : ""}`}
       >
         {feedback === "correct" && (
-          <div
-            className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
-            aria-hidden="true"
-          >
+          <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
             {CONFETTI_DOTS.map((dot, i) => (
               <div
                 key={i}
@@ -183,16 +179,14 @@ export function QuizPanel() {
           {options.map((birdId) => {
             const bird = birdMap.get(birdId);
             const name = bird
-              ? language === "zh"
-                ? bird.nameZh
-                : bird.nameEn
+              ? language === "zh" ? bird.nameZh : bird.nameEn
               : birdId;
             return (
               <button
                 key={birdId}
                 onClick={() => handleAnswer(birdId)}
                 disabled={answered}
-                className="min-h-12 w-full rounded-xl bg-amber-100 px-4 py-3 text-left font-medium text-amber-900 transition-all hover:bg-amber-200 active:scale-[0.98] disabled:opacity-70"
+                className="h-12 w-full rounded-xl bg-amber-50 px-4 text-left font-medium text-amber-900 transition-all hover:bg-amber-100 active:scale-[0.98] disabled:opacity-70"
               >
                 {name}
               </button>
@@ -209,7 +203,6 @@ export function QuizPanel() {
         }
         .animate-quiz-correct {
           animation: quiz-correct 0.6s ease-out;
-          background: linear-gradient(to bottom, rgba(34, 197, 94, 0.15), transparent);
         }
         @keyframes quiz-shake {
           0%, 100% { transform: translateX(0); }
@@ -222,14 +215,8 @@ export function QuizPanel() {
           animation: quiz-shake 0.5s ease-in-out;
         }
         @keyframes confetti-fall {
-          0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(200px) rotate(360deg);
-            opacity: 0;
-          }
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(200px) rotate(360deg); opacity: 0; }
         }
       `}</style>
     </div>

@@ -83,21 +83,19 @@ export function SoundGuessPanel() {
     return (
       <button
         onClick={startSoundGuess}
-        className="fixed bottom-60 right-4 z-30 flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-lg ring-1 ring-gray-200/50 backdrop-blur-sm transition-all hover:bg-white min-h-12 min-w-12"
+        className="fixed left-4 bottom-16 z-10 flex h-[44px] min-w-[120px] items-center justify-center gap-2 rounded-xl bg-black/65 px-4 text-sm font-semibold text-white shadow-lg backdrop-blur-lg transition-all hover:scale-105 active:scale-95 min-[900px]:bottom-16 min-[900px]:left-4"
         aria-label={language === "zh" ? "听声辨鸟" : "Sound Guess"}
       >
-        <span className="text-base">🎵</span>
-        <span className="hidden sm:inline">
-          {language === "zh" ? "听声辨鸟" : "Sound Guess"}
-        </span>
+        <span>🎵</span>
+        <span>{language === "zh" ? "听声辨鸟" : "Sound Guess"}</span>
       </button>
     );
   }
 
   if (soundGuessState === "result") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div className="mx-4 w-full max-w-sm rounded-[28px] bg-white/95 p-6 text-center shadow-2xl backdrop-blur-xl">
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div className="mx-4 w-full max-w-sm rounded-[20px] bg-white/95 p-6 text-center shadow-2xl backdrop-blur-xl">
           <p className="text-4xl">🎵</p>
           <h3 className="mt-2 text-xl font-bold text-gray-800">
             {language === "zh" ? "听声辨鸟完成！" : "Sound Guess Complete!"}
@@ -105,19 +103,16 @@ export function SoundGuessPanel() {
           <p className="mt-2 text-3xl font-bold text-amber-500">
             {soundGuessScore}/5
           </p>
-          <p className="mt-1 text-sm text-gray-500">
-            {language === "zh" ? "正确答案" : "correct answers"}
-          </p>
-          <div className="mt-4 flex gap-3 justify-center">
+          <div className="mt-4 flex justify-center gap-3">
             <button
               onClick={() => { endSoundGuess(); startSoundGuess(); }}
-              className="rounded-full bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-amber-600"
+              className="h-[44px] rounded-xl bg-amber-500 px-5 text-sm font-semibold text-white shadow-md hover:bg-amber-600 active:scale-95"
             >
               {language === "zh" ? "再玩一次" : "Play Again"}
             </button>
             <button
               onClick={endSoundGuess}
-              className="rounded-full bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200"
+              className="h-[44px] rounded-xl bg-gray-100 px-5 text-sm font-semibold text-gray-600 hover:bg-gray-200 active:scale-95"
             >
               {language === "zh" ? "退出" : "Exit"}
             </button>
@@ -128,10 +123,10 @@ export function SoundGuessPanel() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       {showConfetti && <Confetti />}
       <div
-        className={`mx-4 w-full max-w-md rounded-[28px] bg-white/95 p-6 shadow-2xl backdrop-blur-xl ${shake ? "animate-[shake_0.3s_ease-in-out]" : ""}`}
+        className={`mx-4 w-full max-w-md rounded-[20px] bg-white/95 p-6 shadow-2xl backdrop-blur-xl ${shake ? "animate-[shake_0.3s_ease-in-out]" : ""}`}
       >
         <div className="mb-4 flex items-center justify-between">
           <span className="text-sm font-semibold text-gray-500">
@@ -172,7 +167,7 @@ export function SoundGuessPanel() {
                   <div className="h-16 w-16 overflow-hidden rounded-xl">
                     <img src={opt.photoUrl} alt={opt.nameEn} className="h-full w-full object-cover" />
                   </div>
-                  <span className="text-xs font-medium text-gray-700 text-center">
+                  <span className="text-center text-xs font-medium text-gray-700">
                     {language === "zh" ? opt.nameZh : opt.nameEn}
                   </span>
                 </button>
@@ -194,7 +189,7 @@ export function SoundGuessPanel() {
 
 function Confetti() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-60 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
       {Array.from({ length: 40 }).map((_, i) => (
         <div
           key={i}
@@ -210,7 +205,7 @@ function Confetti() {
       <style>{`
         @keyframes confettiFall {
           to {
-            transform: translateY(110vh) rotate(${360 + Math.random() * 360}deg);
+            transform: translateY(110vh) rotate(720deg);
             opacity: 0;
           }
         }

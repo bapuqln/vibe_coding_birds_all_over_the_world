@@ -1,0 +1,90 @@
+[
+  {
+    "id": "quest-africa-3",
+    "titleZh": "非洲探险家",
+    "titleEn": "African Explorer",
+    "descriptionZh": "在非洲找到3只鸟",
+    "descriptionEn": "Find 3 birds in Africa",
+    "type": "find_region",
+    "target": "africa",
+    "reward": 30,
+    "badge": "🌍"
+  },
+  {
+    "id": "quest-antarctica-1",
+    "titleZh": "南极发现者",
+    "titleEn": "Antarctic Discoverer",
+    "descriptionZh": "发现一只南极洲的鸟",
+    "descriptionEn": "Discover a bird in Antarctica",
+    "type": "find_region",
+    "target": "antarctica",
+    "reward": 20,
+    "badge": "🧊"
+  },
+  {
+    "id": "quest-collect-5",
+    "titleZh": "收藏家",
+    "titleEn": "Bird Collector",
+    "descriptionZh": "收集5只鸟",
+    "descriptionEn": "Collect 5 birds",
+    "type": "collect_count",
+    "target": 5,
+    "reward": 50,
+    "badge": "⭐"
+  },
+  {
+    "id": "quest-collect-10",
+    "titleZh": "超级收藏家",
+    "titleEn": "Super Collector",
+    "descriptionZh": "收集10只鸟",
+    "descriptionEn": "Collect 10 birds",
+    "type": "collect_count",
+    "target": 10,
+    "reward": 100,
+    "badge": "🏆"
+  },
+  {
+    "id": "quest-asia-3",
+    "titleZh": "亚洲冒险家",
+    "titleEn": "Asian Adventurer",
+    "descriptionZh": "在亚洲找到3只鸟",
+    "descriptionEn": "Find 3 birds in Asia",
+    "type": "find_region",
+    "target": "asia",
+    "reward": 30,
+    "badge": "🏯"
+  },
+  {
+    "id": "quest-eagle",
+    "titleZh": "寻找白头海雕",
+    "titleEn": "Find the Bald Eagle",
+    "descriptionZh": "发现美国国鸟白头海雕",
+    "descriptionEn": "Discover America's national bird, the Bald Eagle",
+    "type": "discover_bird",
+    "target": "bald-eagle",
+    "reward": 25,
+    "badge": "🦅"
+  },
+  {
+    "id": "quest-penguin",
+    "titleZh": "寻找帝企鹅",
+    "titleEn": "Find the Emperor Penguin",
+    "descriptionZh": "发现世界上最高的企鹅",
+    "descriptionEn": "Discover the tallest penguin in the world",
+    "type": "discover_bird",
+    "target": "emperor-penguin",
+    "reward": 25,
+    "badge": "🐧"
+  },
+  {
+    "id": "quest-europe-2",
+    "titleZh": "欧洲探索者",
+    "titleEn": "European Explorer",
+    "descriptionZh": "在欧洲找到2只鸟",
+    "descriptionEn": "Find 2 birds in Europe",
+    "type": "find_region",
+    "target": "europe",
+    "reward": 20,
+    "badge": "🏰"
+  }
+]

@@ -1,6 +1,6 @@
 import { useRef, useMemo, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import {
   Vector3,
   Quaternion,
@@ -14,6 +14,8 @@ import { useAppStore } from "../../store";
 const MARKER_RADIUS = 1.02;
 const MODEL_PATH = "/models/bird.glb";
 const BASE_SCALE = 0.03;
+const FLIGHT_RADIUS = 0.015;
+const FLIGHT_SPEED = 0.4;
 
 useGLTF.preload(MODEL_PATH);
 
@@ -28,9 +30,16 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const hoveredRef = useRef(false);
   const scaleRef = useRef(1);
   const emissiveRef = useRef(0.5);
+  const pausedUntilRef = useRef(0);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const setModelsReady = useAppStore((s) => s.setModelsReady);
+  const setHoveredBird = useAppStore((s) => s.setHoveredBird);
+  const activeRegion = useAppStore((s) => s.activeRegion);
+  const hoveredBirdId = useAppStore((s) => s.hoveredBirdId);
   const phaseOffset = index * 1.3;
+
+  const isVisible = !activeRegion || bird.region === activeRegion;
+  const isHovered = hoveredBirdId === bird.id;
 
   const position = useMemo(
     () => latLngToVector3(bird.lat, bird.lng, MARKER_RADIUS),
@@ -63,9 +72,14 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       setSelectedBird(bird.id);
+      pausedUntilRef.current = Date.now() + 3000;
     },
     [bird.id, setSelectedBird],
   );
+
+  const rarityGlow = bird.rarity === "legendary" ? 2.0
+    : bird.rarity === "rare" ? 1.2
+    : 0.5;
 
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
@@ -77,49 +91,92 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     const wingFlap = 1 + 0.08 * Math.sin(clock.elapsedTime * (2 * Math.PI / 1.2) + phaseOffset);
     meshRef.current.scale.set(s * wingFlap, s, s);
 
-    const targetEmissive = hoveredRef.current ? 1.5 : 0.5;
+    const targetEmissive = hoveredRef.current ? 1.5 : rarityGlow;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
     if (matRef.current) {
       matRef.current.emissiveIntensity = emissiveRef.current;
     }
 
+    const isPaused = Date.now() < pausedUntilRef.current;
+    const t = clock.elapsedTime * FLIGHT_SPEED + phaseOffset;
+    const flightX = isPaused ? 0 : Math.sin(t) * FLIGHT_RADIUS;
+    const flightZ = isPaused ? 0 : Math.cos(t) * FLIGHT_RADIUS * 0.6;
+
+    const tangent1 = new Vector3(-normal.y, normal.x, 0).normalize();
+    const tangent2 = new Vector3().crossVectors(normal, tangent1).normalize();
+
     const bob = 0.005 * Math.sin(clock.elapsedTime * Math.PI + phaseOffset);
     meshRef.current.position.set(
-      position[0] + normal.x * bob,
-      position[1] + normal.y * bob,
-      position[2] + normal.z * bob,
+      position[0] + normal.x * bob + tangent1.x * flightX + tangent2.x * flightZ,
+      position[1] + normal.y * bob + tangent1.y * flightX + tangent2.y * flightZ,
+      position[2] + normal.z * bob + tangent1.z * flightX + tangent2.z * flightZ,
     );
+
+    const targetOpacity = isVisible ? 1 : 0.1;
+    if (matRef.current) {
+      matRef.current.opacity += (targetOpacity - matRef.current.opacity) * 0.1;
+    }
   });
 
+  const emissiveColor = bird.rarity === "legendary" ? 0x664400 : bird.rarity === "rare" ? 0x223366 : 0x332200;
+
   return (
-    <mesh
-      ref={meshRef}
-      position={position}
-      quaternion={quaternion}
-      onClick={handleClick}
-      onPointerOver={(e) => {
-        e.stopPropagation();
-        hoveredRef.current = true;
-        document.body.style.cursor = "pointer";
-      }}
-      onPointerOut={() => {
-        hoveredRef.current = false;
-        document.body.style.cursor = "auto";
-      }}
-    >
-      {gltfGeometry ? (
-        <primitive object={gltfGeometry} attach="geometry" />
-      ) : (
-        <sphereGeometry args={[0.015, 16, 16]} />
+    <group visible={isVisible || (matRef.current?.opacity ?? 0) > 0.05}>
+      <mesh
+        ref={meshRef}
+        position={position}
+        quaternion={quaternion}
+        onClick={handleClick}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          hoveredRef.current = true;
+          setHoveredBird(bird.id);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          hoveredRef.current = false;
+          setHoveredBird(null);
+          document.body.style.cursor = "auto";
+        }}
+      >
+        {gltfGeometry ? (
+          <primitive object={gltfGeometry} attach="geometry" />
+        ) : (
+          <sphereGeometry args={[0.015, 16, 16]} />
+        )}
+        <meshStandardMaterial
+          ref={matRef}
+          color={0xffb347}
+          emissive={emissiveColor}
+          emissiveIntensity={rarityGlow}
+          metalness={0.2}
+          roughness={0.6}
+          transparent
+          opacity={1}
+        />
+      </mesh>
+
+      {/* Tooltip on hover */}
+      {isHovered && (
+        <Html
+          position={[
+            position[0] + normal.x * 0.06,
+            position[1] + normal.y * 0.06,
+            position[2] + normal.z * 0.06,
+          ]}
+          center
+          style={{ pointerEvents: "none" }}
+        >
+          <div className="whitespace-nowrap rounded-lg bg-black/75 px-2.5 py-1.5 text-center backdrop-blur-sm">
+            <p className="text-xs font-bold text-white">
+              {bird.nameEn}
+            </p>
+            <p className="text-[10px] text-white/70">
+              {bird.region}
+            </p>
+          </div>
+        </Html>
       )}
-      <meshStandardMaterial
-        ref={matRef}
-        color={0xffb347}
-        emissive={0x332200}
-        emissiveIntensity={0.5}
-        metalness={0.2}
-        roughness={0.6}
-      />
-    </mesh>
+    </group>
   );
 }
