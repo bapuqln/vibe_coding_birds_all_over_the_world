@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v18)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v19)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -7,10 +7,111 @@
 > v12 phases (93–100) are complete.
 > v13 phases (101–108) are complete.
 > v14 phases (109–118) are complete.
-> v15 phases (119–126) are new.
-> v16 phases (127–134) are new.
+> v15 phases (119–126) are complete.
+> v16 phases (127–134) are complete.
 > v17 phases (135–141) are complete.
-> v18 phases (142–149) are new.
+> v18 phases (142–149) are complete.
+> v19 phases (150–161) are new.
+
+---
+
+# v19 Tasks (High-Quality Bird Models Upgrade)
+
+---
+
+## Phase 150: Remove Generated Bird Models
+
+- [x] **150.1** Delete `scripts/generate-bird-models.mjs` procedural bird generation script.
+- [x] **150.2** Remove all procedurally generated GLB files from `public/models/birds/`.
+- [x] **150.3** Verify no procedural geometry code remains in bird marker components.
+
+---
+
+## Phase 151: Asset Pipeline Setup
+
+- [x] **151.1** Establish `/public/models/birds/` as canonical bird GLB directory.
+- [x] **151.2** Create `src/utils/birdModelLoader.ts` with DRACOLoader configuration and bounding-box normalization.
+- [x] **151.3** Update `src/data/birdModels.ts` to use new loader utility.
+
+---
+
+## Phase 152: High-Quality Bird Model Integration
+
+- [x] **152.1** Create proper GLB bird models for starter set: eagle, owl, parrot, penguin, flamingo, duck, sparrow, crow, toucan, peacock, woodpecker, seagull.
+- [x] **152.2** Each model fits 1-unit bounding box, < 2000 triangles, stylized low-poly.
+- [x] **152.3** Update `BirdMarker.tsx` to load full GLB scenes (not just geometry) with proper materials.
+
+---
+
+## Phase 153: Model Scale Normalization
+
+- [x] **153.1** Implement bounding-box computation and auto-scale in loader.
+- [x] **153.2** Center all models at origin after normalization.
+- [x] **153.3** Verify all 12 bird models render at consistent sizes on globe.
+
+---
+
+## Phase 154: Bird Idle Animation
+
+- [x] **154.1** Add subtle wing-flap animation (Y-axis scale sine wave, amplitude 0.04, period ~4s).
+- [x] **154.2** Add vertical floating motion (sine wave, amplitude 0.02–0.05 units, period 3–5s).
+- [x] **154.3** Per-bird phase offset for animation variety.
+
+---
+
+## Phase 155: Bird Marker Enhancement
+
+- [x] **155.1** Glowing base ring with additive blending at marker position.
+- [x] **155.2** Hover effect: scale 1.35x with glow intensification.
+- [x] **155.3** Ring opacity pulse with sine wave animation.
+
+---
+
+## Phase 156: Bird Discovery Interaction
+
+- [x] **156.1** Camera smooth fly-to bird location on click (~1s duration).
+- [x] **156.2** Open bird info card after camera arrives.
+- [x] **156.3** "You discovered a new bird!" notification with Birds Found X/Total counter.
+
+---
+
+## Phase 157: UI Layering Fix
+
+- [x] **157.1** Enforce z-index hierarchy: globe 0, markers 5, sidebar 20, bottom panel 30, info card 60, modal 100.
+- [x] **157.2** Sidebar dims when bird card open (opacity 0.4, shift left 10px).
+- [x] **157.3** Info cards never covered by sidebar.
+
+---
+
+## Phase 158: Safe Layout Margins
+
+- [x] **158.1** Info card desktop position with left margin 200px.
+- [x] **158.2** Tablet: center modal layout.
+- [x] **158.3** Mobile: bottom sheet layout.
+
+---
+
+## Phase 159: Camera Experience
+
+- [x] **159.1** Smooth camera fly-to with smoothstep easing (~1s).
+- [x] **159.2** Stop above bird marker (ZOOM_DISTANCE = 1.8).
+- [x] **159.3** Gentle auto-rotate orbit after arrival.
+
+---
+
+## Phase 160: Draco Compression
+
+- [x] **160.1** Configure DRACOLoader with Google-hosted decoder.
+- [x] **160.2** Integrate with useGLTF for transparent compressed loading.
+- [x] **160.3** Verify both compressed and uncompressed GLB files load correctly.
+
+---
+
+## Phase 161: Visual Polish
+
+- [x] **161.1** Subtle floating sine-wave effect on all bird models (amplitude 0.02–0.05).
+- [x] **161.2** Smooth wing-flap breathing animation on Y axis.
+- [x] **161.3** Per-bird phase offsets for natural variety.
 
 ---
 
@@ -764,5 +865,6 @@
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
+| **Total v19 tasks** | **36 tasks** | **36 complete** |
 | **Total v18 tasks** | **28 tasks** | **28 complete** |
-| **Total all tasks (v1–v18)** | **~972 tasks** | **~874 complete** |
+| **Total all tasks (v1–v19)** | **~1008 tasks** | **~910 complete** |

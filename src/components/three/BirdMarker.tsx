@@ -9,9 +9,11 @@ import {
   MeshBasicMaterial,
   DoubleSide,
   AdditiveBlending,
+  Box3,
   type Mesh,
   type Group,
   type BufferGeometry,
+  type Material,
 } from "three";
 import type { Bird } from "../../types";
 import { latLngToVector3 } from "../../utils/coordinates";
@@ -31,22 +33,51 @@ const PHASE_HOP = 500;
 const PHASE_LOOK = 800;
 const PHASE_CIRCLE = 1300;
 
+const FLOAT_AMPLITUDE_3D = 0.035;
+const FLOAT_AMPLITUDE_2D = 0.02;
+const FLOAT_SPEED_3D = Math.PI * 0.6;
+const FLOAT_SPEED_2D = Math.PI * 0.8;
+const IDLE_FLAP_AMPLITUDE = 0.04;
+const IDLE_FLAP_SPEED = 1.0;
+
 for (const p of ALL_MODEL_PATHS) {
   useGLTF.preload(p);
 }
 
-function useModelGeometry(modelPath: string): BufferGeometry | null {
+function useNormalizedBirdModel(modelPath: string): {
+  geometry: BufferGeometry | null;
+  material: Material | Material[] | null;
+} {
   const gltf = useGLTF(modelPath);
   return useMemo(() => {
-    const firstMesh = gltf.scene.children[0] as Mesh | undefined;
-    return firstMesh?.geometry ?? null;
+    const scene = gltf.scene.clone(true);
+
+    const box = new Box3().setFromObject(scene);
+    const size = new Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    if (maxDim > 0) {
+      scene.scale.multiplyScalar(1.0 / maxDim);
+    }
+
+    const meshes: Mesh[] = [];
+    scene.traverse((child) => {
+      if ((child as Mesh).isMesh) {
+        meshes.push(child as Mesh);
+      }
+    });
+    const firstMesh = meshes[0] ?? null;
+
+    return {
+      geometry: firstMesh?.geometry ?? null,
+      material: firstMesh?.material ?? null,
+    };
   }, [gltf]);
 }
 
 interface BirdMarkerProps {
   bird: Bird;
   index: number;
-  totalVisible3D?: number;
 }
 
 export function BirdMarker({ bird, index }: BirdMarkerProps) {
@@ -72,8 +103,11 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
 
   const { camera } = useThree();
 
-  const modelPath = useMemo(() => getModelPath(bird.silhouette), [bird.silhouette]);
-  const glbGeometry = useModelGeometry(modelPath);
+  const modelPath = useMemo(
+    () => getModelPath(bird.silhouette),
+    [bird.silhouette],
+  );
+  const { geometry: glbGeometry } = useNormalizedBirdModel(modelPath);
 
   useEffect(() => {
     if (index === 0 && glbGeometry) setModelsReady(true);
@@ -141,19 +175,19 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
           )
       : 1;
 
-    // Idle wing-flap: gentle sine wave every few seconds
-    const idleFlapCycle = clock.elapsedTime * 1.2 + phaseOffset;
-    const idleFlap = 0.04 * Math.sin(idleFlapCycle * Math.PI);
+    const idleFlapCycle = clock.elapsedTime * IDLE_FLAP_SPEED + phaseOffset;
+    const idleFlap =
+      IDLE_FLAP_AMPLITUDE * Math.sin(idleFlapCycle * Math.PI);
 
     const s = scaleRef.current * modelScale * hintFlutter;
 
-    let wingFlapFreq = 2 * Math.PI / 1.2;
+    let wingFlapFreq = (2 * Math.PI) / 1.2;
     let wingFlapAmp = 0.08;
     if (isClickAnimating && clickElapsed < PHASE_FLAP) {
-      wingFlapFreq = 2 * Math.PI / 0.12;
+      wingFlapFreq = (2 * Math.PI) / 0.12;
       wingFlapAmp = 0.25;
     } else if (isClickAnimating && clickElapsed < PHASE_HOP) {
-      wingFlapFreq = 2 * Math.PI / 0.2;
+      wingFlapFreq = (2 * Math.PI) / 0.2;
       wingFlapAmp = 0.15;
     }
     const wingFlap =
@@ -161,12 +195,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       wingFlapAmp *
         Math.sin(clock.elapsedTime * wingFlapFreq + phaseOffset);
 
-    // Apply scale with idle wing breathing on Y axis
-    meshRef.current.scale.set(
-      s * wingFlap,
-      s * (1 + idleFlap),
-      s,
-    );
+    meshRef.current.scale.set(s * wingFlap, s * (1 + idleFlap), s);
 
     const gentleRotation = shouldUse3D
       ? Math.sin(clock.elapsedTime * 0.3 + phaseOffset) * 0.15
@@ -193,7 +222,10 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
           1,
         );
         const eased = lookT * lookT * (3 - 2 * lookT);
-        const rotQ = new Quaternion().setFromAxisAngle(normal, -angle * eased);
+        const rotQ = new Quaternion().setFromAxisAngle(
+          normal,
+          -angle * eased,
+        );
         q.multiply(rotQ);
 
         if (clickElapsed >= PHASE_LOOK) {
@@ -207,7 +239,10 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
           q.multiply(circleRotQ);
         }
       } else if (!isClickAnimating) {
-        const rotQ = new Quaternion().setFromAxisAngle(normal, gentleRotation);
+        const rotQ = new Quaternion().setFromAxisAngle(
+          normal,
+          gentleRotation,
+        );
         q.multiply(rotQ);
       }
       meshRef.current.quaternion.copy(q);
@@ -254,8 +289,8 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       .crossVectors(normal, tangent1)
       .normalize();
 
-    const floatAmplitude = shouldUse3D ? 0.008 : 0.005;
-    const floatSpeed = shouldUse3D ? Math.PI * 0.8 : Math.PI;
+    const floatAmplitude = shouldUse3D ? FLOAT_AMPLITUDE_3D : FLOAT_AMPLITUDE_2D;
+    const floatSpeed = shouldUse3D ? FLOAT_SPEED_3D : FLOAT_SPEED_2D;
     let bob =
       floatAmplitude *
       Math.sin(clock.elapsedTime * floatSpeed + phaseOffset);
@@ -339,7 +374,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
         />
       </mesh>
 
-      {/* Bird mesh — uses GLB geometry when available, fallback sphere */}
+      {/* Bird mesh — uses normalized GLB geometry, fallback sphere */}
       <mesh
         ref={meshRef}
         position={position}

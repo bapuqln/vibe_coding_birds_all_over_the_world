@@ -1,6 +1,7 @@
 /**
  * Maps bird silhouette types to GLB model paths.
- * Each model is a stylized low-poly bird (< 2000 tris, 1-unit bounding box).
+ * All models are high-quality stylized low-poly birds loaded from /public/models/birds/.
+ * Each model fits a 1-unit bounding box, < 2000 tris, with Draco compression support.
  */
 
 const SILHOUETTE_TO_MODEL: Record<string, string> = {
@@ -18,6 +19,34 @@ const SILHOUETTE_TO_MODEL: Record<string, string> = {
   "kiwi": "/models/birds/duck.glb",
   "superb-fairywren": "/models/birds/sparrow.glb",
   "fairy-pitta": "/models/birds/parrot.glb",
+  "great-hornbill": "/models/birds/toucan.glb",
+  "snowy-owl": "/models/birds/owl.glb",
+  "barn-owl": "/models/birds/owl.glb",
+  "peregrine-falcon": "/models/birds/eagle.glb",
+  "blue-jay": "/models/birds/crow.glb",
+  "american-robin": "/models/birds/sparrow.glb",
+  "ruby-throated-hummingbird": "/models/birds/sparrow.glb",
+  "scarlet-macaw": "/models/birds/parrot.glb",
+  "harpy-eagle": "/models/birds/eagle.glb",
+  "resplendent-quetzal": "/models/birds/parrot.glb",
+  "mandarin-duck": "/models/birds/duck.glb",
+  "indian-peafowl": "/models/birds/peacock.glb",
+  "greater-flamingo": "/models/birds/flamingo.glb",
+  "african-grey-parrot": "/models/birds/parrot.glb",
+  "shoebill": "/models/birds/flamingo.glb",
+  "kookaburra": "/models/birds/woodpecker.glb",
+  "lyrebird": "/models/birds/peacock.glb",
+  "kakapo": "/models/birds/parrot.glb",
+  "arctic-tern": "/models/birds/seagull.glb",
+  "puffin": "/models/birds/penguin.glb",
+  "golden-eagle": "/models/birds/eagle.glb",
+  "european-starling": "/models/birds/crow.glb",
+  "common-raven": "/models/birds/crow.glb",
+  "house-sparrow": "/models/birds/sparrow.glb",
+  "mallard": "/models/birds/duck.glb",
+  "great-blue-heron": "/models/birds/flamingo.glb",
+  "red-crowned-crane": "/models/birds/flamingo.glb",
+  "white-bellied-sea-eagle": "/models/birds/eagle.glb",
 };
 
 const DEFAULT_MODEL = "/models/birds/sparrow.glb";

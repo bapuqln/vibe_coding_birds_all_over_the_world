@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v18)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v19)
 
+> **v19 changelog**: High-Quality Bird Models Upgrade — removed all procedurally generated bird geometry and the generate-bird-models.mjs script, established proper GLB asset pipeline, integrated 12 high-quality stylized low-poly bird models loaded via useGLTF with DRACOLoader support, added bounding-box normalization (1-unit scale), idle animation system (wing flap + floating sine wave), improved markers with glow ring and hover effects, enhanced discovery interaction with progress tracking, fixed UI z-index layering, added safe layout margins, improved camera fly-to, enabled Draco compression.
+>
 > **v18 changelog**: Stability & Core Experience — fixed critical UI overlap (sidebar covering info cards) by enforcing z-index hierarchy and adding sidebar collision avoidance with opacity/shift, replaced unrealistic bird geometry with stylized low-poly procedural bird model with wing-flap animation, improved marker visuals with glowing base circle, enhanced info card with section titles and 200px left margin, improved camera fly-to (~1s), added discovery glow pulse, enforced consistent spacing tokens and safe margins across all UI.
 >
 > **v17 changelog**: Game-Like Exploration Polish — enhanced daily mission panel with continent progress mini-bars and animated completion badges, bird photo mode upgraded with full-screen photo overlay including zoom slider and rotation controls, bird encyclopedia improved with continent section grouping and search filter, explorer achievement system enhanced with progress bars showing requirement completion percentage, discovery celebration upgraded with layered confetti + sparkle + glow pulse animation, bottom discovery panel now shows continent-level progress bars with color-coded regions, bird hint system improved with proximity-based pulse intensity, exploration encouragement messages now rotate through suggestions, performance verified with all v17 features active at 60 FPS.
@@ -21,6 +23,36 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v19)
+
+### TD-121: Remove Procedural Bird Generation
+**Problem**: `scripts/generate-bird-models.mjs` generates low-quality procedural bird GLBs from Three.js primitives. Models look like chickens with poor topology and unrealistic shapes.
+**Solution**: Delete the generation script. Remove all procedurally generated GLB files from `public/models/birds/`. Birds must NEVER be generated procedurally again. All bird models must be loaded from external GLB assets.
+
+### TD-122: GLB Asset Pipeline
+**Problem**: No standardized asset pipeline exists. Bird models were generated ad-hoc.
+**Solution**: Establish `/public/models/birds/` as the canonical directory for bird GLB assets. Create a proper model loader utility (`src/utils/birdModelLoader.ts`) that handles loading via `useGLTF` with DRACOLoader support, bounding-box normalization to 1-unit scale, and scene traversal to extract the first mesh. All models must be < 2000 triangles and use stylized low-poly aesthetic.
+
+### TD-123: Bounding Box Normalization
+**Problem**: External GLB models may have inconsistent scales.
+**Solution**: On load, compute the model's bounding box, find the max dimension, and scale to fit within a 1-unit bounding box. Center the model at origin. This normalization happens in the loader utility and ensures all birds render at consistent sizes.
+
+### TD-124: DRACOLoader Integration
+**Problem**: GLB files can be large. Need compression support for performance.
+**Solution**: Configure `useGLTF` with DRACOLoader using the Google-hosted decoder (`https://www.gstatic.com/draco/versioned/decoders/1.5.7/`). This enables loading Draco-compressed GLB files transparently. Non-compressed files still load normally.
+
+### TD-125: Idle Animation System
+**Problem**: Birds need subtle life-like motion even when not interacted with.
+**Solution**: Add two animation layers in `useFrame`: (1) gentle wing flap via Y-axis scale modulation with sine wave (amplitude 0.04, period ~4s), (2) vertical floating via normal-direction offset with sine wave (amplitude 0.02-0.05 units, period ~3-5s). Both use per-bird phase offsets for variety.
+
+### TD-126: Enhanced Bird Markers
+**Problem**: Markers need clearer visual anchoring and hover feedback.
+**Solution**: Keep the glowing ring base (RingGeometry with additive blending). On hover: scale increase to 1.35x with soft glow intensification. Ring opacity pulses with sine wave. Undiscovered birds get warm amber glow, discovered birds get their rarity-based color.
+
+### TD-127: Camera Fly-To Improvement
+**Problem**: Camera needs to stop above the bird marker, not clip into the globe.
+**Solution**: Set `ZOOM_DISTANCE = 1.8` (above globe radius 1.0 + marker radius 0.02). Use spherical interpolation for smooth arc movement. Duration ~1s with smoothstep easing. After arrival, enable gentle auto-rotate orbit around the bird.
 
 ## Key Technical Decisions (v18)
 
