@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import type {
+  AchievementProgress,
   AudioStatus,
+  BirdPhoto,
   CollectedBird,
+  DailyMission,
   Language,
+  MissionTemplate,
   QuestProgress,
   QuizQuestion,
   QuizState,
@@ -10,6 +14,10 @@ import type {
   SoundGuessState,
   TourState,
 } from "./types";
+import birdsData from "./data/birds.json";
+import missionTemplates from "./data/missions.json";
+import achievementDefs from "./data/achievements.json";
+import type { AchievementDef, Bird } from "./types";
 
 export type PanelType =
   | "birdCard"
@@ -23,13 +31,59 @@ export type PanelType =
   | "continentBird"
   | "storyExplorer"
   | "evolution"
-  | "ar";
+  | "ar"
+  | "missions"
+  | "photoGallery"
+  | "achievements";
 
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
 const STORY_KEY = "kids-bird-globe-stories";
 const POINTS_KEY = "kids-bird-globe-points";
 const DISCOVERY_KEY = "kids-bird-globe-discovered";
+const MISSIONS_KEY = "kids-bird-globe-missions";
+const MISSIONS_DATE_KEY = "kids-bird-globe-missions-date";
+const PHOTOS_KEY = "kids-bird-globe-photos";
+const ACHIEVEMENTS_KEY = "kids-bird-globe-achievements";
+const LISTEN_COUNT_KEY = "kids-bird-globe-listen-count";
+const COMPLETED_MISSIONS_KEY = "kids-bird-globe-completed-missions";
+
+const allBirds = birdsData as Bird[];
+const templates = missionTemplates as MissionTemplate[];
+const MAX_PHOTOS = 50;
+
+function getTodayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function generateMissions(): DailyMission[] {
+  const shuffled = [...templates].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, 4);
+  return selected.map((t) => ({
+    id: `${t.id}-${getTodayKey()}`,
+    templateId: t.id,
+    type: t.type,
+    titleZh: t.titleZh,
+    titleEn: t.titleEn,
+    target: t.target,
+    goal: t.goal,
+    current: 0,
+    completed: false,
+    badge: t.badge,
+  }));
+}
+
+function loadMissions(): DailyMission[] {
+  const savedDate = loadFromStorage<string>(MISSIONS_DATE_KEY, "");
+  const today = getTodayKey();
+  if (savedDate === today) {
+    return loadFromStorage<DailyMission[]>(MISSIONS_KEY, []);
+  }
+  const missions = generateMissions();
+  saveToStorage(MISSIONS_KEY, missions);
+  saveToStorage(MISSIONS_DATE_KEY, today);
+  return missions;
+}
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
@@ -106,6 +160,23 @@ interface AppStore {
   // v13: Panel collision avoidance
   activePanel: PanelType | null;
 
+  // v16: Missions
+  dailyMissions: DailyMission[];
+  missionsPanelOpen: boolean;
+  completedMissionCount: number;
+  missionNotification: string | null;
+
+  // v16: Photos
+  birdPhotos: BirdPhoto[];
+  photoGalleryOpen: boolean;
+  photoModeActive: boolean;
+
+  // v16: Achievements
+  achievements: AchievementProgress[];
+  achievementPanelOpen: boolean;
+  achievementNotification: string | null;
+  listenCount: number;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -159,6 +230,21 @@ interface AppStore {
 
   // v13 actions
   setActivePanel: (panel: PanelType | null) => void;
+
+  // v16 actions
+  setMissionsPanelOpen: (open: boolean) => void;
+  updateMissionProgress: (type: DailyMission["type"], region?: string) => void;
+  dismissMissionNotification: () => void;
+
+  capturePhoto: (birdId: string, birdNameZh: string, birdNameEn: string, dataUrl: string) => void;
+  deletePhoto: (photoId: string) => void;
+  setPhotoGalleryOpen: (open: boolean) => void;
+  setPhotoModeActive: (active: boolean) => void;
+
+  setAchievementPanelOpen: (open: boolean) => void;
+  checkAchievements: () => void;
+  dismissAchievementNotification: () => void;
+  incrementListenCount: () => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -217,6 +303,20 @@ export const useAppStore = create<AppStore>((set, get) => ({
   arViewerBirdId: null,
 
   activePanel: null,
+
+  dailyMissions: loadMissions(),
+  missionsPanelOpen: false,
+  completedMissionCount: loadFromStorage<number>(COMPLETED_MISSIONS_KEY, 0),
+  missionNotification: null,
+
+  birdPhotos: loadFromStorage<BirdPhoto[]>(PHOTOS_KEY, []),
+  photoGalleryOpen: false,
+  photoModeActive: false,
+
+  achievements: loadFromStorage<AchievementProgress[]>(ACHIEVEMENTS_KEY, []),
+  achievementPanelOpen: false,
+  achievementNotification: null,
+  listenCount: loadFromStorage<number>(LISTEN_COUNT_KEY, 0),
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -409,6 +509,136 @@ export const useAppStore = create<AppStore>((set, get) => ({
     if (activePanel !== null && activePanel !== "ar") {
       reset.arViewerBirdId = null;
     }
+    if (activePanel !== null && activePanel !== "missions") {
+      reset.missionsPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "photoGallery") {
+      reset.photoGalleryOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "achievements") {
+      reset.achievementPanelOpen = false;
+    }
     set(reset);
+  },
+
+  setMissionsPanelOpen: (missionsPanelOpen) => set({ missionsPanelOpen }),
+
+  updateMissionProgress: (type, region) => {
+    const state = get();
+    let changed = false;
+    let completedId: string | null = null;
+    const updated = state.dailyMissions.map((m) => {
+      if (m.completed) return m;
+      if (m.type !== type) return m;
+      if (type === "find_region" && m.target !== region) return m;
+
+      const newCurrent = m.current + 1;
+      const isComplete = newCurrent >= m.goal;
+      changed = true;
+      if (isComplete) completedId = m.id;
+      return { ...m, current: newCurrent, completed: isComplete };
+    });
+
+    if (changed) {
+      saveToStorage(MISSIONS_KEY, updated);
+      const newCompletedCount = completedId
+        ? state.completedMissionCount + 1
+        : state.completedMissionCount;
+      if (completedId) {
+        saveToStorage(COMPLETED_MISSIONS_KEY, newCompletedCount);
+      }
+      set({
+        dailyMissions: updated,
+        completedMissionCount: newCompletedCount,
+        missionNotification: completedId,
+      });
+    }
+  },
+
+  dismissMissionNotification: () => set({ missionNotification: null }),
+
+  capturePhoto: (birdId, birdNameZh, birdNameEn, dataUrl) => {
+    const state = get();
+    const photo: BirdPhoto = {
+      id: `photo-${Date.now()}`,
+      birdId,
+      birdNameZh,
+      birdNameEn,
+      dataUrl,
+      capturedAt: Date.now(),
+    };
+    let updated = [photo, ...state.birdPhotos];
+    if (updated.length > MAX_PHOTOS) {
+      updated = updated.slice(0, MAX_PHOTOS);
+    }
+    saveToStorage(PHOTOS_KEY, updated);
+    set({ birdPhotos: updated });
+  },
+
+  deletePhoto: (photoId) => {
+    const state = get();
+    const updated = state.birdPhotos.filter((p) => p.id !== photoId);
+    saveToStorage(PHOTOS_KEY, updated);
+    set({ birdPhotos: updated });
+  },
+
+  setPhotoGalleryOpen: (photoGalleryOpen) => set({ photoGalleryOpen }),
+  setPhotoModeActive: (photoModeActive) => set({ photoModeActive }),
+
+  setAchievementPanelOpen: (achievementPanelOpen) => set({ achievementPanelOpen }),
+
+  checkAchievements: () => {
+    const state = get();
+    const discovered = state.discoveredBirds;
+    const regions = new Set(
+      allBirds.filter((b) => discovered.includes(b.id)).map((b) => b.region),
+    );
+
+    const checks: Record<string, number> = {
+      discover: discovered.length,
+      continent: regions.size,
+      listen: state.listenCount,
+      photo: state.birdPhotos.length,
+      mission: state.completedMissionCount,
+    };
+
+    let newUnlock: string | null = null;
+    const updatedAchievements = [...state.achievements];
+    const defs = achievementDefs as AchievementDef[];
+
+    for (const def of defs) {
+      const existing = updatedAchievements.find((a) => a.achievementId === def.id);
+      if (existing?.unlocked) continue;
+
+      const progress = checks[def.type] ?? 0;
+      if (progress >= def.requirement) {
+        if (existing) {
+          existing.unlocked = true;
+          existing.unlockedAt = Date.now();
+        } else {
+          updatedAchievements.push({
+            achievementId: def.id,
+            unlocked: true,
+            unlockedAt: Date.now(),
+          });
+        }
+        newUnlock = def.id;
+      }
+    }
+
+    saveToStorage(ACHIEVEMENTS_KEY, updatedAchievements);
+    set({
+      achievements: updatedAchievements,
+      achievementNotification: newUnlock,
+    });
+  },
+
+  dismissAchievementNotification: () => set({ achievementNotification: null }),
+
+  incrementListenCount: () => {
+    const state = get();
+    const newCount = state.listenCount + 1;
+    saveToStorage(LISTEN_COUNT_KEY, newCount);
+    set({ listenCount: newCount });
   },
 }));

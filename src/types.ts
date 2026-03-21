@@ -140,6 +140,55 @@ export interface StoryTheme {
   badge: string;
 }
 
+export interface MissionTemplate {
+  id: string;
+  type: "find_region" | "discover_count" | "listen_sounds";
+  titleZh: string;
+  titleEn: string;
+  target: string | number;
+  goal: number;
+  badge: string;
+}
+
+export interface DailyMission {
+  id: string;
+  templateId: string;
+  type: "find_region" | "discover_count" | "listen_sounds";
+  titleZh: string;
+  titleEn: string;
+  target: string | number;
+  goal: number;
+  current: number;
+  completed: boolean;
+  badge: string;
+}
+
+export interface BirdPhoto {
+  id: string;
+  birdId: string;
+  birdNameZh: string;
+  birdNameEn: string;
+  dataUrl: string;
+  capturedAt: number;
+}
+
+export interface AchievementDef {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  icon: string;
+  requirement: number;
+  type: "discover" | "continent" | "listen" | "photo" | "mission";
+}
+
+export interface AchievementProgress {
+  achievementId: string;
+  unlocked: boolean;
+  unlockedAt?: number;
+}
+
 export type TourState = "idle" | "intro" | "touring" | "paused" | "complete";
 
 export interface TourWaypoint {

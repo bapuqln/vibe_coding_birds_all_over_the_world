@@ -1,0 +1,110 @@
+[
+  {
+    "id": "mission-find-south-america",
+    "type": "find_region",
+    "titleZh": "探索南美洲",
+    "titleEn": "Find a bird in South America",
+    "target": "south-america",
+    "goal": 1,
+    "badge": "🌿"
+  },
+  {
+    "id": "mission-find-africa",
+    "type": "find_region",
+    "titleZh": "探索非洲",
+    "titleEn": "Find a bird in Africa",
+    "target": "africa",
+    "goal": 1,
+    "badge": "🌍"
+  },
+  {
+    "id": "mission-find-asia",
+    "type": "find_region",
+    "titleZh": "探索亚洲",
+    "titleEn": "Explore birds from Asia",
+    "target": "asia",
+    "goal": 1,
+    "badge": "🏯"
+  },
+  {
+    "id": "mission-find-europe",
+    "type": "find_region",
+    "titleZh": "探索欧洲",
+    "titleEn": "Find a bird in Europe",
+    "target": "europe",
+    "goal": 1,
+    "badge": "🏰"
+  },
+  {
+    "id": "mission-find-oceania",
+    "type": "find_region",
+    "titleZh": "探索大洋洲",
+    "titleEn": "Find a bird in Oceania",
+    "target": "oceania",
+    "goal": 1,
+    "badge": "🐨"
+  },
+  {
+    "id": "mission-find-north-america",
+    "type": "find_region",
+    "titleZh": "探索北美洲",
+    "titleEn": "Find a bird in North America",
+    "target": "north-america",
+    "goal": 1,
+    "badge": "🗽"
+  },
+  {
+    "id": "mission-discover-2",
+    "type": "discover_count",
+    "titleZh": "发现2只新鸟类",
+    "titleEn": "Discover 2 new birds today",
+    "target": 2,
+    "goal": 2,
+    "badge": "🔍"
+  },
+  {
+    "id": "mission-discover-3",
+    "type": "discover_count",
+    "titleZh": "发现3只新鸟类",
+    "titleEn": "Discover 3 new birds today",
+    "target": 3,
+    "goal": 3,
+    "badge": "🌟"
+  },
+  {
+    "id": "mission-listen-3",
+    "type": "listen_sounds",
+    "titleZh": "聆听3种鸟鸣",
+    "titleEn": "Listen to 3 bird sounds",
+    "target": 3,
+    "goal": 3,
+    "badge": "🎵"
+  },
+  {
+    "id": "mission-listen-2",
+    "type": "listen_sounds",
+    "titleZh": "聆听2种鸟鸣",
+    "titleEn": "Listen to 2 bird sounds",
+    "target": 2,
+    "goal": 2,
+    "badge": "🔊"
+  },
+  {
+    "id": "mission-discover-5",
+    "type": "discover_count",
+    "titleZh": "发现5只新鸟类",
+    "titleEn": "Discover 5 new birds today",
+    "target": 5,
+    "goal": 5,
+    "badge": "⭐"
+  },
+  {
+    "id": "mission-find-antarctica",
+    "type": "find_region",
+    "titleZh": "探索南极洲",
+    "titleEn": "Find a bird in Antarctica",
+    "target": "antarctica",
+    "goal": 1,
+    "badge": "🧊"
+  }
+]

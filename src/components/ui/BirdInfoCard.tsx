@@ -21,6 +21,10 @@ export function BirdInfoCard() {
   const setAudioStatus = useAppStore((s) => s.setAudioStatus);
   const discoverBird = useAppStore((s) => s.discoverBird);
   const setARViewerBird = useAppStore((s) => s.setARViewerBird);
+  const capturePhoto = useAppStore((s) => s.capturePhoto);
+  const updateMissionProgress = useAppStore((s) => s.updateMissionProgress);
+  const checkAchievements = useAppStore((s) => s.checkAchievements);
+  const incrementListenCount = useAppStore((s) => s.incrementListenCount);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -42,8 +46,11 @@ export function BirdInfoCard() {
   );
 
   useEffect(() => {
-    if (isOpen && selectedBirdId) {
+    if (isOpen && selectedBirdId && bird) {
       discoverBird(selectedBirdId);
+      updateMissionProgress("discover_count");
+      updateMissionProgress("find_region", bird.region);
+      setTimeout(() => checkAchievements(), 100);
       previousFocusRef.current = document.activeElement as HTMLElement;
       requestAnimationFrame(() => closeButtonRef.current?.focus());
     } else {
@@ -57,7 +64,7 @@ export function BirdInfoCard() {
         setAudioStatus("idle");
       }
     }
-  }, [isOpen, selectedBirdId, setAudioStatus, discoverBird]);
+  }, [isOpen, selectedBirdId, setAudioStatus, discoverBird, bird, updateMissionProgress, checkAchievements]);
 
   const handleClose = useCallback(() => {
     stopNarration();
@@ -119,6 +126,9 @@ export function BirdInfoCard() {
         audio.addEventListener("canplaythrough", () => {
           setAudioStatus("playing");
           audio.play().catch(() => setAudioStatus("error"));
+          incrementListenCount();
+          updateMissionProgress("listen_sounds");
+          setTimeout(() => checkAchievements(), 100);
         }, { once: true });
 
         audio.addEventListener("ended", () => {
@@ -566,6 +576,45 @@ export function BirdInfoCard() {
                 >
                   <span>📱</span>
                   <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!bird) return;
+                    const canvas = document.querySelector("canvas");
+                    if (!canvas) return;
+                    try {
+                      const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+                      capturePhoto(bird.id, bird.nameZh, bird.nameEn, dataUrl);
+                      setTimeout(() => checkAchievements(), 100);
+                    } catch {
+                      /* canvas tainted or unavailable */
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    borderRadius: 9999,
+                    padding: "12px 0",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    background: "linear-gradient(135deg, #0ea5e9, #0284c7)",
+                    color: "white",
+                    boxShadow: "0 4px 16px rgba(14, 165, 233, 0.3)",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                  aria-label={language === "zh" ? "拍照" : "Take Photo"}
+                >
+                  <span>📸</span>
+                  <span>{language === "zh" ? "拍照" : "Photo"}</span>
                 </button>
               </div>
             </div>

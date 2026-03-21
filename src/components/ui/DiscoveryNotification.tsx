@@ -17,7 +17,7 @@ export function DiscoveryNotification() {
 
   useEffect(() => {
     if (!isVisible) return;
-    const timer = setTimeout(dismiss, 3500);
+    const timer = setTimeout(dismiss, 4000);
     return () => clearTimeout(timer);
   }, [isVisible, dismiss]);
 
@@ -38,6 +38,7 @@ export function DiscoveryNotification() {
       }}
     >
       <StarParticles />
+      <ConfettiBurst />
 
       <div style={{
         position: "relative",
@@ -130,6 +131,60 @@ function StarParticles() {
           }
           100% {
             transform: translate(var(--star-x), var(--star-y)) scale(1.2) rotate(180deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function ConfettiBurst() {
+  const pieces = Array.from({ length: 24 }, (_, i) => {
+    const x = -120 + Math.random() * 240;
+    const colors = ["#ef4444", "#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#14b8a6"];
+    return {
+      x,
+      delay: Math.random() * 0.4,
+      duration: 1.2 + Math.random() * 0.8,
+      color: colors[i % colors.length],
+      width: 4 + Math.random() * 4,
+      height: 8 + Math.random() * 6,
+      rotation: Math.random() * 360,
+    };
+  });
+
+  return (
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }}>
+      {pieces.map((p, i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: p.width,
+            height: p.height,
+            borderRadius: 2,
+            backgroundColor: p.color,
+            animation: `confettiFall ${p.duration}s ease-out ${p.delay}s forwards`,
+            ["--cx" as string]: `${p.x}px`,
+            ["--cr" as string]: `${p.rotation}deg`,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes confettiFall {
+          0% {
+            transform: translate(0, 0) rotate(0deg) scale(0);
+            opacity: 1;
+          }
+          20% {
+            transform: translate(calc(var(--cx) * 0.3), -40px) rotate(calc(var(--cr) * 0.5)) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translate(var(--cx), 120px) rotate(var(--cr)) scale(0.5);
             opacity: 0;
           }
         }

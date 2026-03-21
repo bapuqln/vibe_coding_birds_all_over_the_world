@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v15)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v16)
 
+> **v16 changelog**: Game-Like Exploration Upgrade — daily bird discovery mission system with progress tracking and celebration animations, bird photo mode with camera freeze / zoom / rotate and local photo gallery, enhanced bird encyclopedia with discovered/locked entries and progress indicator, explorer achievement system with badges (First Discovery, Explorer, World Traveler, Bird Listener, Photographer, Mission Master), improved discovery celebration with confetti burst and sparkle particles, continent exploration progress with hint animations and exploration encouragement messages, performance optimization with lazy loading for photos/models/sounds.
+>
 > **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position directional light (day side bright, night side dark with city lights emissive texture), enhanced atmosphere glow, AI bird narration system using Web Speech API with "Tell me about this bird" button, improved bird discovery celebration with star-particle animation, enhanced educational bird info card with scientific name and wingspan comparison, improved camera fly-to with gentle orbit after arrival, Whooping Crane migration route added, performance optimization with lazy loading and KTX2 textures.
 >
 > **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system with CSS utility classes, modern pill-shaped buttons with hover glow, improved globe rendering (enhanced atmosphere, rim lighting, better clouds), bird hover interactions (scale, glow, tooltip), particle bird silhouettes around globe, improved camera animation (ease-in-out, 1.2s), bottom discovery panel with progress bar, responsive layout improvements, rendering performance optimizations.
@@ -15,6 +17,36 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v16)
+
+### TD-101: Daily Bird Mission System
+**Problem**: Children lack structured motivation to explore the globe daily. There is no daily engagement loop.
+**Solution**: Add a mission system with predefined mission templates. Each day, generate a set of 3-4 missions from templates (find a bird in a continent, discover N new birds, listen to N sounds, explore a region). Store mission state in localStorage with a date key for daily reset. Create `DailyMissionsPanel` component accessible from the right control panel. Track progress reactively — when a bird is discovered, sound played, or region explored, update matching mission progress. On completion, show celebration animation and award a badge. Missions stored under `kids-bird-globe-missions` localStorage key.
+
+### TD-102: Bird Photo Mode
+**Problem**: Children cannot capture and save their bird discoveries visually. No photo or screenshot feature exists.
+**Solution**: Add a "Take Photo" button to `BirdInfoCard`. When activated, enter photo mode: freeze the R3F canvas rendering loop, overlay zoom/rotate controls, and show a capture button. On capture, use `canvas.toDataURL('image/jpeg', 0.7)` to generate a compressed image. Store photos in localStorage under `kids-bird-globe-photos` as an array of `{id, birdId, dataUrl, capturedAt}`. Create `PhotoGalleryPanel` component showing saved photos in a grid with bird name labels. Limit to 50 photos max; auto-remove oldest when exceeded.
+
+### TD-103: Bird Encyclopedia Enhancement
+**Problem**: The existing encyclopedia shows all birds equally with no discovery/locked distinction. No progress indicator.
+**Solution**: Modify `BirdEncyclopediaPanel` to check `discoveredBirds` from the store. Discovered birds show full info (photo, name, region). Undiscovered birds show a locked state with a question mark overlay and greyed-out appearance. Add a progress header: "17 / 50 birds discovered" with a progress bar. Clicking a discovered bird opens the info card. Clicking a locked bird shows a hint toast about which continent to explore.
+
+### TD-104: Explorer Achievement System
+**Problem**: No long-term achievement tracking beyond quest points. Children lack badges for milestones.
+**Solution**: Define achievements in a data file: First Discovery (1 bird), Explorer (10 birds), World Traveler (all continents), Bird Listener (10 sounds), Photographer (5 photos), Mission Master (5 missions). Track achievement progress in localStorage under `kids-bird-globe-achievements`. Check achievement conditions reactively in the store. On unlock, show celebration animation. Create `AchievementPanel` component showing all achievements with locked/unlocked states and badge icons. Accessible from the right control panel.
+
+### TD-105: Discovery Celebration Enhancement
+**Problem**: The current discovery notification has star particles but lacks confetti and feels brief.
+**Solution**: Enhance `DiscoveryNotification` with additional confetti burst animation (small colored rectangles falling). Increase celebration duration to ~2s. Add a subtle glow pulse behind the notification card. Keep the star particles and add confetti as a second layer. Ensure animation is non-blocking and auto-dismisses.
+
+### TD-106: Bird Hint System
+**Problem**: Children have no visual guidance toward undiscovered birds when rotating the globe.
+**Solution**: In `BirdMarker`, check if the bird is undiscovered. If so, add a subtle pulse animation to the marker and a small flutter effect on the bird icon. The pulse is a CSS animation on the marker's outer ring. The flutter is a gentle rotation oscillation. Hints only appear for undiscovered birds and do not reveal the bird's identity. Add exploration encouragement messages in `BottomDiscoveryPanel` suggesting continents with low discovery rates.
+
+### TD-107: Performance — Photo & Mission Storage
+**Problem**: Storing photos as base64 in localStorage can consume significant space.
+**Solution**: Compress photos to JPEG quality 0.6, resize to max 400px width before storing. Limit to 50 photos. Use efficient JSON serialization. Mission and achievement data are small and pose no storage concern. Ensure lazy loading for photo gallery thumbnails.
 
 ## Key Technical Decisions (v15)
 
@@ -132,6 +164,57 @@ App.tsx
 │
 └── AudioPlayer (invisible)
 ```
+
+## Component Inventory (v16 additions)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `DailyMissionsPanel.tsx` | Daily mission list with progress bars and celebration | v16 |
+| `PhotoGalleryPanel.tsx` | Photo gallery showing captured bird photos | v16 |
+| `AchievementPanel.tsx` | Explorer achievement badges and progress | v16 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `BirdEncyclopediaPanel.tsx` | Added discovered/locked states, progress indicator | v16 |
+| `BirdInfoCard.tsx` | Added "Take Photo" button | v16 |
+| `DiscoveryNotification.tsx` | Enhanced with confetti burst animation | v16 |
+| `BottomDiscoveryPanel.tsx` | Added exploration encouragement messages | v16 |
+| `RightControlPanel.tsx` | Added Missions, Photos, Achievements buttons | v16 |
+| `BirdMarker.tsx` | Added hint pulse animation for undiscovered birds | v16 |
+| `App.tsx` | Added new panels to modal layer | v16 |
+
+### Store Changes
+| State | Changes | Version |
+|-------|---------|---------|
+| `dailyMissions` | New: array of daily mission objects | v16 |
+| `missionsPanelOpen` | New: toggle for missions panel | v16 |
+| `birdPhotos` | New: array of captured bird photos | v16 |
+| `photoGalleryOpen` | New: toggle for photo gallery | v16 |
+| `photoModeActive` | New: toggle for photo capture mode | v16 |
+| `achievements` | New: array of achievement objects | v16 |
+| `achievementPanelOpen` | New: toggle for achievement panel | v16 |
+| `achievementNotification` | New: recently unlocked achievement ID | v16 |
+| `listenCount` | New: total bird sounds listened to | v16 |
+| `completedMissionCount` | New: total missions completed | v16 |
+
+### Data Changes
+| File | Changes | Version |
+|------|---------|---------|
+| `missions.json` | New: mission template definitions | v16 |
+| `achievements.json` | New: achievement definitions | v16 |
+
+## Implementation Phases (v16)
+
+- Phase 127: Daily Bird Mission System — mission data, store state, panel UI, progress tracking → R-41
+- Phase 128: Bird Photo Mode — photo capture, localStorage storage, gallery panel → R-42
+- Phase 129: Bird Encyclopedia Enhancement — discovered/locked states, progress indicator → R-43
+- Phase 130: Explorer Achievement System — achievement data, store tracking, panel UI → R-44
+- Phase 131: Discovery Celebration Enhancement — confetti, sparkles, improved animation → R-45
+- Phase 132: Exploration Progress & Hints — encouragement messages, bird hint animations → R-46, R-47
+- Phase 133: Performance Optimization — photo compression, lazy loading, storage limits → R-48
+- Phase 134: Final Verification → All v16 ACs
 
 ## Component Inventory (v15 additions)
 

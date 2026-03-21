@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v15
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v16
 
+> **v16 changelog**: Game-Like Exploration Upgrade — daily bird discovery mission system with progress tracking and celebration animations, bird photo mode with camera freeze / zoom / rotate and local photo gallery, enhanced bird encyclopedia with discovered/locked entries and progress indicator, explorer achievement system with badges (First Discovery, Explorer, World Traveler, Bird Listener), improved discovery celebration with confetti burst and sparkle particles, continent exploration progress with hint animations and exploration encouragement messages, performance optimization with lazy loading for photos/models/sounds and 15-model limit enforcement.
+>
 > **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position lighting (bright day side, dark night side with city lights texture), atmospheric glow ring, cloud layer visible in both day and night, enhanced bird migration route visualization with Whooping Crane route added and glowing animated arcs with particle dots, AI bird narration system using Web Speech API (text-to-speech) with "Tell me about this bird" button and friendly child-oriented narration content, improved bird discovery experience with star-particle celebration animation and continent-level discovery progress UI, enhanced educational bird info card with scientific name / habitat / wingspan / lifespan / fun fact sections and wingspan comparison bar, improved camera fly-to experience with gentle orbit after arrival, performance optimization with 15-model limit fallback to icon markers and lazy loading for models/audio/textures and KTX2 compressed texture support.
 >
 > **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system (semi-transparent backgrounds, backdrop blur 20px, soft shadows, rounded corners), modern pill-shaped buttons with hover glow and scale effects, improved globe rendering (enhanced atmosphere glow, better cloud layer, rim lighting, higher-quality Fresnel shader), bird hover interactions (scale animation, soft glow, floating motion, styled tooltip), particle bird silhouettes flying around the globe, improved camera animation system (ease-in-out transitions, 1.2s duration), bottom discovery panel with progress bar, responsive panel layout improvements, rendering performance optimizations (lazy loading, compressed textures, model limits).
@@ -123,6 +125,27 @@ As a child, I can see detailed bird information including scientific name, habit
 
 ### US-34: Experience Smooth Camera Flight (v15)
 As a child, when I click a bird, the camera smoothly flies to it in about 1.2 seconds and then gently orbits so I can see the bird clearly.
+
+### US-35: Complete Daily Missions (v16)
+As a child, I can see a set of daily discovery missions like "Find a bird in South America" or "Discover 2 new birds today", track my progress, and see a celebration animation when I complete a mission.
+
+### US-36: Take Bird Photos (v16)
+As a child, I can take a photo of a bird I discover by freezing the camera, zooming and rotating, then capturing the image to save in my photo gallery.
+
+### US-37: Browse Bird Encyclopedia (v16)
+As a child, I can open a bird encyclopedia that shows all birds with discovered entries unlocked and undiscovered entries locked, along with a progress indicator showing how many I've found.
+
+### US-38: Earn Explorer Achievements (v16)
+As a child, I can earn achievement badges like "First Discovery", "Explorer", "World Traveler", and "Bird Listener" that appear in my explorer profile panel.
+
+### US-39: See Discovery Celebrations (v16)
+As a child, when I discover a new bird I see a celebration with sparkle particles, confetti burst, and a "New Bird Discovered" message that makes exploration feel rewarding.
+
+### US-40: Track Continent Progress (v16)
+As a child, I can see my exploration progress for each continent and receive encouragement messages like "Try exploring South America. Many colorful birds live there."
+
+### US-41: See Bird Hints (v16)
+As a child, when I rotate the globe near a bird location, I see subtle hint animations like a marker pulse or small bird icon flutter that guide me to undiscovered birds.
 
 ## Requirements
 
@@ -545,6 +568,40 @@ interface StoryTheme {
 type Rarity = "common" | "rare" | "legendary";
 ```
 
+### New types (v16):
+```typescript
+interface DailyMission {
+  id: string;
+  type: "find_region" | "discover_count" | "listen_sounds" | "explore_region";
+  titleZh: string;
+  titleEn: string;
+  target: string | number;
+  current: number;
+  completed: boolean;
+  badge: string;
+}
+
+interface BirdPhoto {
+  id: string;
+  birdId: string;
+  dataUrl: string;
+  capturedAt: number;
+}
+
+interface Achievement {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  icon: string;
+  requirement: number;
+  type: "discover" | "continent" | "listen" | "photo" | "mission";
+  unlocked: boolean;
+  unlockedAt?: number;
+}
+```
+
 ### R-34: Real-Time Day-Night Earth (v15)
 - Dynamic lighting system simulating day and night on the globe.
 - Directional light representing the sun, slowly rotating to simulate Earth rotation.
@@ -603,6 +660,61 @@ type Rarity = "common" | "rare" | "legendary";
 - Migration arc geometry cached and reused.
 - Narration audio generated on-demand, not preloaded.
 
+### R-41: Daily Bird Mission System (v16)
+- Daily mission set generated from predefined mission templates.
+- Mission types: find a bird in a specific continent, discover N new birds, listen to N bird sounds, explore birds from a specific region.
+- Mission progress tracked in localStorage with daily reset.
+- Mission UI displayed in a dedicated panel accessible from the right control panel.
+- Mission completion triggers celebration animation with star particles and a "Mission Complete" message.
+- Completing missions awards badges stored in localStorage.
+
+### R-42: Bird Photo Mode (v16)
+- "Take Photo" button on bird info card.
+- Photo mode freezes the current camera view.
+- In photo mode: user can zoom and rotate to frame the bird.
+- Capture button saves the current view as a base64 image to localStorage.
+- Photo gallery panel ("My Bird Photos") accessible from the right control panel.
+- Gallery shows saved photos with bird name labels.
+- Photos lazy-loaded from localStorage.
+
+### R-43: Bird Encyclopedia Enhancement (v16)
+- Encyclopedia shows all birds: discovered birds with full info, undiscovered birds as locked entries.
+- Locked entries display bird silhouette or question mark instead of photo.
+- Progress indicator: "17 / 50 birds discovered" at the top of the encyclopedia.
+- Clicking a discovered bird opens the bird info card.
+- Clicking a locked bird shows a hint about the bird's continent.
+
+### R-44: Explorer Achievement System (v16)
+- Achievement definitions: First Discovery (discover 1 bird), Explorer (discover 10 birds), World Traveler (discover birds from all continents), Bird Listener (listen to 10 bird sounds), Photographer (take 5 bird photos), Mission Master (complete 5 missions).
+- Achievement progress tracked in localStorage.
+- Achievement unlock triggers celebration animation.
+- Explorer profile panel showing earned badges.
+- Badge icons displayed as visual indicators.
+
+### R-45: Discovery Celebration Enhancement (v16)
+- Enhanced celebration on new bird discovery: sparkle particles + confetti burst.
+- Soft celebration sound effect (CSS animation primary, optional audio).
+- "New Bird Discovered!" message with bird name prominently displayed.
+- Celebration animation duration ~2s, non-blocking.
+
+### R-46: Exploration Progress Enhancement (v16)
+- Global progress: "World Bird Discovery: 17 / 50 birds discovered".
+- Continent progress with individual bars: "Asia: 4/10", "Africa: 3/8".
+- Exploration encouragement messages when a continent has low discovery rate.
+- Example: "Try exploring South America. Many colorful birds live there."
+
+### R-47: Bird Hint System (v16)
+- When globe rotates near an undiscovered bird location, show subtle hint animation.
+- Hint types: marker pulse animation, small bird icon flutter.
+- Hints only appear for undiscovered birds.
+- Hints are subtle and do not reveal the exact bird identity.
+
+### R-48: Performance — Photo & Mission Storage (v16)
+- Photos stored as compressed base64 in localStorage with size limits.
+- Mission progress and achievements use efficient localStorage keys.
+- Lazy loading for photo gallery thumbnails.
+- Maximum 50 stored photos; oldest auto-removed when limit reached.
+
 ## Non-goals
 - User accounts or server-side progress tracking.
 - Offline support / PWA.
@@ -612,6 +724,54 @@ type Rarity = "common" | "rare" | "legendary";
 - High-resolution GeoJSON.
 
 ## Acceptance Criteria
+
+### AC-V16-1: Daily Bird Mission System
+- [ ] Daily missions displayed in a dedicated panel.
+- [ ] Mission types include find_region, discover_count, listen_sounds, explore_region.
+- [ ] Mission progress updates in real-time.
+- [ ] Mission completion triggers celebration animation.
+- [ ] Completed missions award badges.
+- [ ] Mission progress persisted in localStorage with daily reset.
+
+### AC-V16-2: Bird Photo Mode
+- [ ] "Take Photo" button on bird info card.
+- [ ] Photo mode freezes camera and allows zoom/rotate.
+- [ ] Capture saves image to localStorage.
+- [ ] Photo gallery panel shows saved photos with bird names.
+- [ ] Photos lazy-loaded in gallery.
+
+### AC-V16-3: Bird Encyclopedia Enhancement
+- [ ] Encyclopedia shows discovered birds with full info.
+- [ ] Undiscovered birds shown as locked entries.
+- [ ] Progress indicator shows "X / Y birds discovered".
+- [ ] Clicking discovered bird opens info card.
+
+### AC-V16-4: Explorer Achievement System
+- [ ] Achievement definitions for First Discovery, Explorer, World Traveler, Bird Listener, Photographer, Mission Master.
+- [ ] Achievement progress tracked and persisted.
+- [ ] Achievement unlock triggers celebration.
+- [ ] Explorer profile panel shows earned badges.
+
+### AC-V16-5: Discovery Celebration Enhancement
+- [ ] Sparkle particles and confetti on new bird discovery.
+- [ ] "New Bird Discovered" message with bird name.
+- [ ] Celebration animation ~2s, non-blocking.
+
+### AC-V16-6: Exploration Progress Enhancement
+- [ ] Global progress displayed.
+- [ ] Continent progress with individual bars.
+- [ ] Encouragement messages for low-discovery continents.
+
+### AC-V16-7: Bird Hint System
+- [ ] Subtle hint animation near undiscovered bird locations.
+- [ ] Hints only for undiscovered birds.
+- [ ] Hints do not reveal bird identity.
+
+### AC-V16-8: Performance
+- [ ] Photo storage with size limits.
+- [ ] Max 15 simultaneous 3D models enforced.
+- [ ] Lazy loading for photos, models, sounds.
+- [ ] ~60 FPS maintained with all v16 features.
 
 ### AC-V15-1: Real-Time Day-Night Earth
 - [ ] Globe displays bright day side and dark night side.

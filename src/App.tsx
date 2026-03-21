@@ -22,6 +22,9 @@ import { DiscoveryNotification } from "./components/ui/DiscoveryNotification";
 import { DiscoveryProgressBar } from "./components/ui/DiscoveryProgressBar";
 import { ARViewerModal } from "./components/ui/ARViewerModal";
 import { BottomDiscoveryPanel } from "./components/ui/BottomDiscoveryPanel";
+import { DailyMissionsPanel } from "./components/ui/DailyMissionsPanel";
+import { PhotoGalleryPanel } from "./components/ui/PhotoGalleryPanel";
+import { AchievementPanel, AchievementNotification } from "./components/ui/AchievementPanel";
 
 export default function App() {
   return (
@@ -72,6 +75,7 @@ export default function App() {
       >
         <BirdInfoCard />
         <DiscoveryNotification />
+        <AchievementNotification />
       </div>
 
       {/* Layer 5 — Modal Dialogs */}
@@ -84,6 +88,9 @@ export default function App() {
         <QuestPanel />
         <ContinentBirdPanel />
         <ARViewerModal />
+        <DailyMissionsPanel />
+        <PhotoGalleryPanel />
+        <AchievementPanel />
       </div>
 
       {/* Layer 6 — Full Screen Overlays */}

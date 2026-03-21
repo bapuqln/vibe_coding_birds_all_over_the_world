@@ -48,6 +48,8 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const activeRegion = useAppStore((s) => s.activeRegion);
   const hoveredBirdId = useAppStore((s) => s.hoveredBirdId);
   const discoverBird = useAppStore((s) => s.discoverBird);
+  const discoveredBirds = useAppStore((s) => s.discoveredBirds);
+  const isDiscovered = discoveredBirds.includes(bird.id);
   const phaseOffset = index * 1.3;
 
   const { camera } = useThree();
@@ -113,7 +115,10 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     scaleRef.current += (targetScale - scaleRef.current) * 0.1;
 
     const modelScale = shouldUse3D ? BASE_SCALE * 1.2 : BASE_SCALE;
-    const s = scaleRef.current * modelScale;
+    const hintFlutter = !isDiscovered
+      ? 1 + 0.06 * Math.sin(clock.elapsedTime * 4 + phaseOffset * 2)
+      : 1;
+    const s = scaleRef.current * modelScale * hintFlutter;
 
     let wingFlapFreq = 2 * Math.PI / 1.2;
     let wingFlapAmp = 0.08;
@@ -160,7 +165,10 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       meshRef.current.quaternion.copy(q);
     }
 
-    const targetEmissive = hoveredRef.current ? 2.0 : rarityGlow;
+    const hintPulse = !isDiscovered
+      ? 0.4 * (0.5 + 0.5 * Math.sin(clock.elapsedTime * 2.5 + phaseOffset))
+      : 0;
+    const targetEmissive = hoveredRef.current ? 2.0 : rarityGlow + hintPulse;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
     if (matRef.current) {
       matRef.current.emissiveIntensity = emissiveRef.current;

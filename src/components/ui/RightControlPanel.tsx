@@ -28,6 +28,14 @@ export function RightControlPanel() {
   const setActiveRegion = useAppStore((s) => s.setActiveRegion);
   const heatmapVisible = useAppStore((s) => s.heatmapVisible);
   const setHeatmapVisible = useAppStore((s) => s.setHeatmapVisible);
+  const missionsPanelOpen = useAppStore((s) => s.missionsPanelOpen);
+  const setMissionsPanelOpen = useAppStore((s) => s.setMissionsPanelOpen);
+  const photoGalleryOpen = useAppStore((s) => s.photoGalleryOpen);
+  const setPhotoGalleryOpen = useAppStore((s) => s.setPhotoGalleryOpen);
+  const birdPhotos = useAppStore((s) => s.birdPhotos);
+  const achievementPanelOpen = useAppStore((s) => s.achievementPanelOpen);
+  const setAchievementPanelOpen = useAppStore((s) => s.setAchievementPanelOpen);
+  const dailyMissions = useAppStore((s) => s.dailyMissions);
 
   const handleDiscover = () => {
     const bird = pickRandomBird(selectedBirdId);
@@ -39,6 +47,8 @@ export function RightControlPanel() {
     setActiveRegion(null);
     setMigrationModeActive(false);
   };
+
+  const incompleteMissions = dailyMissions.filter((m) => !m.completed).length;
 
   return (
     <div
@@ -63,6 +73,16 @@ export function RightControlPanel() {
       </ActionButton>
 
       <ActionButton
+        onClick={() => setMissionsPanelOpen(!missionsPanelOpen)}
+        active={missionsPanelOpen}
+        icon="📋"
+        badge={incompleteMissions || undefined}
+        ariaLabel={language === "zh" ? "每日任务" : "Missions"}
+      >
+        {language === "zh" ? "任务" : "Missions"}
+      </ActionButton>
+
+      <ActionButton
         onClick={() => setCollectionOpen(!isCollectionOpen)}
         active={isCollectionOpen}
         icon="🐦"
@@ -70,6 +90,25 @@ export function RightControlPanel() {
         ariaLabel={language === "zh" ? "我的鸟类" : "My Birds"}
       >
         {language === "zh" ? "鸟类" : "Birds"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setPhotoGalleryOpen(!photoGalleryOpen)}
+        active={photoGalleryOpen}
+        icon="📷"
+        badge={birdPhotos.length || undefined}
+        ariaLabel={language === "zh" ? "照片" : "Photos"}
+      >
+        {language === "zh" ? "照片" : "Photos"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setAchievementPanelOpen(!achievementPanelOpen)}
+        active={achievementPanelOpen}
+        icon="🏅"
+        ariaLabel={language === "zh" ? "徽章" : "Badges"}
+      >
+        {language === "zh" ? "徽章" : "Badges"}
       </ActionButton>
 
       <ActionButton
@@ -103,9 +142,9 @@ export function RightControlPanel() {
         onClick={() => setQuestsOpen(!questsOpen)}
         active={questsOpen}
         icon="🎯"
-        ariaLabel={language === "zh" ? "任务" : "Quests"}
+        ariaLabel={language === "zh" ? "探索任务" : "Quests"}
       >
-        {language === "zh" ? "任务" : "Quests"}
+        {language === "zh" ? "探索" : "Quests"}
       </ActionButton>
 
       <ActionButton

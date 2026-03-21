@@ -1,0 +1,82 @@
+[
+  {
+    "id": "first-discovery",
+    "titleZh": "初次发现",
+    "titleEn": "First Discovery",
+    "descriptionZh": "发现你的第一只鸟",
+    "descriptionEn": "Discover your first bird",
+    "icon": "🐣",
+    "requirement": 1,
+    "type": "discover"
+  },
+  {
+    "id": "explorer-10",
+    "titleZh": "探索者",
+    "titleEn": "Explorer",
+    "descriptionZh": "发现10只鸟",
+    "descriptionEn": "Discover 10 birds",
+    "icon": "🔭",
+    "requirement": 10,
+    "type": "discover"
+  },
+  {
+    "id": "explorer-25",
+    "titleZh": "资深探索者",
+    "titleEn": "Senior Explorer",
+    "descriptionZh": "发现25只鸟",
+    "descriptionEn": "Discover 25 birds",
+    "icon": "🏅",
+    "requirement": 25,
+    "type": "discover"
+  },
+  {
+    "id": "world-traveler",
+    "titleZh": "环球旅行家",
+    "titleEn": "World Traveler",
+    "descriptionZh": "在所有大洲发现鸟类",
+    "descriptionEn": "Discover birds from all continents",
+    "icon": "🌏",
+    "requirement": 7,
+    "type": "continent"
+  },
+  {
+    "id": "bird-listener-5",
+    "titleZh": "聆听者",
+    "titleEn": "Bird Listener",
+    "descriptionZh": "聆听5种鸟鸣",
+    "descriptionEn": "Listen to 5 bird sounds",
+    "icon": "🎧",
+    "requirement": 5,
+    "type": "listen"
+  },
+  {
+    "id": "bird-listener-10",
+    "titleZh": "音乐家",
+    "titleEn": "Bird Musician",
+    "descriptionZh": "聆听10种鸟鸣",
+    "descriptionEn": "Listen to 10 bird sounds",
+    "icon": "🎶",
+    "requirement": 10,
+    "type": "listen"
+  },
+  {
+    "id": "photographer-5",
+    "titleZh": "摄影师",
+    "titleEn": "Photographer",
+    "descriptionZh": "拍摄5张鸟类照片",
+    "descriptionEn": "Take 5 bird photos",
+    "icon": "📸",
+    "requirement": 5,
+    "type": "photo"
+  },
+  {
+    "id": "mission-master",
+    "titleZh": "任务大师",
+    "titleEn": "Mission Master",
+    "descriptionZh": "完成5个探索任务",
+    "descriptionEn": "Complete 5 missions",
+    "icon": "🎯",
+    "requirement": 5,
+    "type": "mission"
+  }
+]

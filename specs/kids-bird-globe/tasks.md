@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v15)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v16)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -8,6 +8,110 @@
 > v13 phases (101–108) are complete.
 > v14 phases (109–118) are complete.
 > v15 phases (119–126) are new.
+> v16 phases (127–134) are new.
+
+---
+
+# v16 Tasks (Game-Like Exploration Upgrade)
+
+---
+
+## Phase 127: Daily Bird Mission System
+
+- [ ] **127.1** Create `src/data/missions.json` with mission template definitions (find_region, discover_count, listen_sounds, explore_region).
+- [ ] **127.2** Add `DailyMission` type to `types.ts`.
+- [ ] **127.3** Add mission state to Zustand store: `dailyMissions`, `missionsPanelOpen`, `completedMissionCount`.
+- [ ] **127.4** Add mission actions: `generateDailyMissions()`, `updateMissionProgress()`, `completeMission()`, `setMissionsPanelOpen()`.
+- [ ] **127.5** Add localStorage persistence for missions with daily reset logic (date key comparison).
+- [ ] **127.6** Create `DailyMissionsPanel.tsx` with mission list, progress bars, and celebration animation.
+- [ ] **127.7** Add "Missions" button to `RightControlPanel.tsx`.
+- [ ] **127.8** Wire mission progress updates to bird discovery, sound playback, and region exploration events.
+- [ ] **127.9** Add mission completion celebration animation (star particles + "Mission Complete" message).
+- [ ] **127.10** Add `missionsPanelOpen` to `PanelType` and panel collision avoidance.
+- [ ] **127.11** Integrate `DailyMissionsPanel` into `App.tsx` modal layer.
+
+---
+
+## Phase 128: Bird Photo Mode
+
+- [ ] **128.1** Add `BirdPhoto` type to `types.ts`.
+- [ ] **128.2** Add photo state to Zustand store: `birdPhotos`, `photoGalleryOpen`, `photoModeActive`.
+- [ ] **128.3** Add photo actions: `capturePhoto()`, `deletePhoto()`, `setPhotoGalleryOpen()`, `setPhotoModeActive()`.
+- [ ] **128.4** Add localStorage persistence for photos with 50-photo limit.
+- [ ] **128.5** Add "Take Photo" button to `BirdInfoCard.tsx`.
+- [ ] **128.6** Implement photo capture using R3F canvas `toDataURL` with JPEG compression.
+- [ ] **128.7** Create `PhotoGalleryPanel.tsx` with grid layout showing saved photos and bird names.
+- [ ] **128.8** Add "Photos" button to `RightControlPanel.tsx`.
+- [ ] **128.9** Add `photoGalleryOpen` to `PanelType` and panel collision avoidance.
+- [ ] **128.10** Integrate `PhotoGalleryPanel` into `App.tsx` modal layer.
+
+---
+
+## Phase 129: Bird Encyclopedia Enhancement
+
+- [ ] **129.1** Modify `BirdEncyclopediaPanel.tsx` to check `discoveredBirds` from store.
+- [ ] **129.2** Add discovered/locked visual states: discovered shows full info, locked shows question mark overlay.
+- [ ] **129.3** Add progress header: "X / Y birds discovered" with progress bar.
+- [ ] **129.4** Clicking locked bird shows hint toast about which continent to explore.
+- [ ] **129.5** Sort birds: discovered first, then locked.
+
+---
+
+## Phase 130: Explorer Achievement System
+
+- [ ] **130.1** Create `src/data/achievements.json` with achievement definitions.
+- [ ] **130.2** Add `Achievement` type to `types.ts`.
+- [ ] **130.3** Add achievement state to Zustand store: `achievements`, `achievementPanelOpen`, `achievementNotification`, `listenCount`.
+- [ ] **130.4** Add achievement actions: `checkAchievements()`, `unlockAchievement()`, `setAchievementPanelOpen()`, `incrementListenCount()`.
+- [ ] **130.5** Add localStorage persistence for achievements and listen count.
+- [ ] **130.6** Create `AchievementPanel.tsx` with badge grid showing locked/unlocked achievements.
+- [ ] **130.7** Add "Badges" button to `RightControlPanel.tsx`.
+- [ ] **130.8** Wire achievement checks to bird discovery, sound playback, photo capture, and mission completion events.
+- [ ] **130.9** Add achievement unlock notification with celebration animation.
+- [ ] **130.10** Add `achievementPanelOpen` to `PanelType` and panel collision avoidance.
+- [ ] **130.11** Integrate `AchievementPanel` into `App.tsx` modal layer.
+
+---
+
+## Phase 131: Discovery Celebration Enhancement
+
+- [ ] **131.1** Add confetti burst animation to `DiscoveryNotification.tsx` (colored rectangles falling).
+- [ ] **131.2** Increase celebration duration to ~2s.
+- [ ] **131.3** Add subtle glow pulse behind notification card.
+- [ ] **131.4** Ensure celebration is non-blocking and auto-dismisses.
+
+---
+
+## Phase 132: Exploration Progress & Hints
+
+- [ ] **132.1** Add exploration encouragement messages to `BottomDiscoveryPanel.tsx`.
+- [ ] **132.2** Show continent suggestion for lowest-discovery region.
+- [ ] **132.3** Add hint pulse animation to undiscovered bird markers in `BirdMarker.tsx`.
+- [ ] **132.4** Add subtle bird icon flutter for undiscovered markers.
+- [ ] **132.5** Ensure hints only appear for undiscovered birds and do not reveal identity.
+
+---
+
+## Phase 133: Performance Optimization
+
+- [ ] **133.1** Implement photo compression (JPEG quality 0.6, max 400px width) before localStorage storage.
+- [ ] **133.2** Enforce 50-photo limit with auto-removal of oldest.
+- [ ] **133.3** Verify lazy loading for photo gallery thumbnails.
+- [ ] **133.4** Verify max 15 simultaneous 3D models enforced.
+- [ ] **133.5** Verify ~60 FPS maintained with all v16 features active.
+
+---
+
+## Phase 134: Final Verification (v16)
+
+- [ ] **134.1** Daily missions display and progress tracking. (AC-V16-1)
+- [ ] **134.2** Bird photo mode capture and gallery. (AC-V16-2)
+- [ ] **134.3** Encyclopedia discovered/locked states. (AC-V16-3)
+- [ ] **134.4** Achievement system with badges. (AC-V16-4)
+- [ ] **134.5** Enhanced discovery celebration. (AC-V16-5)
+- [ ] **134.6** Exploration progress and encouragement. (AC-V16-6)
+- [ ] **134.7** Bird hint animations. (AC-V16-7)
+- [ ] **134.8** ~60 FPS maintained. (AC-V16-8)
 
 ---
 
@@ -473,10 +577,19 @@
 
 ---
 
-## Summary (v15)
+## Summary (v16)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
+| Daily Bird Mission System (v16) | 127.1–127.11 | New |
+| Bird Photo Mode (v16) | 128.1–128.10 | New |
+| Bird Encyclopedia Enhancement (v16) | 129.1–129.5 | New |
+| Explorer Achievement System (v16) | 130.1–130.11 | New |
+| Discovery Celebration Enhancement (v16) | 131.1–131.4 | New |
+| Exploration Progress & Hints (v16) | 132.1–132.5 | New |
+| Performance Optimization (v16) | 133.1–133.5 | New |
+| Final Verification (v16) | 134.1–134.8 | New |
+| **Total v16 tasks** | **59 tasks** | **0 complete** |
 | Real-Time Day-Night Earth (v15) | 119.1–119.5 | New |
 | Enhanced Migration Routes (v15) | 120.1–120.4 | New |
 | AI Bird Narration System (v15) | 121.1–121.6 | New |
@@ -501,4 +614,5 @@
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total all tasks (v1–v15)** | **~855 tasks** | **~816 complete** |
+| **Total v16 tasks** | **59 tasks** | **0 complete** |
+| **Total all tasks (v1–v16)** | **~914 tasks** | **~816 complete** |
