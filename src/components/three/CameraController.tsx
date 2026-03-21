@@ -17,6 +17,7 @@ const MIN_CAMERA_DISTANCE = 1.15;
 const ANIM_DURATION = 1200;
 const IDLE_TIMEOUT = 5000;
 const BASE_AUTO_ROTATE_SPEED = 1.0;
+const BIRD_ORBIT_SPEED = 0.5;
 
 const REGION_CENTERS: Record<string, { lat: number; lng: number }> = {
   "north-america": { lat: 40, lng: -100 },
@@ -48,6 +49,7 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
   const lastInteractionRef = useRef(Date.now());
   const prevSelectedRef = useRef<string | null>(null);
   const prevRegionRef = useRef<string | null>(null);
+  const birdOrbitActiveRef = useRef(false);
 
   const startPosRef = useRef(new Vector3());
   const targetPosRef = useRef(new Vector3());
@@ -63,6 +65,7 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
 
     const handleStart = () => {
       controls.autoRotate = false;
+      birdOrbitActiveRef.current = false;
       if (animatingRef.current) {
         userInteractedRef.current = true;
         animatingRef.current = false;
@@ -86,13 +89,19 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
 
     const handleWheel = () => {
       const controls = controlsRef.current;
-      if (controls) controls.autoRotate = false;
+      if (controls) {
+        controls.autoRotate = false;
+        birdOrbitActiveRef.current = false;
+      }
       lastInteractionRef.current = Date.now();
     };
 
     const handleTouchMove = () => {
       const controls = controlsRef.current;
-      if (controls) controls.autoRotate = false;
+      if (controls) {
+        controls.autoRotate = false;
+        birdOrbitActiveRef.current = false;
+      }
       lastInteractionRef.current = Date.now();
     };
 
@@ -109,6 +118,8 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
     prevSelectedRef.current = selectedBirdId;
 
     userInteractedRef.current = false;
+    birdOrbitActiveRef.current = false;
+
     if (bird) {
       const dist = Math.max(ZOOM_DISTANCE, MIN_CAMERA_DISTANCE);
       const pos = latLngToVector3(bird.lat, bird.lng, dist);
@@ -161,6 +172,12 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
       if (rawT >= 1) {
         camera.position.copy(targetPosRef.current);
         animatingRef.current = false;
+
+        if (bird) {
+          birdOrbitActiveRef.current = true;
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = BIRD_ORBIT_SPEED;
+        }
       } else {
         const startDir = startPosRef.current.clone().normalize();
         const targetDir = targetPosRef.current.clone().normalize();
@@ -180,14 +197,15 @@ export function CameraController({ controlsRef }: CameraControllerProps) {
       !bird &&
       !activeRegion &&
       !animatingRef.current &&
+      !birdOrbitActiveRef.current &&
       Date.now() - lastInteractionRef.current > IDLE_TIMEOUT
     ) {
       controls.autoRotate = true;
-    } else if (bird || activeRegion) {
-      controls.autoRotate = false;
+    } else if (!bird && !activeRegion && !birdOrbitActiveRef.current) {
+      // keep current state
     }
 
-    if (controls.autoRotate) {
+    if (controls.autoRotate && !birdOrbitActiveRef.current) {
       controls.autoRotateSpeed =
         BASE_AUTO_ROTATE_SPEED * (DEFAULT_DISTANCE / camera.position.length());
     }

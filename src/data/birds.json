@@ -1456,5 +1456,33 @@
     "soundUrl": "",
     "migration": false,
     "model": ""
+  },
+  {
+    "id": "whooping-crane",
+    "nameZh": "美洲鹤",
+    "pinyin": "měi zhōu hè",
+    "nameEn": "Whooping Crane",
+    "scientificName": "Grus americana",
+    "lat": 59.0,
+    "lng": -112.0,
+    "region": "north-america",
+    "funFactZh": "美洲鹤是北美最高的鸟类，站立时可达1.5米！它们曾濒临灭绝，仅剩21只，如今通过保护已恢复到800多只。",
+    "funFactEn": "The Whooping Crane is the tallest bird in North America, standing up to 1.5 metres! They nearly went extinct with only 21 left, but conservation efforts have brought their numbers back to over 800.",
+    "photoUrl": "/images/birds/whooping-crane.jpg",
+    "xenoCantoQuery": "Grus americana",
+    "silhouette": "japanese-crane",
+    "sizeCategory": "large",
+    "habitatType": "wetlands",
+    "diet": "Crustaceans, insects, plants",
+    "wingspan": "210–230 cm",
+    "lifespan": "~22 years",
+    "evolutionEra": "neogene",
+    "dietType": "omnivore",
+    "wingspanCm": 220,
+    "rarity": "legendary",
+    "storyTheme": "arctic",
+    "soundUrl": "",
+    "migration": true,
+    "model": ""
   }
 ]

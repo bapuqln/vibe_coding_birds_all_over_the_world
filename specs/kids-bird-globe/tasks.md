@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v14)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v15)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -6,7 +6,91 @@
 > v11 phases (85–92) are complete.
 > v12 phases (93–100) are complete.
 > v13 phases (101–108) are complete.
-> v14 phases (109–118) are new.
+> v14 phases (109–118) are complete.
+> v15 phases (119–126) are new.
+
+---
+
+# v15 Tasks (Immersive Experience Upgrade)
+
+---
+
+## Phase 119: Real-Time Day-Night Earth
+
+- [ ] **119.1** Add rotating sun directional light to `GlobeScene.tsx` with slow rotation (~0.02 rad/s).
+- [ ] **119.2** Create day-night custom shader for `Globe.tsx` blending day texture and night city-lights emissive based on sun direction.
+- [ ] **119.3** Add city lights texture loading (`/textures/earth_night.jpg`) with emissive map.
+- [ ] **119.4** Ensure cloud layer is visible in both day and night regions.
+- [ ] **119.5** Enhance atmosphere glow to be visible from all angles as soft blue ring.
+
+---
+
+## Phase 120: Enhanced Migration Routes
+
+- [ ] **120.1** Add Whooping Crane bird entry to `birds.json` with complete data fields.
+- [ ] **120.2** Add Whooping Crane migration route to `migrations.json` (Wood Buffalo, Canada → Aransas, Texas).
+- [ ] **120.3** Verify all migration arcs render with glowing effect and moving particle dots.
+- [ ] **120.4** Ensure migration toggle button works correctly with new route.
+
+---
+
+## Phase 121: AI Bird Narration System
+
+- [ ] **121.1** Create `useNarration.ts` hook in `src/hooks/` using Web Speech API (SpeechSynthesis).
+- [ ] **121.2** Implement narration text generation from bird data (name, habitat, fun fact, lifespan, wingspan).
+- [ ] **121.3** Add "Tell me about this bird" button to `BirdInfoCard.tsx`.
+- [ ] **121.4** Implement voice selection (prefer English, friendly tone, rate 0.9).
+- [ ] **121.5** Add fallback: display narration text when speech synthesis unavailable.
+- [ ] **121.6** Add narration state management (idle, speaking, unavailable) to store or local state.
+
+---
+
+## Phase 122: Bird Discovery Celebration
+
+- [ ] **122.1** Enhance `DiscoveryNotification.tsx` with star-particle burst animation (12-16 stars).
+- [ ] **122.2** Add CSS keyframes for star particles animating outward.
+- [ ] **122.3** Add scale-bounce animation to notification card.
+- [ ] **122.4** Verify celebration animation is brief (~1.5s) and non-blocking.
+
+---
+
+## Phase 123: Enhanced Bird Info Card
+
+- [ ] **123.1** Add scientific name display (italic) below common name in `BirdInfoCard.tsx`.
+- [ ] **123.2** Verify habitat, wingspan, lifespan sections are present and styled.
+- [ ] **123.3** Verify wingspan comparison bar renders correctly.
+- [ ] **123.4** Ensure fun fact section uses "Did you know?" prompt styling.
+
+---
+
+## Phase 124: Camera Orbit After Arrival
+
+- [ ] **124.1** Modify `CameraController.tsx` to enable gentle auto-orbit after fly-to completes.
+- [ ] **124.2** Set orbit speed to slow (~0.5 autoRotateSpeed).
+- [ ] **124.3** Disable auto-orbit immediately when user interacts (drag/scroll).
+- [ ] **124.4** Verify camera stops slightly above bird location.
+
+---
+
+## Phase 125: Performance Optimization
+
+- [ ] **125.1** Verify max 15 simultaneous 3D models with icon marker fallback.
+- [ ] **125.2** Verify lazy loading for bird models and audio files.
+- [ ] **125.3** Verify day-night shader performs well on mid-range devices.
+- [ ] **125.4** Ensure narration audio is generated on-demand, not preloaded.
+- [ ] **125.5** Verify ~60 FPS maintained with all v15 features active.
+
+---
+
+## Phase 126: Final Verification (v15)
+
+- [ ] **126.1** Day-night Earth rendering with city lights. (AC-V15-1)
+- [ ] **126.2** Migration routes with glowing arcs and moving dots. (AC-V15-2)
+- [ ] **126.3** AI narration via "Tell me about this bird" button. (AC-V15-3)
+- [ ] **126.4** Star-particle discovery celebration. (AC-V15-4)
+- [ ] **126.5** Enhanced bird info card with scientific name. (AC-V15-5)
+- [ ] **126.6** Camera fly-to with gentle orbit. (AC-V15-6)
+- [ ] **126.7** ~60 FPS maintained. (AC-V15-7)
 
 ---
 
@@ -389,10 +473,19 @@
 
 ---
 
-## Summary (v14)
+## Summary (v15)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
+| Real-Time Day-Night Earth (v15) | 119.1–119.5 | New |
+| Enhanced Migration Routes (v15) | 120.1–120.4 | New |
+| AI Bird Narration System (v15) | 121.1–121.6 | New |
+| Bird Discovery Celebration (v15) | 122.1–122.4 | New |
+| Enhanced Bird Info Card (v15) | 123.1–123.4 | New |
+| Camera Orbit After Arrival (v15) | 124.1–124.4 | New |
+| Performance Optimization (v15) | 125.1–125.5 | New |
+| Final Verification (v15) | 126.1–126.7 | New |
+| **Total v15 tasks** | **39 tasks** | **0 complete** |
 | Glass UI Design System (v14) | 109.1–109.3 | Complete |
 | Modern Button Design (v14) | 110.1–110.4 | Complete |
 | Globe Visual Improvements (v14) | 111.1–111.4 | Complete |
@@ -408,4 +501,4 @@
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total all tasks (v1–v14)** | **~816 tasks** | **~816 complete** |
+| **Total all tasks (v1–v15)** | **~855 tasks** | **~816 complete** |

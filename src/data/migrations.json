@@ -52,5 +52,14 @@
     "nameEn": "Canada Goose Migration",
     "migrationDistanceKm": 5000,
     "color": "#38bdf8"
+  },
+  {
+    "id": "whooping-crane-migration",
+    "from": "whooping-crane",
+    "to": "bald-eagle",
+    "nameZh": "美洲鹤迁徙路线",
+    "nameEn": "Whooping Crane Migration",
+    "migrationDistanceKm": 4000,
+    "color": "#ec4899"
   }
 ]

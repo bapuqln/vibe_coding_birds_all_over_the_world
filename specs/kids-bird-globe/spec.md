@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v14
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v15
 
+> **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position lighting (bright day side, dark night side with city lights texture), atmospheric glow ring, cloud layer visible in both day and night, enhanced bird migration route visualization with Whooping Crane route added and glowing animated arcs with particle dots, AI bird narration system using Web Speech API (text-to-speech) with "Tell me about this bird" button and friendly child-oriented narration content, improved bird discovery experience with star-particle celebration animation and continent-level discovery progress UI, enhanced educational bird info card with scientific name / habitat / wingspan / lifespan / fun fact sections and wingspan comparison bar, improved camera fly-to experience with gentle orbit after arrival, performance optimization with 15-model limit fallback to icon markers and lazy loading for models/audio/textures and KTX2 compressed texture support.
+>
 > **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system (semi-transparent backgrounds, backdrop blur 20px, soft shadows, rounded corners), modern pill-shaped buttons with hover glow and scale effects, improved globe rendering (enhanced atmosphere glow, better cloud layer, rim lighting, higher-quality Fresnel shader), bird hover interactions (scale animation, soft glow, floating motion, styled tooltip), particle bird silhouettes flying around the globe, improved camera animation system (ease-in-out transitions, 1.2s duration), bottom discovery panel with progress bar, responsive panel layout improvements, rendering performance optimizations (lazy loading, compressed textures, model limits).
 >
 > **v13 changelog**: Global UI Layer System — unified z-index hierarchy (7 layers from canvas z-0 to overlay z-100), refactored App root into layered container architecture (GlobeLayer → MarkerLayer → SidebarLayer → BottomPanelLayer → CardLayer → ModalLayer → OverlayLayer), panel collision avoidance system (only one panel type active at a time), bird info card repositioned to right side to prevent overlap with bottom panels, responsive layout rules (desktop: sidebar+bottom+right card, tablet: collapsed sidebar+center modal, mobile: full-screen sheets), safe area padding (20px all sides), modal priority system with semi-transparent overlay blocking lower layers, smooth panel animations (slide-up 250ms for bottom, slide-right 250ms for side, scale-fade 250ms for modal).
@@ -103,6 +105,24 @@ As a child, I can click "View in AR" to open my device camera and place a 3D bir
 
 ### US-28: Compare Wingspans (v12)
 As a child, I can see a visual bar comparing different birds' wingspan sizes in the info card.
+
+### US-29: See Day and Night on Earth (v15)
+As a child, I can see the globe with realistic day and night regions based on the sun's position, with city lights glowing on the dark side, making the Earth feel alive.
+
+### US-30: Hear Bird Narration (v15)
+As a child, I can press "Tell me about this bird" to hear a friendly spoken narration about the bird, including where it lives, what it eats, and a fun fact.
+
+### US-31: See Discovery Celebration (v15)
+As a child, when I discover a new bird, I see a celebration animation with star particles and a "New Bird Discovered" message, making exploration feel rewarding.
+
+### US-32: Track Continent Progress (v15)
+As a child, I can see how many birds I've discovered on each continent with visual progress indicators like "Asia: 4/10 birds discovered".
+
+### US-33: See Enhanced Bird Info (v15)
+As a child, I can see detailed bird information including scientific name, habitat, wingspan comparison, lifespan, and fun facts in a beautifully designed card.
+
+### US-34: Experience Smooth Camera Flight (v15)
+As a child, when I click a bird, the camera smoothly flies to it in about 1.2 seconds and then gently orbits so I can see the bird clearly.
 
 ## Requirements
 
@@ -525,6 +545,64 @@ interface StoryTheme {
 type Rarity = "common" | "rare" | "legendary";
 ```
 
+### R-34: Real-Time Day-Night Earth (v15)
+- Dynamic lighting system simulating day and night on the globe.
+- Directional light representing the sun, slowly rotating to simulate Earth rotation.
+- Day side: bright, fully lit by directional light.
+- Night side: dark with city lights texture visible (emissive map on night hemisphere).
+- Earth rendering layers: base Earth texture, night city lights (emissive), cloud layer, atmosphere glow.
+- Atmosphere: soft blue glow ring around the planet using slightly transparent sphere with additive blending.
+- Sun rotation speed: very slow (~0.02 radians per second) for gentle day-night cycle.
+- City lights fade in/out based on sun angle per fragment.
+
+### R-35: Enhanced Bird Migration Route Visualization (v15)
+- Migration routes displayed as curved glowing arcs connecting regions.
+- Moving particle/dot traveling along each path with smooth animation.
+- Toggle button "Migration Routes" to show/hide all migration paths.
+- Whooping Crane migration route added (North America).
+- Animation speed slow and smooth.
+- Each route has distinct color for visual clarity.
+- Arc lines glow with emissive shader effect.
+
+### R-36: AI Bird Narration System (v15)
+- "Tell me about this bird" button on bird info card.
+- Narration content: friendly, short, child-oriented.
+- Example: "This is the Scarlet Macaw. It lives in the rainforests of South America. Its bright feathers help it communicate with other birds. Scarlet Macaws can live for more than fifty years."
+- Audio: use browser Web Speech API (SpeechSynthesis) as primary.
+- Voice: friendly, clear, moderate speed.
+- Fallback: display narration text if speech synthesis unavailable.
+- Narration auto-generated from bird data fields (name, habitat, fun fact, lifespan, wingspan).
+
+### R-37: Bird Discovery Celebration (v15)
+- When a new bird is discovered: show celebration animation with star particles.
+- Soft sound effect (optional, CSS animation primary).
+- Message: "New Bird Discovered!" with bird name.
+- Star particles: small sparkle/burst animation around notification.
+- Bird discovery counter: "Birds Found: 14 / 50" displayed in UI.
+- Continent discovery progress: "Asia: 4/10 birds discovered", "Africa: 3/8 birds discovered".
+
+### R-38: Enhanced Bird Information Card (v15)
+- Sections: Bird name, Scientific name, Habitat, Wingspan, Lifespan, Fun fact.
+- Wingspan comparison visualization bar.
+- Habitat region indicator: briefly highlight region on globe when card opens.
+- Scientific name displayed in italic below common name.
+- All sections use consistent spacing tokens.
+
+### R-39: Camera Experience Improvements (v15)
+- On bird selection: camera smoothly flies to bird location.
+- Animation duration ~1.2 seconds with ease-in-out.
+- Camera stops slightly above bird location.
+- After arrival: gentle camera orbit (slow auto-rotate around the bird's position).
+- Orbit helps user see the bird model clearly from multiple angles.
+
+### R-40: Performance Optimization (v15)
+- Limit visible 3D bird models to 15; fallback to icon markers for others.
+- Lazy loading for bird models, audio files, high-resolution textures.
+- Use compressed textures (KTX2) when possible.
+- Day-night shader optimized for mobile (single-pass fragment shader).
+- Migration arc geometry cached and reused.
+- Narration audio generated on-demand, not preloaded.
+
 ## Non-goals
 - User accounts or server-side progress tracking.
 - Offline support / PWA.
@@ -534,6 +612,48 @@ type Rarity = "common" | "rare" | "legendary";
 - High-resolution GeoJSON.
 
 ## Acceptance Criteria
+
+### AC-V15-1: Real-Time Day-Night Earth
+- [ ] Globe displays bright day side and dark night side.
+- [ ] City lights visible on night side.
+- [ ] Directional sun light slowly rotates.
+- [ ] Atmosphere glow ring visible around planet.
+- [ ] Cloud layer renders in both day and night.
+
+### AC-V15-2: Bird Migration Routes
+- [ ] Migration arcs display as glowing curved lines.
+- [ ] Moving particle dot animates along each path.
+- [ ] Toggle button shows/hides migration routes.
+- [ ] Whooping Crane route included.
+- [ ] Each route has distinct color.
+
+### AC-V15-3: AI Bird Narration
+- [ ] "Tell me about this bird" button on info card.
+- [ ] Clicking triggers spoken narration via Web Speech API.
+- [ ] Narration content is friendly and child-oriented.
+- [ ] Fallback text display when speech unavailable.
+
+### AC-V15-4: Bird Discovery Celebration
+- [ ] Star particle celebration on new bird discovery.
+- [ ] "New Bird Discovered" message displays.
+- [ ] Discovery counter shows "Birds Found: X / Y".
+- [ ] Continent progress shows per-continent discovery.
+
+### AC-V15-5: Enhanced Bird Info Card
+- [ ] Scientific name displayed in italic.
+- [ ] Habitat, wingspan, lifespan sections present.
+- [ ] Wingspan comparison bar works.
+- [ ] Fun fact section styled with "Did you know?" prompt.
+
+### AC-V15-6: Camera Experience
+- [ ] Camera fly-to uses ease-in-out over ~1.2s.
+- [ ] Camera stops above bird location.
+- [ ] Gentle orbit after arrival.
+
+### AC-V15-7: Performance
+- [ ] Max 15 simultaneous 3D models enforced.
+- [ ] Lazy loading for models and audio.
+- [ ] ~60 FPS maintained with all v15 features.
 
 ### AC-V14-1: Glass UI Design System
 - [ ] Glassmorphism CSS utility classes defined.

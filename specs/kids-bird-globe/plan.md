@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v14)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v15)
 
+> **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position directional light (day side bright, night side dark with city lights emissive texture), enhanced atmosphere glow, AI bird narration system using Web Speech API with "Tell me about this bird" button, improved bird discovery celebration with star-particle animation, enhanced educational bird info card with scientific name and wingspan comparison, improved camera fly-to with gentle orbit after arrival, Whooping Crane migration route added, performance optimization with lazy loading and KTX2 textures.
+>
 > **v14 changelog**: Visual & Interaction Upgrade — glassmorphism design system with CSS utility classes, modern pill-shaped buttons with hover glow, improved globe rendering (enhanced atmosphere, rim lighting, better clouds), bird hover interactions (scale, glow, tooltip), particle bird silhouettes around globe, improved camera animation (ease-in-out, 1.2s), bottom discovery panel with progress bar, responsive layout improvements, rendering performance optimizations.
 >
 > **v13 changelog**: Global UI Layer System — unified 7-layer z-index hierarchy, refactored App root into layered container architecture, panel collision avoidance (one panel active at a time via `activePanel` store state), bird info card repositioned to right side (desktop) / bottom center (mobile), responsive layout (desktop sidebar+bottom+right, tablet collapsed+center modal, mobile full-screen sheets), safe area padding (20px all sides), modal priority with overlay blocking, smooth panel animations (250ms slide/scale-fade).
@@ -13,6 +15,28 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v15)
+
+### TD-96: Real-Time Day-Night Earth Rendering
+**Problem**: The globe has static uniform lighting — no sense of day/night, no city lights, no dynamic sun position. The Earth feels flat and unrealistic.
+**Solution**: Replace the static directional light with a slowly rotating sun light. Modify `Globe.tsx` to use a custom shader that blends the day Earth texture with a night city-lights emissive texture based on the dot product of the surface normal and the sun direction. Fragments facing the sun are bright (day), fragments facing away show city lights (night). The sun direction rotates at ~0.02 rad/s. Add a city lights texture loaded via `useTexture`. The atmosphere shell already provides glow; enhance it to be visible from all angles.
+
+### TD-97: AI Bird Narration System
+**Problem**: Children can read bird info but cannot hear it spoken aloud. No audio narration exists.
+**Solution**: Add a "Tell me about this bird" button to `BirdInfoCard`. On click, use the browser's `SpeechSynthesis` API to speak a child-friendly narration generated from the bird's data (name, habitat, fun fact, lifespan, wingspan). Voice selection prefers English voices with friendly tone. Rate set to 0.9 for clarity. If `SpeechSynthesis` is unavailable, display the narration text in a visible panel as fallback. Create a `useNarration` hook encapsulating the speech logic.
+
+### TD-98: Bird Discovery Celebration Enhancement
+**Problem**: The current discovery notification is a simple slide-in card. It lacks the "wow" factor for children.
+**Solution**: Enhance `DiscoveryNotification` with a star-particle burst animation. Add 12-16 small star/sparkle elements that animate outward from the notification center using CSS keyframes. Add a subtle scale-bounce to the notification itself. The celebration should feel magical but brief (~1.5s).
+
+### TD-99: Camera Orbit After Arrival
+**Problem**: After the camera flies to a bird, it stops. The user must manually rotate to see the bird from different angles.
+**Solution**: After the fly-to animation completes (1.2s), enable a gentle auto-orbit around the bird's position. Set `OrbitControls.autoRotate = true` with a slow speed (~0.5). If the user interacts (drag/scroll), disable auto-orbit immediately. This creates a cinematic "showcase" feel when viewing a bird.
+
+### TD-100: Whooping Crane Migration Route
+**Problem**: The migration dataset lacks the Whooping Crane, a well-known migratory bird.
+**Solution**: Add Whooping Crane to `birds.json` (if not present) and add a migration route from breeding grounds (Wood Buffalo, Canada) to wintering grounds (Aransas, Texas) in `migrations.json`. Use a distinct color (#ec4899 pink) for the route.
 
 ## Key Technical Decisions (v14)
 
@@ -108,6 +132,46 @@ App.tsx
 │
 └── AudioPlayer (invisible)
 ```
+
+## Component Inventory (v15 additions)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `DayNightGlobe.tsx` | Replaces `Globe.tsx` with day-night shader using sun position | v15 |
+| `SunLight.tsx` | Rotating directional light representing the sun | v15 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `Globe.tsx` | Day-night custom shader with city lights emissive map | v15 |
+| `GlobeScene.tsx` | Added rotating sun light, updated lighting setup | v15 |
+| `BirdInfoCard.tsx` | Added "Tell me about this bird" narration button, scientific name display | v15 |
+| `DiscoveryNotification.tsx` | Enhanced with star-particle celebration animation | v15 |
+| `CameraController.tsx` | Added gentle orbit after fly-to arrival | v15 |
+| `DiscoveryProgressBar.tsx` | Enhanced continent progress display | v15 |
+
+### New Hooks
+| Hook | Purpose | Version |
+|------|---------|---------|
+| `useNarration.ts` | Web Speech API narration with fallback | v15 |
+
+### Data Changes
+| File | Changes | Version |
+|------|---------|---------|
+| `migrations.json` | Added Whooping Crane migration route | v15 |
+| `birds.json` | Added Whooping Crane bird entry | v15 |
+
+## Implementation Phases (v15)
+
+- Phase 119: Real-Time Day-Night Earth — sun light rotation, day-night shader, city lights → R-34
+- Phase 120: Enhanced Migration Routes — Whooping Crane route, improved arc visualization → R-35
+- Phase 121: AI Bird Narration System — useNarration hook, TTS button, fallback → R-36
+- Phase 122: Bird Discovery Celebration — star particles, enhanced notification → R-37
+- Phase 123: Enhanced Bird Info Card — scientific name, improved sections → R-38
+- Phase 124: Camera Orbit After Arrival — gentle auto-rotate post fly-to → R-39
+- Phase 125: Performance Optimization — lazy loading, model limits, KTX2 → R-40
+- Phase 126: Final Verification → All v15 ACs
 
 ## Component Inventory (v14 additions)
 

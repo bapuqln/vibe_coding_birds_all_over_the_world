@@ -3,6 +3,7 @@ import { useAppStore } from "../../store";
 import birdsData from "../../data/birds.json";
 import type { Bird, DietType, Language, Rarity, SizeCategory } from "../../types";
 import { WingspanBar } from "./WingspanBar";
+import { useNarration } from "../../hooks/useNarration";
 
 const birds = birdsData as Bird[];
 const birdMap = new Map(birds.map((b) => [b.id, b]));
@@ -26,6 +27,8 @@ export function BirdInfoCard() {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [showSparkle, setShowSparkle] = useState(false);
+  const { state: narrationState, narrationText, speak: speakNarration, stop: stopNarration, isAvailable: narrationAvailable } = useNarration();
+  const [showNarrationText, setShowNarrationText] = useState(false);
 
   const bird = useMemo(
     () => (selectedBirdId ? birdMap.get(selectedBirdId) ?? null : null),
@@ -57,8 +60,10 @@ export function BirdInfoCard() {
   }, [isOpen, selectedBirdId, setAudioStatus, discoverBird]);
 
   const handleClose = useCallback(() => {
+    stopNarration();
+    setShowNarrationText(false);
     setSelectedBird(null);
-  }, [setSelectedBird]);
+  }, [setSelectedBird, stopNarration]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -229,6 +234,11 @@ export function BirdInfoCard() {
               <p style={{ fontSize: 16, fontWeight: 600, color: "#4b5563", margin: "2px 0 0" }}>
                 {bird.nameEn}
               </p>
+              {bird.scientificName && (
+                <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0", fontStyle: "italic" }}>
+                  {bird.scientificName}
+                </p>
+              )}
             </div>
 
             {/* FunFact */}
@@ -464,18 +474,25 @@ export function BirdInfoCard() {
                 </button>
               </div>
 
+              {/* Narration Button */}
               <button
                 type="button"
                 onClick={() => {
-                  if (selectedBirdId) {
-                    setARViewerBird(selectedBirdId);
+                  if (narrationState === "speaking") {
+                    stopNarration();
+                    setShowNarrationText(false);
+                  } else if (bird) {
+                    speakNarration(bird, language);
+                    if (!narrationAvailable) {
+                      setShowNarrationText(true);
+                    }
                   }
                 }}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 6,
+                  gap: 8,
                   borderRadius: 9999,
                   padding: "12px 0",
                   fontSize: 14,
@@ -483,17 +500,74 @@ export function BirdInfoCard() {
                   border: "none",
                   cursor: "pointer",
                   transition: "transform 0.2s, box-shadow 0.2s",
-                  background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
+                  background: narrationState === "speaking"
+                    ? "linear-gradient(135deg, #10b981, #059669)"
+                    : "linear-gradient(135deg, #14b8a6, #0d9488)",
                   color: "white",
-                  boxShadow: "0 4px 16px rgba(139, 92, 246, 0.3)",
+                  boxShadow: narrationState === "speaking"
+                    ? "0 4px 16px rgba(16, 185, 129, 0.4)"
+                    : "0 4px 16px rgba(20, 184, 166, 0.3)",
                 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                aria-label={language === "zh" ? "AR查看" : "View in AR"}
+                aria-label={language === "zh" ? "讲述这只鸟" : "Tell me about this bird"}
               >
-                <span>📱</span>
-                <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
+                <span>{narrationState === "speaking" ? "⏹" : "🗣️"}</span>
+                <span>
+                  {narrationState === "speaking"
+                    ? (language === "zh" ? "停止讲述" : "Stop narration")
+                    : (language === "zh" ? "讲讲这只鸟" : "Tell me about this bird")}
+                </span>
               </button>
+
+              {/* Narration text fallback */}
+              {showNarrationText && narrationText && (
+                <div style={{
+                  borderRadius: 14,
+                  background: "rgba(240, 253, 250, 0.9)",
+                  padding: `${SP.sm}px ${SP.md}px`,
+                  border: "1px solid rgba(20, 184, 166, 0.2)",
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  color: "#134e4a",
+                }}>
+                  {narrationText}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: SP.sm }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (selectedBirdId) {
+                      setARViewerBird(selectedBirdId);
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    borderRadius: 9999,
+                    padding: "12px 0",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
+                    color: "white",
+                    boxShadow: "0 4px 16px rgba(139, 92, 246, 0.3)",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                  aria-label={language === "zh" ? "AR查看" : "View in AR"}
+                >
+                  <span>📱</span>
+                  <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
