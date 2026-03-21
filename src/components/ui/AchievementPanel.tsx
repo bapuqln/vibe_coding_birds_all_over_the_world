@@ -1,9 +1,11 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useAppStore } from "../../store";
 import achievementDefs from "../../data/achievements.json";
-import type { AchievementDef } from "../../types";
+import birdsData from "../../data/birds.json";
+import type { AchievementDef, Bird } from "../../types";
 
 const defs = achievementDefs as AchievementDef[];
+const birds = birdsData as Bird[];
 
 export function AchievementPanel() {
   const achievementPanelOpen = useAppStore((s) => s.achievementPanelOpen);
@@ -12,6 +14,10 @@ export function AchievementPanel() {
   const language = useAppStore((s) => s.language);
   const achievementNotification = useAppStore((s) => s.achievementNotification);
   const dismissAchievementNotification = useAppStore((s) => s.dismissAchievementNotification);
+  const discoveredBirds = useAppStore((s) => s.discoveredBirds);
+  const listenCount = useAppStore((s) => s.listenCount);
+  const birdPhotos = useAppStore((s) => s.birdPhotos);
+  const completedMissionCount = useAppStore((s) => s.completedMissionCount);
 
   useEffect(() => {
     if (!achievementNotification) return;
@@ -20,6 +26,19 @@ export function AchievementPanel() {
   }, [achievementNotification, dismissAchievementNotification]);
 
   const handleClose = useCallback(() => setAchievementPanelOpen(false), [setAchievementPanelOpen]);
+
+  const progressMap = useMemo(() => {
+    const regions = new Set(
+      birds.filter((b) => discoveredBirds.includes(b.id)).map((b) => b.region),
+    );
+    return {
+      discover: discoveredBirds.length,
+      continent: regions.size,
+      listen: listenCount,
+      photo: birdPhotos.length,
+      mission: completedMissionCount,
+    } as Record<string, number>;
+  }, [discoveredBirds, listenCount, birdPhotos.length, completedMissionCount]);
 
   if (!achievementPanelOpen) return null;
 
@@ -64,6 +83,8 @@ export function AchievementPanel() {
             {defs.map((def) => {
               const progress = achievements.find((a) => a.achievementId === def.id);
               const isUnlocked = progress?.unlocked ?? false;
+              const currentValue = progressMap[def.type] ?? 0;
+              const pct = Math.min((currentValue / def.requirement) * 100, 100);
 
               return (
                 <div
@@ -71,7 +92,7 @@ export function AchievementPanel() {
                   className={`flex flex-col items-center rounded-xl border p-4 text-center transition-all ${
                     isUnlocked
                       ? "border-purple-200 bg-linear-to-b from-purple-50 to-indigo-50 shadow-sm"
-                      : "border-gray-100 bg-gray-50/50 opacity-60"
+                      : "border-gray-100 bg-gray-50/50"
                   }`}
                 >
                   <div
@@ -80,6 +101,7 @@ export function AchievementPanel() {
                         ? "bg-linear-to-br from-purple-100 to-indigo-100 shadow-inner"
                         : "bg-gray-100"
                     }`}
+                    style={isUnlocked ? { boxShadow: "0 0 12px rgba(139, 92, 246, 0.3)" } : undefined}
                   >
                     {isUnlocked ? def.icon : "🔒"}
                   </div>
@@ -89,6 +111,27 @@ export function AchievementPanel() {
                   <p className="mt-1 text-[10px] leading-tight text-gray-500">
                     {language === "zh" ? def.descriptionZh : def.descriptionEn}
                   </p>
+
+                  <div className="mt-2 w-full">
+                    <div className="flex items-center justify-between text-[9px] text-gray-400">
+                      <span>{Math.min(currentValue, def.requirement)}/{def.requirement}</span>
+                      <span>{Math.round(pct)}%</span>
+                    </div>
+                    <div className="mt-0.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isUnlocked
+                            ? "bg-linear-to-r from-purple-400 to-indigo-400"
+                            : "bg-gray-300"
+                        }`}
+                        style={{
+                          width: `${pct}%`,
+                          boxShadow: isUnlocked ? "0 0 6px rgba(139, 92, 246, 0.4)" : "none",
+                        }}
+                      />
+                    </div>
+                  </div>
+
                   {isUnlocked && progress?.unlockedAt && (
                     <p className="mt-1 text-[9px] text-purple-400">
                       {new Date(progress.unlockedAt).toLocaleDateString()}
@@ -135,7 +178,7 @@ export function AchievementNotification() {
         <span className="text-2xl">{def.icon}</span>
         <div>
           <p className="text-xs font-semibold text-purple-100">
-            {language === "zh" ? "🎉 成就解锁！" : "🎉 Achievement Unlocked!"}
+            {language === "zh" ? "成就解锁！" : "Achievement Unlocked!"}
           </p>
           <p className="text-sm font-bold text-white">
             {language === "zh" ? def.titleZh : def.titleEn}

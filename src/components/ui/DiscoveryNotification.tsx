@@ -53,6 +53,7 @@ export function DiscoveryNotification() {
         padding: "14px 22px",
         cursor: "pointer",
         maxWidth: 380,
+        animation: "discoveryGlowPulse 2s ease-in-out infinite",
       }}>
         <DiscoveryIcon />
         <div>
@@ -75,6 +76,10 @@ export function DiscoveryNotification() {
           0% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.8); }
           60% { opacity: 1; transform: translateX(-50%) translateY(5px) scale(1.03); }
           100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        }
+        @keyframes discoveryGlowPulse {
+          0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.2), 0 0 40px rgba(251,191,36,0.2); }
+          50% { box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.2), 0 0 60px rgba(251,191,36,0.4), 0 0 80px rgba(251,191,36,0.15); }
         }
       `}</style>
     </div>

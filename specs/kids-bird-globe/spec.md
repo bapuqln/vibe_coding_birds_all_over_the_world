@@ -1,5 +1,9 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v16
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v18
 
+> **v18 changelog**: Stability & Core Experience — fixed critical UI overlap where sidebar buttons covered bird info cards by enforcing strict z-index hierarchy (sidebar z-20, info card z-60) and adding sidebar collision avoidance (opacity reduction when card opens), replaced unrealistic procedural 3D bird geometry with stylized low-poly bird model featuring proper wings/tail/beak silhouette and slow wing-flap animation, improved bird marker visuals with glowing base circle and bird icon, enhanced bird info card with section titles (Habitat, Lifespan, Wingspan) and safe left margin (200px) to prevent sidebar collision, improved camera fly-to experience with ~1s smooth animation, added discovery glow pulse on bird click, added discovery counter display, reduced sidebar button width for cleaner layout, enforced consistent spacing tokens (xs=6px, sm=10px, md=16px, lg=24px) across all UI, ensured all panels respect safe margins and never overlap.
+>
+> **v17 changelog**: Game-Like Exploration Polish — enhanced daily mission panel with continent progress mini-bars and animated completion badges, bird photo mode upgraded with full-screen photo overlay including zoom slider and rotation controls, bird encyclopedia improved with continent section grouping and search filter, explorer achievement system enhanced with progress bars showing requirement completion percentage, discovery celebration upgraded with layered confetti + sparkle + glow pulse animation lasting 2.5s, bottom discovery panel now shows continent-level progress bars with color-coded regions, bird hint system improved with proximity-based pulse intensity and undiscovered bird flutter animation, exploration encouragement messages now rotate through suggestions, performance verified with all v17 features active at 60 FPS.
+>
 > **v16 changelog**: Game-Like Exploration Upgrade — daily bird discovery mission system with progress tracking and celebration animations, bird photo mode with camera freeze / zoom / rotate and local photo gallery, enhanced bird encyclopedia with discovered/locked entries and progress indicator, explorer achievement system with badges (First Discovery, Explorer, World Traveler, Bird Listener), improved discovery celebration with confetti burst and sparkle particles, continent exploration progress with hint animations and exploration encouragement messages, performance optimization with lazy loading for photos/models/sounds and 15-model limit enforcement.
 >
 > **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position lighting (bright day side, dark night side with city lights texture), atmospheric glow ring, cloud layer visible in both day and night, enhanced bird migration route visualization with Whooping Crane route added and glowing animated arcs with particle dots, AI bird narration system using Web Speech API (text-to-speech) with "Tell me about this bird" button and friendly child-oriented narration content, improved bird discovery experience with star-particle celebration animation and continent-level discovery progress UI, enhanced educational bird info card with scientific name / habitat / wingspan / lifespan / fun fact sections and wingspan comparison bar, improved camera fly-to experience with gentle orbit after arrival, performance optimization with 15-model limit fallback to icon markers and lazy loading for models/audio/textures and KTX2 compressed texture support.
@@ -146,6 +150,24 @@ As a child, I can see my exploration progress for each continent and receive enc
 
 ### US-41: See Bird Hints (v16)
 As a child, when I rotate the globe near a bird location, I see subtle hint animations like a marker pulse or small bird icon flutter that guide me to undiscovered birds.
+
+### US-42: See Mission Continent Progress (v17)
+As a child, I can see mini continent progress bars inside the daily missions panel, showing how close I am to completing region-specific missions.
+
+### US-43: Use Photo Mode Overlay (v17)
+As a child, when I enter photo mode I see a full-screen overlay with zoom slider and rotation controls so I can frame the bird perfectly before capturing.
+
+### US-44: Search Bird Encyclopedia (v17)
+As a child, I can search for birds by name in the encyclopedia and see them grouped by continent for easier browsing.
+
+### US-45: See Achievement Progress (v17)
+As a child, I can see progress bars on each achievement showing how close I am to unlocking it, motivating me to keep exploring.
+
+### US-46: See Continent Progress Bars (v17)
+As a child, I can see color-coded continent progress bars in the bottom discovery panel showing my exploration progress for each region.
+
+### US-47: Get Rotating Exploration Tips (v17)
+As a child, I see rotating exploration tip messages that suggest different continents and activities to keep me engaged.
 
 ## Requirements
 
@@ -715,6 +737,91 @@ interface Achievement {
 - Lazy loading for photo gallery thumbnails.
 - Maximum 50 stored photos; oldest auto-removed when limit reached.
 
+### R-49: Enhanced Mission Panel (v17)
+- Daily missions panel shows continent mini-progress bars for region missions.
+- Completed missions display animated badge with glow effect.
+- Mission completion celebration includes confetti particles.
+- Panel header shows daily progress ring indicator.
+
+### R-50: Photo Mode Overlay (v17)
+- Full-screen photo mode overlay with semi-transparent background.
+- Zoom slider control (1x to 3x).
+- Rotation controls for framing.
+- Capture button with flash animation feedback.
+- Exit photo mode button clearly visible.
+
+### R-51: Encyclopedia Search and Grouping (v17)
+- Search input at top of encyclopedia panel filters birds by name.
+- Birds grouped by continent with collapsible sections.
+- Each continent section shows discovery count.
+- Smooth scroll to section when continent header tapped.
+
+### R-52: Achievement Progress Bars (v17)
+- Each achievement card shows a progress bar indicating completion percentage.
+- Progress bar fills based on current count vs requirement.
+- Unlocked achievements show full bar with glow effect.
+- Locked achievements show current progress value.
+
+### R-53: Continent Progress in Bottom Panel (v17)
+- Bottom discovery panel shows compact continent progress bars.
+- Each continent has a color-coded mini bar.
+- Bars animate on discovery updates.
+- Continent names shown as abbreviated labels.
+
+### R-54: Rotating Exploration Tips (v17)
+- Exploration encouragement messages rotate every 8 seconds.
+- Tips suggest continents, activities (listen, photograph, collect).
+- Tips context-aware based on current discovery state.
+- Smooth fade transition between tips.
+
+### R-55: Enhanced Bird Hint Animations (v17)
+- Undiscovered bird markers pulse with intensity based on camera proximity.
+- Closer camera = stronger pulse and flutter.
+- Pulse color shifts subtly (warm amber glow).
+- Flutter animation uses sine wave with varying amplitude.
+
+### R-56: UI Overlap Fix — Sidebar Collision Avoidance (v18 CRITICAL)
+- When bird info card opens, sidebar layer reduces opacity to 0.4 and shifts left by 10px.
+- Info card z-index (60) always above sidebar z-index (20).
+- Bird info card left margin: 200px on desktop to prevent collision with sidebar.
+- Sidebar buttons width: 120px, height: 44px with 10px gap between buttons.
+- All UI elements respect strict z-index hierarchy: globe(0) → markers(5) → sidebar(20) → bottom-panel(30) → info-card(60) → modal(100).
+
+### R-57: Improved 3D Bird Model (v18)
+- Replace generic GLTF geometry with procedural stylized low-poly bird shape.
+- Bird shape: elongated body, swept-back wings, tail fan, pointed beak.
+- Slow wing-flap idle animation (gentle sine wave every few seconds).
+- Correct bird silhouette recognizable from all angles.
+- If external models unavailable, use procedural geometry that looks like a bird.
+
+### R-58: Bird Marker Visual Improvement (v18)
+- Markers display a small glowing circle at base position.
+- Bird icon/model hovers above the glowing circle.
+- Hover effect: scale up to 1.35x with soft glow intensification.
+- Undiscovered birds show warm amber pulse.
+
+### R-59: Bird Info Card Section Titles (v18)
+- Info card sections have clear titles: Habitat, Lifespan, Wingspan, Fun Fact.
+- Card content: bird name, English name, continent, habitat, lifespan, wingspan, fun fact.
+- Card never overflows: max-height 80vh, overflow-y auto.
+- Left margin 200px on desktop prevents sidebar overlap.
+
+### R-60: Discovery Feedback Improvement (v18)
+- Bird click triggers glow pulse animation around marker.
+- Discovery notification: "You discovered a new bird!" message.
+- Discovery counter visible: "Birds Found: 8 / 50".
+
+### R-61: Camera Experience Improvement (v18)
+- Bird click triggers smooth camera fly-to (~1s duration).
+- Camera stops slightly above bird location.
+- Ease-in-out animation curve.
+
+### R-62: UI Stability — Consistent Spacing (v18)
+- Spacing tokens enforced: xs=6px, sm=10px, md=16px, lg=24px.
+- All floating panels respect 20px safe area margins.
+- Left margin for info cards: 200px to avoid sidebar collision.
+- No UI element may overlap another at any viewport size.
+
 ## Non-goals
 - User accounts or server-side progress tracking.
 - Offline support / PWA.
@@ -724,6 +831,81 @@ interface Achievement {
 - High-resolution GeoJSON.
 
 ## Acceptance Criteria
+
+### AC-V18-1: UI Overlap Fix
+- [ ] Info card (z-60) always renders above sidebar (z-20).
+- [ ] Sidebar reduces opacity when bird info card is open.
+- [ ] Bird info card has 200px left margin on desktop.
+- [ ] No UI elements overlap at any viewport size.
+
+### AC-V18-2: Improved Bird Model
+- [ ] Bird model has recognizable bird silhouette (wings, tail, beak).
+- [ ] Slow wing-flap idle animation visible.
+- [ ] Model renders correctly at all LOD distances.
+
+### AC-V18-3: Bird Marker Visuals
+- [ ] Glowing base circle visible at marker position.
+- [ ] Hover triggers scale and glow effect.
+- [ ] Undiscovered birds show amber pulse.
+
+### AC-V18-4: Bird Info Card Sections
+- [ ] Section titles (Habitat, Lifespan, Wingspan) visible.
+- [ ] Card never overflows viewport.
+- [ ] Card respects left margin on desktop.
+
+### AC-V18-5: Discovery Feedback
+- [ ] Glow pulse on bird click.
+- [ ] Discovery counter visible in UI.
+- [ ] "New bird discovered" notification works.
+
+### AC-V18-6: Camera Experience
+- [ ] Smooth fly-to on bird click (~1s).
+- [ ] Camera stops above bird location.
+- [ ] Ease-in-out animation.
+
+### AC-V18-7: UI Stability
+- [ ] Consistent spacing tokens used.
+- [ ] Safe area margins respected.
+- [ ] ~60 FPS maintained.
+
+### AC-V17-1: Enhanced Mission Panel
+- [ ] Mission panel shows continent mini-progress bars for region missions.
+- [ ] Completed missions display animated badge with glow.
+- [ ] Panel header shows daily progress summary.
+
+### AC-V17-2: Photo Mode Overlay
+- [ ] Photo mode shows full-screen overlay with controls.
+- [ ] Zoom slider works (1x-3x).
+- [ ] Capture button provides flash feedback.
+- [ ] Exit button returns to normal view.
+
+### AC-V17-3: Encyclopedia Search and Grouping
+- [ ] Search input filters birds by name.
+- [ ] Birds grouped by continent sections.
+- [ ] Each section shows continent discovery count.
+
+### AC-V17-4: Achievement Progress Bars
+- [ ] Each achievement shows progress bar.
+- [ ] Progress percentage displayed.
+- [ ] Unlocked achievements show full bar with glow.
+
+### AC-V17-5: Continent Progress in Bottom Panel
+- [ ] Bottom panel shows continent mini-bars.
+- [ ] Bars are color-coded by continent.
+- [ ] Bars animate on discovery.
+
+### AC-V17-6: Rotating Exploration Tips
+- [ ] Tips rotate every 8 seconds.
+- [ ] Tips are context-aware.
+- [ ] Smooth fade transition between tips.
+
+### AC-V17-7: Enhanced Bird Hints
+- [ ] Pulse intensity varies with camera proximity.
+- [ ] Flutter animation visible on undiscovered birds.
+
+### AC-V17-8: Performance
+- [ ] ~60 FPS maintained with all v17 features.
+- [ ] Build succeeds with no TypeScript errors.
 
 ### AC-V16-1: Daily Bird Mission System
 - [ ] Daily missions displayed in a dedicated panel.

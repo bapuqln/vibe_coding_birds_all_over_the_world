@@ -1,5 +1,9 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v16)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v18)
 
+> **v18 changelog**: Stability & Core Experience — fixed critical UI overlap (sidebar covering info cards) by enforcing z-index hierarchy and adding sidebar collision avoidance with opacity/shift, replaced unrealistic bird geometry with stylized low-poly procedural bird model with wing-flap animation, improved marker visuals with glowing base circle, enhanced info card with section titles and 200px left margin, improved camera fly-to (~1s), added discovery glow pulse, enforced consistent spacing tokens and safe margins across all UI.
+>
+> **v17 changelog**: Game-Like Exploration Polish — enhanced daily mission panel with continent progress mini-bars and animated completion badges, bird photo mode upgraded with full-screen photo overlay including zoom slider and rotation controls, bird encyclopedia improved with continent section grouping and search filter, explorer achievement system enhanced with progress bars showing requirement completion percentage, discovery celebration upgraded with layered confetti + sparkle + glow pulse animation, bottom discovery panel now shows continent-level progress bars with color-coded regions, bird hint system improved with proximity-based pulse intensity, exploration encouragement messages now rotate through suggestions, performance verified with all v17 features active at 60 FPS.
+>
 > **v16 changelog**: Game-Like Exploration Upgrade — daily bird discovery mission system with progress tracking and celebration animations, bird photo mode with camera freeze / zoom / rotate and local photo gallery, enhanced bird encyclopedia with discovered/locked entries and progress indicator, explorer achievement system with badges (First Discovery, Explorer, World Traveler, Bird Listener, Photographer, Mission Master), improved discovery celebration with confetti burst and sparkle particles, continent exploration progress with hint animations and exploration encouragement messages, performance optimization with lazy loading for photos/models/sounds.
 >
 > **v15 changelog**: Immersive Experience Upgrade — real-time day-night Earth rendering with dynamic sun-position directional light (day side bright, night side dark with city lights emissive texture), enhanced atmosphere glow, AI bird narration system using Web Speech API with "Tell me about this bird" button, improved bird discovery celebration with star-particle animation, enhanced educational bird info card with scientific name and wingspan comparison, improved camera fly-to with gentle orbit after arrival, Whooping Crane migration route added, performance optimization with lazy loading and KTX2 textures.
@@ -17,6 +21,62 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v18)
+
+### TD-115: UI Overlap Fix — Sidebar Collision Avoidance
+**Problem**: Left sidebar buttons (z-20) visually overlap the bird info card because the sidebar layer covers the card area. Even though z-index hierarchy is correct (card z-60 > sidebar z-20), the sidebar buttons block interaction and create visual clutter.
+**Solution**: When `selectedBirdId` is set (bird info card open), reduce sidebar layer opacity to 0.4 and shift it left by 10px using CSS transition. This creates visual separation. Additionally, set bird info card's desktop position with `left: 200px` minimum to prevent physical overlap with sidebar content. The sidebar layer wrapper in `App.tsx` reads `selectedBirdId` from store and applies the transition.
+
+### TD-116: Improved Procedural Bird Model
+**Problem**: The current bird model loaded from `/models/bird.glb` looks like a chicken — no clear wings, no recognizable bird silhouette. The file may not even exist in the repo.
+**Solution**: Replace GLTF loading with procedural geometry built from Three.js primitives. Create a stylized low-poly bird using: ellipsoid body, two swept-back wing shapes (using `ShapeGeometry` or scaled boxes), a tail fan, and a pointed beak cone. Merge geometries into a single `BufferGeometry` for performance. Add slow wing-flap animation via `useFrame` (sine wave modulating wing rotation). The result is a clean, recognizable bird silhouette that works well for a kids app.
+
+### TD-117: Bird Marker Glowing Base
+**Problem**: Bird markers are just colored meshes floating on the globe with no visual anchor point.
+**Solution**: Add a small glowing circle (ring geometry with emissive material) at the marker's base position on the globe surface. The bird model/icon hovers slightly above this circle. The ring uses additive blending for a soft glow effect. This anchors the bird visually to its location.
+
+### TD-118: Info Card Section Titles and Left Margin
+**Problem**: Bird info card sections lack clear labels, making it hard for children to understand what each section shows. On desktop, the card can overlap with the sidebar.
+**Solution**: Add explicit section title labels ("Habitat", "Lifespan", "Wingspan") above each info section in `BirdInfoCard.tsx`. On desktop (>=1024px), position the card with `left: 200px` instead of `right: var(--safe-area)` to ensure it never overlaps with the left sidebar.
+
+### TD-119: Discovery Glow Pulse
+**Problem**: Clicking a bird has animation but no clear "discovery" visual feedback on the marker itself.
+**Solution**: When a bird is clicked and discovered for the first time, trigger a brief glow pulse animation on the marker (emissive intensity spike that fades over 0.5s). This provides immediate visual feedback at the click location.
+
+### TD-120: Camera Animation Duration
+**Problem**: Current camera fly-to is 1.2s which feels slightly slow for quick exploration.
+**Solution**: Reduce `ANIM_DURATION` in `CameraController.tsx` from 1200ms to 1000ms for snappier feel while maintaining smooth ease-in-out.
+
+## Key Technical Decisions (v17)
+
+### TD-108: Enhanced Mission Panel with Continent Progress
+**Problem**: The daily missions panel shows progress bars but lacks context about continent-level exploration. Region missions don't show how much of that continent has been explored.
+**Solution**: Add continent mini-progress bars inside the `DailyMissionsPanel` for region-type missions. Each region mission card shows a small bar indicating how many birds in that continent have been discovered. Completed missions display an animated badge with a glow effect. The panel header shows a daily progress ring indicator.
+
+### TD-109: Photo Mode Overlay
+**Problem**: The photo capture is a single button press with no framing controls. Children cannot compose their shot.
+**Solution**: Enhance the photo capture flow in `BirdInfoCard`. When "Take Photo" is pressed, show a full-screen overlay with the canvas visible behind a semi-transparent frame. Add a zoom slider (1x-3x) and rotation hint. The capture button triggers a flash animation before saving. An exit button returns to normal view. The overlay is non-blocking and uses z-index from the overlay layer.
+
+### TD-110: Encyclopedia Search and Continent Grouping
+**Problem**: The encyclopedia is a flat list that becomes hard to browse with 50+ birds.
+**Solution**: Add a search input at the top of `BirdEncyclopediaPanel` that filters birds by name (zh or en). Group birds by continent with collapsible section headers. Each section header shows the continent name, emoji, and discovery count (e.g., "Asia 🏯 4/10"). Discovered birds sort first within each section.
+
+### TD-111: Achievement Progress Bars
+**Problem**: Achievement cards show locked/unlocked state but no progress toward unlocking.
+**Solution**: Add a progress bar to each achievement card in `AchievementPanel`. The bar fills based on current count vs requirement (e.g., 7/10 birds discovered = 70% fill). Unlocked achievements show a full bar with a subtle glow. Locked achievements show the current progress value as text.
+
+### TD-112: Continent Progress in Bottom Panel
+**Problem**: The bottom discovery panel shows global progress but not per-continent breakdown.
+**Solution**: Add compact continent mini-bars to `BottomDiscoveryPanel`. Each continent gets a small colored bar showing discovery percentage. Bars animate smoothly on updates. Continent labels are abbreviated (e.g., "AS", "EU", "AF"). Color coding matches the region tag colors from the design system.
+
+### TD-113: Rotating Exploration Tips
+**Problem**: The encouragement message is static — always showing the lowest-discovery continent.
+**Solution**: Implement a rotating tip system in `BottomDiscoveryPanel`. Tips cycle every 8 seconds with a fade transition. Tips include continent suggestions, activity prompts ("Try listening to bird sounds!"), and milestone encouragements. Tips are context-aware based on discovery state.
+
+### TD-114: Enhanced Bird Hint Animations
+**Problem**: Undiscovered bird hints have a fixed pulse intensity regardless of camera distance.
+**Solution**: In `BirdMarker`, calculate camera distance to each undiscovered bird. Closer distance = stronger pulse and flutter amplitude. The pulse color shifts to warm amber. Flutter uses a sine wave with distance-modulated amplitude. This creates a "warmer/colder" discovery mechanic.
 
 ## Key Technical Decisions (v16)
 
@@ -164,6 +224,51 @@ App.tsx
 │
 └── AudioPlayer (invisible)
 ```
+
+## Component Inventory (v18 — stability and core experience)
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `App.tsx` | Sidebar layer opacity/shift when bird card open | v18 |
+| `BirdMarker.tsx` | Procedural bird geometry, glowing base ring, discovery glow pulse | v18 |
+| `BirdInfoCard.tsx` | Section titles, left margin 200px on desktop | v18 |
+| `CameraController.tsx` | Reduced animation duration to 1000ms | v18 |
+| `index.css` | Updated bottom-panel z-index to 30 | v18 |
+
+## Implementation Phases (v18)
+
+- Phase 142: UI Overlap Fix — sidebar collision avoidance, z-index enforcement → R-56
+- Phase 143: Improved Bird Model — procedural low-poly bird geometry, wing-flap animation → R-57
+- Phase 144: Bird Marker Visuals — glowing base circle, improved hover → R-58
+- Phase 145: Info Card Sections — section titles, left margin → R-59
+- Phase 146: Discovery Feedback — glow pulse, counter display → R-60
+- Phase 147: Camera Experience — 1s animation duration → R-61
+- Phase 148: UI Stability — spacing tokens, safe margins → R-62
+- Phase 149: Final Verification → All v18 ACs
+
+## Component Inventory (v17 — enhancements to existing components)
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `DailyMissionsPanel.tsx` | Added continent mini-progress bars, animated completion badges, progress ring header | v17 |
+| `BirdInfoCard.tsx` | Enhanced photo capture with overlay mode, zoom slider, flash animation | v17 |
+| `BirdEncyclopediaPanel.tsx` | Added search input, continent section grouping, collapsible headers | v17 |
+| `AchievementPanel.tsx` | Added progress bars to each achievement card | v17 |
+| `BottomDiscoveryPanel.tsx` | Added continent mini-bars, rotating exploration tips | v17 |
+| `DiscoveryNotification.tsx` | Enhanced celebration with glow pulse background | v17 |
+| `BirdMarker.tsx` | Proximity-based hint pulse intensity | v17 |
+
+## Implementation Phases (v17)
+
+- Phase 135: Enhanced Mission Panel — continent mini-bars, animated badges, progress ring → R-49
+- Phase 136: Photo Mode Overlay — zoom slider, rotation, flash animation → R-50
+- Phase 137: Encyclopedia Search & Grouping — search input, continent sections → R-51
+- Phase 138: Achievement Progress Bars — progress indicators on each card → R-52
+- Phase 139: Continent Progress & Rotating Tips — bottom panel mini-bars, tip rotation → R-53, R-54
+- Phase 140: Enhanced Bird Hints — proximity-based pulse, improved flutter → R-55
+- Phase 141: Performance Verification → All v17 ACs
 
 ## Component Inventory (v16 additions)
 

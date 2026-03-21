@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v16)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v18)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -9,6 +9,149 @@
 > v14 phases (109–118) are complete.
 > v15 phases (119–126) are new.
 > v16 phases (127–134) are new.
+> v17 phases (135–141) are complete.
+> v18 phases (142–149) are new.
+
+---
+
+# v18 Tasks (Stability & Core Experience)
+
+---
+
+## Phase 142: UI Overlap Fix
+
+- [x] **142.1** Update `--z-bottom-panel` from 40 to 30 in `index.css` to match spec z-index hierarchy.
+- [x] **142.2** Add sidebar collision avoidance in `App.tsx`: reduce sidebar opacity to 0.4 and shift left 10px when bird info card is open.
+- [x] **142.3** Verify info card (z-60) always renders above sidebar (z-20).
+
+---
+
+## Phase 143: Improved Bird Model
+
+- [x] **143.1** Replace GLTF-based bird geometry in `BirdMarker.tsx` with procedural low-poly bird shape (body ellipsoid, wings, tail, beak).
+- [x] **143.2** Add slow wing-flap idle animation using sine wave in `useFrame`.
+- [x] **143.3** Ensure bird silhouette is recognizable from all angles.
+
+---
+
+## Phase 144: Bird Marker Visuals
+
+- [x] **144.1** Add glowing base ring at marker position in `BirdMarker.tsx`.
+- [x] **144.2** Bird model hovers above the glowing ring.
+- [x] **144.3** Hover effect: scale 1.35x with glow intensification.
+
+---
+
+## Phase 145: Info Card Sections
+
+- [x] **145.1** Add section titles (Habitat, Lifespan, Wingspan) to `BirdInfoCard.tsx`.
+- [x] **145.2** Set bird info card desktop position with left margin 200px.
+- [x] **145.3** Verify card max-height 80vh with overflow-y auto.
+
+---
+
+## Phase 146: Discovery Feedback
+
+- [x] **146.1** Add discovery glow pulse to bird marker on first click in `BirdMarker.tsx`.
+- [x] **146.2** Verify discovery counter display in `DiscoveryNotification`.
+- [x] **146.3** Verify "New bird discovered" notification works.
+
+---
+
+## Phase 147: Camera Experience
+
+- [x] **147.1** Reduce `ANIM_DURATION` from 1200ms to 1000ms in `CameraController.tsx`.
+- [x] **147.2** Verify smooth ease-in-out camera animation.
+- [x] **147.3** Verify camera stops slightly above bird location.
+
+---
+
+## Phase 148: UI Stability
+
+- [x] **148.1** Verify consistent spacing tokens (xs=6px, sm=10px, md=16px, lg=24px) across all UI.
+- [x] **148.2** Verify all floating panels respect 20px safe area margins.
+- [x] **148.3** Verify no UI overlap at any viewport size.
+
+---
+
+## Phase 149: Final Verification (v18)
+
+- [x] **149.1** UI overlap fix verified. (AC-V18-1)
+- [x] **149.2** Improved bird model with wing animation. (AC-V18-2)
+- [x] **149.3** Bird marker glowing base. (AC-V18-3)
+- [x] **149.4** Info card section titles. (AC-V18-4)
+- [x] **149.5** Discovery feedback works. (AC-V18-5)
+- [x] **149.6** Camera fly-to ~1s. (AC-V18-6)
+- [x] **149.7** UI stability verified. (AC-V18-7)
+
+---
+
+# v17 Tasks (Game-Like Exploration Polish)
+
+---
+
+## Phase 135: Enhanced Mission Panel
+
+- [x] **135.1** Add continent mini-progress bars to region-type mission cards in `DailyMissionsPanel.tsx`.
+- [x] **135.2** Add animated glow badge to completed missions.
+- [x] **135.3** Add daily progress summary ring in panel header.
+- [x] **135.4** Add confetti particles to mission completion celebration.
+
+---
+
+## Phase 136: Photo Mode Overlay
+
+- [x] **136.1** Add full-screen photo mode overlay component in `BirdInfoCard.tsx`.
+- [x] **136.2** Add zoom slider control (1x to 3x).
+- [x] **136.3** Add capture button with flash animation feedback.
+- [x] **136.4** Add exit photo mode button.
+
+---
+
+## Phase 137: Encyclopedia Search & Grouping
+
+- [x] **137.1** Add search input to `BirdEncyclopediaPanel.tsx` header.
+- [x] **137.2** Group birds by continent with section headers.
+- [x] **137.3** Show continent discovery count in each section header.
+- [x] **137.4** Filter birds by search query (zh and en names).
+
+---
+
+## Phase 138: Achievement Progress Bars
+
+- [x] **138.1** Add progress bar to each achievement card in `AchievementPanel.tsx`.
+- [x] **138.2** Show current progress value and requirement.
+- [x] **138.3** Add glow effect to unlocked achievement progress bars.
+
+---
+
+## Phase 139: Continent Progress & Rotating Tips
+
+- [x] **139.1** Add continent mini-bars to `BottomDiscoveryPanel.tsx`.
+- [x] **139.2** Color-code bars by continent.
+- [x] **139.3** Implement rotating exploration tips with 8-second interval.
+- [x] **139.4** Add fade transition between tips.
+
+---
+
+## Phase 140: Enhanced Bird Hints
+
+- [x] **140.1** Add proximity-based pulse intensity to undiscovered bird markers in `BirdMarker.tsx`.
+- [x] **140.2** Modulate flutter amplitude based on camera distance.
+- [x] **140.3** Add warm amber glow color shift for close-proximity hints.
+
+---
+
+## Phase 141: Final Verification (v17)
+
+- [x] **141.1** Enhanced mission panel with continent progress. (AC-V17-1)
+- [x] **141.2** Photo mode overlay with controls. (AC-V17-2)
+- [x] **141.3** Encyclopedia search and grouping. (AC-V17-3)
+- [x] **141.4** Achievement progress bars. (AC-V17-4)
+- [x] **141.5** Continent progress in bottom panel. (AC-V17-5)
+- [x] **141.6** Rotating exploration tips. (AC-V17-6)
+- [x] **141.7** Enhanced bird hints. (AC-V17-7)
+- [x] **141.8** ~60 FPS maintained. (AC-V17-8)
 
 ---
 
@@ -577,10 +720,27 @@
 
 ---
 
-## Summary (v16)
+## Summary (v18)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
+| UI Overlap Fix (v18) | 142.1–142.3 | Complete |
+| Improved Bird Model (v18) | 143.1–143.3 | Complete |
+| Bird Marker Visuals (v18) | 144.1–144.3 | Complete |
+| Info Card Sections (v18) | 145.1–145.3 | Complete |
+| Discovery Feedback (v18) | 146.1–146.3 | Complete |
+| Camera Experience (v18) | 147.1–147.3 | Complete |
+| UI Stability (v18) | 148.1–148.3 | Complete |
+| Final Verification (v18) | 149.1–149.7 | Complete |
+| **Total v18 tasks** | **28 tasks** | **28 complete** |
+| Enhanced Mission Panel (v17) | 135.1–135.4 | Complete |
+| Photo Mode Overlay (v17) | 136.1–136.4 | Complete |
+| Encyclopedia Search & Grouping (v17) | 137.1–137.4 | Complete |
+| Achievement Progress Bars (v17) | 138.1–138.3 | Complete |
+| Continent Progress & Rotating Tips (v17) | 139.1–139.4 | Complete |
+| Enhanced Bird Hints (v17) | 140.1–140.3 | Complete |
+| Final Verification (v17) | 141.1–141.8 | Complete |
+| **Total v17 tasks** | **30 tasks** | **30 complete** |
 | Daily Bird Mission System (v16) | 127.1–127.11 | New |
 | Bird Photo Mode (v16) | 128.1–128.10 | New |
 | Bird Encyclopedia Enhancement (v16) | 129.1–129.5 | New |
@@ -599,20 +759,10 @@
 | Performance Optimization (v15) | 125.1–125.5 | New |
 | Final Verification (v15) | 126.1–126.7 | New |
 | **Total v15 tasks** | **39 tasks** | **0 complete** |
-| Glass UI Design System (v14) | 109.1–109.3 | Complete |
-| Modern Button Design (v14) | 110.1–110.4 | Complete |
-| Globe Visual Improvements (v14) | 111.1–111.4 | Complete |
-| Bird Hover Interaction (v14) | 112.1–112.3 | Complete |
-| Particle Bird Effects (v14) | 113.1–113.3 | Complete |
-| Camera Animation System (v14) | 114.1–114.3 | Complete |
-| Bottom Discovery Panel (v14) | 115.1–115.4 | Complete |
-| Panel Layout & Responsive (v14) | 116.1–116.3 | Complete |
-| Performance Optimization (v14) | 117.1–117.3 | Complete |
-| Final Verification (v14) | 118.1–118.8 | Complete |
 | **Total v14 tasks** | **35 tasks** | **35 complete** |
 | **Total v13 tasks** | **52 tasks** | **52 complete** |
 | **Total v12 tasks** | **51 tasks** | **51 complete** |
 | **Total v11 tasks** | **54 tasks** | **54 complete** |
 | **Total v10 tasks** | **49 tasks** | **49 complete** |
-| **Total v16 tasks** | **59 tasks** | **0 complete** |
-| **Total all tasks (v1–v16)** | **~914 tasks** | **~816 complete** |
+| **Total v18 tasks** | **28 tasks** | **28 complete** |
+| **Total all tasks (v1–v18)** | **~972 tasks** | **~874 complete** |

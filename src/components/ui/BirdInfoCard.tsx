@@ -33,6 +33,9 @@ export function BirdInfoCard() {
   const [showSparkle, setShowSparkle] = useState(false);
   const { state: narrationState, narrationText, speak: speakNarration, stop: stopNarration, isAvailable: narrationAvailable } = useNarration();
   const [showNarrationText, setShowNarrationText] = useState(false);
+  const [photoMode, setPhotoMode] = useState(false);
+  const [photoZoom, setPhotoZoom] = useState(1);
+  const [photoFlash, setPhotoFlash] = useState(false);
 
   const bird = useMemo(
     () => (selectedBirdId ? birdMap.get(selectedBirdId) ?? null : null),
@@ -268,10 +271,14 @@ export function BirdInfoCard() {
               </div>
             </div>
 
-            {/* TagRow */}
+            {/* TagRow — Habitat & Region */}
+            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                {language === "zh" ? "栖息地与分布" : "Habitat & Region"}
+              </p>
+            </div>
             <div style={{
               padding: `0 ${SP.lg}px`,
-              marginTop: SP.md,
               display: "flex",
               flexWrap: "wrap",
               gap: 8,
@@ -327,10 +334,14 @@ export function BirdInfoCard() {
               )}
             </div>
 
-            {/* InfoGrid */}
+            {/* InfoGrid — Size & Diet */}
+            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                {language === "zh" ? "详细信息" : "Details"}
+              </p>
+            </div>
             <div style={{
               padding: `0 ${SP.lg}px`,
-              marginTop: SP.md,
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
               gap: SP.sm,
@@ -372,7 +383,10 @@ export function BirdInfoCard() {
 
             {/* Wingspan */}
             {bird.wingspanCm != null && bird.wingspanCm > 0 && (
-              <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.sm }}>
+              <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  {language === "zh" ? "翼展" : "Wingspan"}
+                </p>
                 <div style={{
                   borderRadius: 14,
                   background: "rgba(237, 233, 254, 0.7)",
@@ -580,18 +594,7 @@ export function BirdInfoCard() {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!bird) return;
-                    const canvas = document.querySelector("canvas");
-                    if (!canvas) return;
-                    try {
-                      const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
-                      capturePhoto(bird.id, bird.nameZh, bird.nameEn, dataUrl);
-                      setTimeout(() => checkAchievements(), 100);
-                    } catch {
-                      /* canvas tainted or unavailable */
-                    }
-                  }}
+                  onClick={() => setPhotoMode(true)}
                   style={{
                     flex: 1,
                     display: "flex",
@@ -627,16 +630,16 @@ export function BirdInfoCard() {
           to { transform: rotate(360deg); }
         }
 
-        /* Desktop: right side panel */
+        /* Desktop: positioned with left margin to avoid sidebar */
         @media (min-width: 1024px) {
           .bird-info-card {
-            right: var(--safe-area);
+            left: 200px;
             top: var(--safe-area);
             bottom: var(--safe-area);
             width: 400px;
             max-width: 400px;
             border-radius: 20px;
-            transform: ${isOpen ? "translateX(0)" : "translateX(120%)"};
+            transform: ${isOpen ? "translateX(0)" : "translateX(-120%)"};
             animation: ${isOpen ? "panelSlideRight var(--panel-duration) var(--panel-ease)" : "none"};
           }
           .bird-info-card-header {
@@ -676,7 +679,165 @@ export function BirdInfoCard() {
             border-radius: 20px 20px 0 0;
           }
         }
+
+        @keyframes photoFlash {
+          0% { opacity: 0.8; }
+          100% { opacity: 0; }
+        }
       `}</style>
+
+      {photoMode && bird && (
+        <div
+          className="fixed inset-0"
+          style={{ zIndex: "var(--z-overlay)", pointerEvents: "auto" }}
+        >
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            border: "4px solid rgba(255,255,255,0.3)",
+            borderRadius: 0,
+            pointerEvents: "none",
+            boxShadow: "inset 0 0 80px rgba(0,0,0,0.4)",
+          }} />
+
+          {photoFlash && (
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "white",
+              animation: "photoFlash 0.4s ease-out forwards",
+              pointerEvents: "none",
+            }} />
+          )}
+
+          <div style={{
+            position: "absolute",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(12px)",
+            borderRadius: 16,
+            padding: "10px 20px",
+          }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "white" }}>
+              {language === "zh" ? "📸 拍照模式" : "📸 Photo Mode"}
+            </span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+              {language === "zh" ? bird.nameZh : bird.nameEn}
+            </span>
+          </div>
+
+          <div style={{
+            position: "absolute",
+            bottom: 100,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(12px)",
+            borderRadius: 16,
+            padding: "10px 20px",
+            minWidth: 240,
+          }}>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", whiteSpace: "nowrap" }}>
+              {photoZoom.toFixed(1)}x
+            </span>
+            <input
+              type="range"
+              min="1"
+              max="3"
+              step="0.1"
+              value={photoZoom}
+              onChange={(e) => setPhotoZoom(parseFloat(e.target.value))}
+              style={{ flex: 1, accentColor: "#0ea5e9" }}
+            />
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>
+              {language === "zh" ? "缩放" : "Zoom"}
+            </span>
+          </div>
+
+          <div style={{
+            position: "absolute",
+            bottom: 30,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            alignItems: "center",
+            gap: 24,
+          }}>
+            <button
+              type="button"
+              onClick={() => {
+                setPhotoMode(false);
+                setPhotoZoom(1);
+              }}
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.15)",
+                border: "2px solid rgba(255,255,255,0.3)",
+                color: "white",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backdropFilter: "blur(8px)",
+              }}
+              aria-label={language === "zh" ? "退出" : "Exit"}
+            >
+              ✕
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                const canvas = document.querySelector("canvas");
+                if (!canvas) return;
+                setPhotoFlash(true);
+                setTimeout(() => setPhotoFlash(false), 400);
+                try {
+                  const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+                  capturePhoto(bird.id, bird.nameZh, bird.nameEn, dataUrl);
+                  setTimeout(() => checkAchievements(), 100);
+                } catch { /* canvas tainted */ }
+                setTimeout(() => {
+                  setPhotoMode(false);
+                  setPhotoZoom(1);
+                }, 500);
+              }}
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: "50%",
+                background: "white",
+                border: "4px solid rgba(255,255,255,0.5)",
+                boxShadow: "0 0 20px rgba(255,255,255,0.3), inset 0 0 0 3px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 28,
+                transition: "transform 0.15s",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+              aria-label={language === "zh" ? "拍摄" : "Capture"}
+            >
+              📸
+            </button>
+
+            <div style={{ width: 48, height: 48 }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,35 +5,15 @@ import type { Bird } from "../../types";
 
 const birds = birdsData as Bird[];
 
-const REGION_EMOJI: Record<string, string> = {
-  asia: "🏯",
-  europe: "🏰",
-  africa: "🌍",
-  "north-america": "🗽",
-  "south-america": "🌿",
-  oceania: "🐨",
-  antarctica: "🧊",
-};
-
-const REGION_NAME_ZH: Record<string, string> = {
-  asia: "亚洲",
-  europe: "欧洲",
-  africa: "非洲",
-  "north-america": "北美洲",
-  "south-america": "南美洲",
-  oceania: "大洋洲",
-  antarctica: "南极洲",
-};
-
-const REGION_NAME_EN: Record<string, string> = {
-  asia: "Asia",
-  europe: "Europe",
-  africa: "Africa",
-  "north-america": "North America",
-  "south-america": "South America",
-  oceania: "Oceania",
-  antarctica: "Antarctica",
-};
+const REGIONS = [
+  { id: "asia", zh: "亚洲", en: "Asia", emoji: "🏯", color: "#3b82f6" },
+  { id: "europe", zh: "欧洲", en: "Europe", emoji: "🏰", color: "#8b5cf6" },
+  { id: "africa", zh: "非洲", en: "Africa", emoji: "🌍", color: "#f59e0b" },
+  { id: "north-america", zh: "北美洲", en: "North America", emoji: "🗽", color: "#ef4444" },
+  { id: "south-america", zh: "南美洲", en: "South America", emoji: "🌿", color: "#22c55e" },
+  { id: "oceania", zh: "大洋洲", en: "Oceania", emoji: "🐨", color: "#14b8a6" },
+  { id: "antarctica", zh: "南极洲", en: "Antarctica", emoji: "🧊", color: "#06b6d4" },
+];
 
 const RARITY_BADGE: Record<string, string> = {
   rare: "💎",
@@ -47,16 +27,40 @@ export function BirdEncyclopediaPanel() {
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const discoveredBirds = useAppStore((s) => s.discoveredBirds);
   const [hintRegion, setHintRegion] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [collapsedRegions, setCollapsedRegions] = useState<Set<string>>(new Set());
 
   const discoveredSet = useMemo(() => new Set(discoveredBirds), [discoveredBirds]);
 
-  const sortedBirds = useMemo(() => {
-    const discovered = birds.filter((b) => discoveredSet.has(b.id));
-    const locked = birds.filter((b) => !discoveredSet.has(b.id));
-    return [...discovered, ...locked];
-  }, [discoveredSet]);
+  const filteredBirds = useMemo(() => {
+    if (!searchQuery.trim()) return birds;
+    const q = searchQuery.toLowerCase();
+    return birds.filter(
+      (b) =>
+        b.nameZh.toLowerCase().includes(q) ||
+        b.nameEn.toLowerCase().includes(q) ||
+        (b.pinyin && b.pinyin.toLowerCase().includes(q)),
+    );
+  }, [searchQuery]);
 
-  const title = language === "zh" ? "📖 鸟类百科" : "📖 Bird Encyclopedia";
+  const groupedBirds = useMemo(() => {
+    const groups: Record<string, { discovered: Bird[]; locked: Bird[] }> = {};
+    for (const region of REGIONS) {
+      groups[region.id] = { discovered: [], locked: [] };
+    }
+    for (const bird of filteredBirds) {
+      const group = groups[bird.region];
+      if (!group) continue;
+      if (discoveredSet.has(bird.id)) {
+        group.discovered.push(bird);
+      } else {
+        group.locked.push(bird);
+      }
+    }
+    return groups;
+  }, [filteredBirds, discoveredSet]);
+
+  const title = language === "zh" ? "鸟类百科" : "Bird Encyclopedia";
   const discoveredCount = discoveredBirds.length;
   const totalCount = birds.length;
   const progressPct = totalCount > 0 ? (discoveredCount / totalCount) * 100 : 0;
@@ -69,6 +73,15 @@ export function BirdEncyclopediaPanel() {
       setHintRegion(bird.region);
       setTimeout(() => setHintRegion(null), 2500);
     }
+  };
+
+  const toggleRegion = (regionId: string) => {
+    setCollapsedRegions((prev) => {
+      const next = new Set(prev);
+      if (next.has(regionId)) next.delete(regionId);
+      else next.add(regionId);
+      return next;
+    });
   };
 
   return (
@@ -98,7 +111,7 @@ export function BirdEncyclopediaPanel() {
           <div className="relative h-full w-80 max-w-[85vw] bg-white/95 shadow-2xl backdrop-blur-xl">
             <header className="border-b border-amber-100 bg-amber-50/80 px-4 py-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-amber-900">{title}</h2>
+                <h2 className="text-lg font-bold text-amber-900">📖 {title}</h2>
                 <button
                   type="button"
                   onClick={() => setEncyclopediaOpen(false)}
@@ -108,6 +121,7 @@ export function BirdEncyclopediaPanel() {
                   ✕
                 </button>
               </div>
+
               <div className="mt-2">
                 <div className="flex items-center justify-between text-xs text-amber-700">
                   <span>
@@ -124,76 +138,113 @@ export function BirdEncyclopediaPanel() {
                   />
                 </div>
               </div>
+
+              <div className="mt-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={language === "zh" ? "🔍 搜索鸟类..." : "🔍 Search birds..."}
+                  className="w-full rounded-lg border border-amber-200 bg-white/80 px-3 py-1.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-300"
+                />
+              </div>
             </header>
 
-            <div className="h-[calc(100%-5.5rem)] overflow-y-auto overscroll-contain">
-              <ul className="divide-y divide-gray-100 p-2">
-                {sortedBirds.map((bird) => {
-                  const isDiscovered = discoveredSet.has(bird.id);
-                  return (
-                    <li key={bird.id}>
-                      <button
-                        type="button"
-                        onClick={() => handleBirdClick(bird)}
-                        className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-3 text-left transition-colors duration-200 ${
-                          isDiscovered ? "hover:bg-amber-50" : "hover:bg-gray-50"
-                        }`}
-                      >
-                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-                          {isDiscovered ? (
-                            <>
-                              <img
-                                src={bird.photoUrl}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
-                              {bird.rarity && RARITY_BADGE[bird.rarity] && (
-                                <span className="absolute right-0 top-0 text-[10px]">
-                                  {RARITY_BADGE[bird.rarity]}
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xl text-gray-400">
-                              ?
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          {isDiscovered ? (
-                            <>
-                              <div className="font-medium text-gray-800">
-                                {language === "zh" ? bird.nameZh : bird.nameEn}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {language === "zh" ? bird.nameEn : bird.nameZh}
-                              </div>
-                              <span className="mt-0.5 inline-block rounded bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-600">
-                                {language === "zh" ? "已发现" : "Discovered"}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <div className="font-medium text-gray-400">
-                                {language === "zh" ? "???" : "???"}
-                              </div>
-                              <div className="text-xs text-gray-300">
-                                {REGION_EMOJI[bird.region] ?? "🌐"}{" "}
-                                {language === "zh"
-                                  ? REGION_NAME_ZH[bird.region] ?? bird.region
-                                  : REGION_NAME_EN[bird.region] ?? bird.region}
-                              </div>
-                              <span className="mt-0.5 inline-block rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-400">
-                                🔒 {language === "zh" ? "未发现" : "Locked"}
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+            <div className="h-[calc(100%-8rem)] overflow-y-auto overscroll-contain">
+              {REGIONS.map((region) => {
+                const group = groupedBirds[region.id];
+                if (!group) return null;
+                const regionBirds = [...group.discovered, ...group.locked];
+                if (regionBirds.length === 0) return null;
+                const isCollapsed = collapsedRegions.has(region.id);
+                const regionDiscovered = group.discovered.length;
+                const regionTotal = birds.filter((b) => b.region === region.id).length;
+
+                return (
+                  <div key={region.id}>
+                    <button
+                      type="button"
+                      onClick={() => toggleRegion(region.id)}
+                      className="flex w-full items-center justify-between px-4 py-2.5 text-left hover:bg-gray-50"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>{region.emoji}</span>
+                        <span className="text-sm font-bold text-gray-700">
+                          {language === "zh" ? region.zh : region.en}
+                        </span>
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-white"
+                          style={{ background: region.color }}
+                        >
+                          {regionDiscovered}/{regionTotal}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        {isCollapsed ? "▶" : "▼"}
+                      </span>
+                    </button>
+
+                    {!isCollapsed && (
+                      <ul className="divide-y divide-gray-50 px-2 pb-1">
+                        {regionBirds.map((bird) => {
+                          const isDiscovered = discoveredSet.has(bird.id);
+                          return (
+                            <li key={bird.id}>
+                              <button
+                                type="button"
+                                onClick={() => handleBirdClick(bird)}
+                                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors duration-200 ${
+                                  isDiscovered ? "hover:bg-amber-50" : "hover:bg-gray-50"
+                                }`}
+                              >
+                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
+                                  {isDiscovered ? (
+                                    <>
+                                      <img
+                                        src={bird.photoUrl}
+                                        alt=""
+                                        className="h-full w-full object-cover"
+                                      />
+                                      {bird.rarity && RARITY_BADGE[bird.rarity] && (
+                                        <span className="absolute right-0 top-0 text-[10px]">
+                                          {RARITY_BADGE[bird.rarity]}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <div className="flex h-full w-full items-center justify-center bg-gray-200 text-lg text-gray-400">
+                                      ?
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  {isDiscovered ? (
+                                    <>
+                                      <div className="text-sm font-medium text-gray-800">
+                                        {language === "zh" ? bird.nameZh : bird.nameEn}
+                                      </div>
+                                      <div className="text-[11px] text-gray-500">
+                                        {language === "zh" ? bird.nameEn : bird.nameZh}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="text-sm font-medium text-gray-400">???</div>
+                                      <span className="mt-0.5 inline-block rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-400">
+                                        🔒 {language === "zh" ? "未发现" : "Locked"}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {hintRegion && (
@@ -202,8 +253,8 @@ export function BirdEncyclopediaPanel() {
                 style={{ animation: "panelSlideUp 0.3s ease-out" }}
               >
                 {language === "zh"
-                  ? `💡 试试探索${REGION_NAME_ZH[hintRegion] ?? hintRegion}！`
-                  : `💡 Try exploring ${REGION_NAME_EN[hintRegion] ?? hintRegion}!`}
+                  ? `💡 试试探索${REGIONS.find((r) => r.id === hintRegion)?.zh ?? hintRegion}！`
+                  : `💡 Try exploring ${REGIONS.find((r) => r.id === hintRegion)?.en ?? hintRegion}!`}
               </div>
             )}
           </div>

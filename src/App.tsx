@@ -25,8 +25,11 @@ import { BottomDiscoveryPanel } from "./components/ui/BottomDiscoveryPanel";
 import { DailyMissionsPanel } from "./components/ui/DailyMissionsPanel";
 import { PhotoGalleryPanel } from "./components/ui/PhotoGalleryPanel";
 import { AchievementPanel, AchievementNotification } from "./components/ui/AchievementPanel";
+import { useAppStore } from "./store";
 
 export default function App() {
+  const birdCardOpen = useAppStore((s) => s.selectedBirdId) !== null;
+
   return (
     <div className="relative h-full w-full">
       {/* Layer 0 — Globe Canvas */}
@@ -41,10 +44,15 @@ export default function App() {
         </Canvas>
       </div>
 
-      {/* Layer 2 — Sidebar Controls */}
+      {/* Layer 2 — Sidebar Controls (dims when bird card open) */}
       <div
         className="pointer-events-none fixed inset-0"
-        style={{ zIndex: "var(--z-sidebar)" }}
+        style={{
+          zIndex: "var(--z-sidebar)",
+          opacity: birdCardOpen ? 0.4 : 1,
+          transform: birdCardOpen ? "translateX(-10px)" : "translateX(0)",
+          transition: "opacity 0.3s ease, transform 0.3s ease",
+        }}
       >
         <AppTitle />
         <LangToggle />
