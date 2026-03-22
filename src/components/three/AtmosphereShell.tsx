@@ -16,9 +16,9 @@ const outerFragmentShader = `
   varying vec3 vPosition;
   void main() {
     vec3 viewDir = normalize(-vPosition);
-    float fresnel = pow(1.0 - abs(dot(vNormal, viewDir)), 3.5);
+    float fresnel = pow(1.0 - abs(dot(vNormal, viewDir)), 3.0);
     vec3 color = mix(vec3(0.25, 0.55, 1.0), vec3(0.4, 0.7, 1.0), fresnel);
-    gl_FragColor = vec4(color, fresnel * 0.2);
+    gl_FragColor = vec4(color, fresnel * 0.25);
   }
 `;
 
@@ -27,11 +27,11 @@ const innerFragmentShader = `
   varying vec3 vPosition;
   void main() {
     vec3 viewDir = normalize(-vPosition);
-    float fresnel = pow(1.0 - abs(dot(vNormal, viewDir)), 2.0);
+    float fresnel = pow(1.0 - abs(dot(vNormal, viewDir)), 1.8);
     vec3 warmColor = vec3(0.5, 0.7, 1.0);
     vec3 coolColor = vec3(0.2, 0.4, 0.9);
     vec3 color = mix(coolColor, warmColor, fresnel * 0.6);
-    gl_FragColor = vec4(color, fresnel * 0.12);
+    gl_FragColor = vec4(color, fresnel * 0.15);
   }
 `;
 

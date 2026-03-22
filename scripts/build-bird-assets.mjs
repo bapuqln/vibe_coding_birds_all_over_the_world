@@ -95,7 +95,7 @@ function geometryToGLB(geometry, colorHex) {
   }
 
   const gltf = {
-    asset: { version: "2.0", generator: "kids-bird-globe-v19" },
+    asset: { version: "2.0", generator: "kids-bird-globe-v20" },
     scene: 0,
     scenes: [{ nodes: [0] }],
     nodes: [{ mesh: 0, name: "Bird" }],
@@ -145,31 +145,41 @@ const PI = Math.PI;
 
 const BIRDS = {
   eagle: {
-    color: 0x6B4226,
+    color: 0x5C3317,
     parts: [
-      // Muscular body
-      { geo: sphere(1, 12, 10), scale: [1.4, 0.75, 0.85] },
-      // Broad chest
-      { geo: sphere(0.5, 8, 6), scale: [0.9, 0.7, 0.8], translate: [0.5, 0.1, 0] },
-      // Strong head
-      { geo: sphere(0.4, 10, 8), translate: [1.1, 0.45, 0] },
-      // Hooked beak (eagle signature)
-      { geo: cone(0.1, 0.5, 5), rotateZ: -PI / 2.2, translate: [1.55, 0.35, 0] },
-      { geo: cone(0.06, 0.2, 4), rotateZ: -PI / 1.5, translate: [1.65, 0.2, 0] },
-      // Wide spread wings (eagle signature - broad)
-      { geo: box(1.6, 0.06, 0.6), rotateZ: PI / 18, translate: [0.1, 0.25, 0.7] },
-      { geo: box(1.6, 0.06, 0.6), rotateZ: -PI / 18, translate: [0.1, 0.25, -0.7] },
-      // Wing tips (swept back)
-      { geo: box(0.4, 0.04, 0.35), rotateZ: PI / 8, translate: [1.0, 0.3, 1.0] },
-      { geo: box(0.4, 0.04, 0.35), rotateZ: -PI / 8, translate: [1.0, 0.3, -1.0] },
-      // Fan tail
-      { geo: box(0.8, 0.04, 0.5), rotateZ: PI / 6, translate: [-1.2, 0.05, 0] },
-      // Strong legs
-      { geo: cyl(0.06, 0.08, 0.4), translate: [0.2, -0.6, 0.2] },
-      { geo: cyl(0.06, 0.08, 0.4), translate: [0.2, -0.6, -0.2] },
-      // Talons
-      { geo: box(0.15, 0.03, 0.1), translate: [0.25, -0.82, 0.2] },
-      { geo: box(0.15, 0.03, 0.1), translate: [0.25, -0.82, -0.2] },
+      // Muscular torso + broad chest
+      { geo: sphere(1, 10, 8), scale: [1.45, 0.78, 0.88] },
+      { geo: sphere(0.52, 8, 6), scale: [1.0, 0.72, 0.85], translate: [0.48, 0.12, 0] },
+      // Shoulder hump (soaring posture)
+      { geo: sphere(0.35, 6, 5), scale: [1.1, 0.6, 1.0], translate: [0.15, 0.55, 0] },
+      // Head + brow ridge
+      { geo: sphere(0.42, 8, 6), translate: [1.05, 0.42, 0] },
+      { geo: box(0.22, 0.06, 0.28), translate: [1.12, 0.52, 0] },
+      // Hooked beak: upper + hooked tip
+      { geo: cone(0.11, 0.38, 6), rotateZ: -PI / 2.1, translate: [1.52, 0.32, 0] },
+      { geo: cone(0.065, 0.22, 5), rotateZ: -PI / 1.55, translate: [1.68, 0.18, 0] },
+      { geo: box(0.08, 0.04, 0.06), rotateZ: -PI / 6, translate: [1.72, 0.12, 0] },
+      // Inner wing (broad, swept back) — layered boxes for thickness
+      { geo: box(1.75, 0.05, 0.55), rotateZ: PI / 22, rotateY: -PI / 28, translate: [0.08, 0.22, 0.72] },
+      { geo: box(1.75, 0.05, 0.55), rotateZ: -PI / 22, rotateY: PI / 28, translate: [0.08, 0.22, -0.72] },
+      { geo: box(1.55, 0.04, 0.48), rotateZ: PI / 14, translate: [0.05, 0.28, 0.72] },
+      { geo: box(1.55, 0.04, 0.48), rotateZ: -PI / 14, translate: [0.05, 0.28, -0.72] },
+      // Mid wing + feathered tips (secondary/primary)
+      { geo: box(0.55, 0.035, 0.38), rotateZ: PI / 7, rotateX: PI / 18, translate: [0.95, 0.28, 1.05] },
+      { geo: box(0.55, 0.035, 0.38), rotateZ: -PI / 7, rotateX: -PI / 18, translate: [0.95, 0.28, -1.05] },
+      { geo: box(0.35, 0.03, 0.32), rotateZ: PI / 5, translate: [1.25, 0.26, 1.12] },
+      { geo: box(0.35, 0.03, 0.32), rotateZ: -PI / 5, translate: [1.25, 0.26, -1.12] },
+      // Fanned tail
+      { geo: box(0.85, 0.04, 0.52), rotateZ: PI / 7, translate: [-1.15, 0.06, 0] },
+      { geo: box(0.35, 0.03, 0.2), rotateZ: PI / 5, translate: [-1.35, 0.02, 0.12] },
+      { geo: box(0.35, 0.03, 0.2), rotateZ: PI / 5, translate: [-1.35, 0.02, -0.12] },
+      // Legs + talons
+      { geo: cyl(0.055, 0.07, 0.38, 6), translate: [0.18, -0.58, 0.22] },
+      { geo: cyl(0.055, 0.07, 0.38, 6), translate: [0.18, -0.58, -0.22] },
+      { geo: box(0.16, 0.028, 0.11), translate: [0.24, -0.8, 0.22] },
+      { geo: box(0.16, 0.028, 0.11), translate: [0.24, -0.8, -0.22] },
+      { geo: box(0.06, 0.02, 0.08), translate: [0.32, -0.82, 0.28] },
+      { geo: box(0.06, 0.02, 0.08), translate: [0.32, -0.82, -0.28] },
     ],
   },
 
@@ -177,169 +187,225 @@ const BIRDS = {
     color: 0x8B7355,
     parts: [
       // Round plump body
-      { geo: sphere(0.85, 12, 10), scale: [0.85, 1.1, 0.8] },
-      // Large round head (owl signature)
-      { geo: sphere(0.55, 12, 10), translate: [0.3, 0.85, 0] },
-      // Facial disc (owl signature)
-      { geo: sphere(0.48, 10, 8), scale: [0.3, 0.9, 0.9], translate: [0.65, 0.85, 0] },
+      { geo: sphere(0.88, 10, 8), scale: [0.88, 1.12, 0.82] },
+      // Large round head
+      { geo: sphere(0.58, 8, 6), translate: [0.28, 0.88, 0] },
+      // Facial disc (wider, rounder)
+      { geo: sphere(0.5, 8, 6), scale: [0.32, 0.95, 0.95], translate: [0.62, 0.88, 0] },
+      { geo: torus(0.22, 0.05, 10, 6), rotateY: PI / 2, translate: [0.72, 0.88, 0] },
+      // Larger eyes
+      { geo: sphere(0.12, 6, 5), translate: [0.76, 0.98, 0.22] },
+      { geo: sphere(0.12, 6, 5), translate: [0.76, 0.98, -0.22] },
+      { geo: sphere(0.05, 5, 4), translate: [0.82, 1.0, 0.22] },
+      { geo: sphere(0.05, 5, 4), translate: [0.82, 1.0, -0.22] },
       // Short hooked beak
-      { geo: cone(0.07, 0.2, 4), rotateZ: -PI / 2, translate: [0.95, 0.78, 0] },
-      // Large eyes (owl signature)
-      { geo: sphere(0.1, 8, 6), translate: [0.78, 0.95, 0.2] },
-      { geo: sphere(0.1, 8, 6), translate: [0.78, 0.95, -0.2] },
-      // Ear tufts (owl signature)
-      { geo: cone(0.1, 0.3, 4), translate: [0.4, 1.35, 0.25] },
-      { geo: cone(0.1, 0.3, 4), translate: [0.4, 1.35, -0.25] },
-      // Rounded wings (shorter than eagle)
-      { geo: box(0.8, 0.05, 0.45), translate: [0, 0.35, 0.55] },
-      { geo: box(0.8, 0.05, 0.45), translate: [0, 0.35, -0.55] },
+      { geo: cone(0.07, 0.22, 5), rotateZ: -PI / 2, translate: [0.98, 0.8, 0] },
+      // Prominent ear tufts
+      { geo: cone(0.11, 0.36, 5), rotateX: -PI / 8, translate: [0.38, 1.38, 0.28] },
+      { geo: cone(0.11, 0.36, 5), rotateX: PI / 8, translate: [0.38, 1.38, -0.28] },
+      { geo: cone(0.06, 0.2, 4), translate: [0.32, 1.42, 0.32] },
+      { geo: cone(0.06, 0.2, 4), translate: [0.32, 1.42, -0.32] },
+      // Short rounded wings (layered)
+      { geo: box(0.75, 0.045, 0.48), rotateX: PI / 20, translate: [-0.02, 0.38, 0.58] },
+      { geo: box(0.75, 0.045, 0.48), rotateX: -PI / 20, translate: [-0.02, 0.38, -0.58] },
+      { geo: box(0.55, 0.04, 0.4), translate: [0, 0.32, 0.58] },
+      { geo: box(0.55, 0.04, 0.4), translate: [0, 0.32, -0.58] },
       // Short fan tail
-      { geo: box(0.4, 0.04, 0.35), rotateZ: PI / 5, translate: [-0.8, -0.15, 0] },
-      // Short legs with feathered look
-      { geo: cyl(0.06, 0.08, 0.3), translate: [0.05, -0.85, 0.15] },
-      { geo: cyl(0.06, 0.08, 0.3), translate: [0.05, -0.85, -0.15] },
+      { geo: box(0.42, 0.035, 0.36), rotateZ: PI / 5, translate: [-0.82, -0.12, 0] },
+      { geo: box(0.2, 0.03, 0.18), rotateZ: PI / 4, translate: [-0.95, -0.2, 0.1] },
+      { geo: box(0.2, 0.03, 0.18), rotateZ: PI / 4, translate: [-0.95, -0.2, -0.1] },
+      // Feathered legs
+      { geo: cyl(0.055, 0.07, 0.28, 6), translate: [0.02, -0.86, 0.16] },
+      { geo: cyl(0.055, 0.07, 0.28, 6), translate: [0.02, -0.86, -0.16] },
+      { geo: sphere(0.08, 5, 4), translate: [0.02, -0.98, 0.16] },
+      { geo: sphere(0.08, 5, 4), translate: [0.02, -0.98, -0.16] },
     ],
   },
 
   parrot: {
-    color: 0x2ECC40,
+    color: 0x00AA44,
     parts: [
       // Compact body
-      { geo: sphere(0.8, 12, 10), scale: [1.0, 0.8, 0.7] },
+      { geo: sphere(0.82, 10, 8), scale: [1.05, 0.82, 0.72] },
       // Round head
-      { geo: sphere(0.42, 10, 8), translate: [0.8, 0.5, 0] },
-      // Large curved beak (parrot signature)
-      { geo: sphere(0.18, 8, 6), scale: [1.2, 0.8, 0.7], translate: [1.15, 0.35, 0] },
-      { geo: cone(0.12, 0.3, 5), rotateZ: -PI / 2.3, translate: [1.3, 0.28, 0] },
-      // Colorful crest hint
-      { geo: cone(0.08, 0.2, 4), translate: [0.75, 0.9, 0] },
-      // Medium wings
-      { geo: box(0.7, 0.05, 0.4), translate: [0, 0.2, 0.5] },
-      { geo: box(0.7, 0.05, 0.4), translate: [0, 0.2, -0.5] },
-      // Long tail feathers (parrot signature)
-      { geo: box(0.12, 0.04, 0.15), rotateZ: PI / 4, translate: [-0.95, -0.15, 0.08] },
-      { geo: box(0.12, 0.04, 0.15), rotateZ: PI / 4, translate: [-0.95, -0.15, -0.08] },
-      { geo: box(0.15, 0.03, 0.08), rotateZ: PI / 3.5, translate: [-1.1, -0.25, 0] },
-      // Perching feet
-      { geo: cyl(0.04, 0.05, 0.25), translate: [0.15, -0.6, 0.15] },
-      { geo: cyl(0.04, 0.05, 0.25), translate: [0.15, -0.6, -0.15] },
+      { geo: sphere(0.44, 8, 6), translate: [0.78, 0.52, 0] },
+      // Large curved upper beak + lower mandible
+      { geo: sphere(0.2, 6, 5), scale: [1.35, 0.85, 0.75], translate: [1.18, 0.38, 0] },
+      { geo: cone(0.13, 0.34, 6), rotateZ: -PI / 2.25, translate: [1.38, 0.28, 0] },
+      { geo: box(0.18, 0.06, 0.12), rotateZ: PI / 8, translate: [1.25, 0.18, 0] },
+      // Colorful crest (multi-feather)
+      { geo: cone(0.09, 0.26, 5), translate: [0.72, 0.95, 0] },
+      { geo: cone(0.06, 0.2, 4), rotateZ: PI / 10, translate: [0.62, 0.98, 0.1] },
+      { geo: cone(0.06, 0.2, 4), rotateZ: -PI / 10, translate: [0.62, 0.98, -0.1] },
+      // Medium wings with slight curve (layered boxes)
+      { geo: box(0.72, 0.045, 0.42), rotateZ: PI / 22, translate: [0.02, 0.22, 0.52] },
+      { geo: box(0.72, 0.045, 0.42), rotateZ: -PI / 22, translate: [0.02, 0.22, -0.52] },
+      { geo: box(0.55, 0.038, 0.36), rotateY: PI / 16, translate: [-0.05, 0.2, 0.52] },
+      { geo: box(0.55, 0.038, 0.36), rotateY: -PI / 16, translate: [-0.05, 0.2, -0.52] },
+      // Long tail feathers
+      { geo: box(0.14, 0.04, 0.16), rotateZ: PI / 3.8, translate: [-0.92, -0.12, 0.1] },
+      { geo: box(0.14, 0.04, 0.16), rotateZ: PI / 3.8, translate: [-0.92, -0.12, -0.1] },
+      { geo: box(0.16, 0.035, 0.1), rotateZ: PI / 3.2, translate: [-1.08, -0.22, 0] },
+      { geo: box(0.12, 0.03, 0.08), rotateZ: PI / 2.8, translate: [-1.15, -0.32, 0.06] },
+      { geo: box(0.12, 0.03, 0.08), rotateZ: PI / 2.8, translate: [-1.15, -0.32, -0.06] },
+      // Perching feet (toes)
+      { geo: cyl(0.038, 0.048, 0.26, 5), translate: [0.12, -0.62, 0.16] },
+      { geo: cyl(0.038, 0.048, 0.26, 5), translate: [0.12, -0.62, -0.16] },
+      { geo: box(0.12, 0.03, 0.06), rotateZ: PI / 5, translate: [0.2, -0.78, 0.2] },
+      { geo: box(0.12, 0.03, 0.06), rotateZ: PI / 5, translate: [0.2, -0.78, -0.2] },
     ],
   },
 
   penguin: {
     color: 0x1A1A2E,
     parts: [
-      // Upright oval body (penguin signature)
-      { geo: sphere(0.7, 12, 10), scale: [0.65, 1.25, 0.6] },
-      // White belly patch
-      { geo: sphere(0.5, 10, 8), scale: [0.3, 1.0, 0.5], translate: [0.2, 0, 0] },
+      // Upright oval body
+      { geo: sphere(0.72, 10, 8), scale: [0.68, 1.28, 0.62] },
+      // Clear white belly patch (forward-facing)
+      { geo: sphere(0.52, 8, 6), scale: [0.28, 1.05, 0.52], translate: [0.22, 0.02, 0] },
+      { geo: box(0.25, 0.55, 0.35), translate: [0.35, 0, 0] },
       // Round head
-      { geo: sphere(0.35, 10, 8), translate: [0, 1.05, 0] },
-      // Small beak
-      { geo: cone(0.07, 0.25, 4), rotateZ: -PI / 2, translate: [0.35, 1.0, 0] },
-      // Flipper wings (penguin signature - small, flat)
-      { geo: box(0.08, 0.55, 0.2), rotateZ: -PI / 10, translate: [0, 0.15, 0.42] },
-      { geo: box(0.08, 0.55, 0.2), rotateZ: PI / 10, translate: [0, 0.15, -0.42] },
-      // Short stubby tail
-      { geo: cone(0.12, 0.2, 4), rotateZ: PI, translate: [-0.15, -0.85, 0] },
+      { geo: sphere(0.36, 8, 6), translate: [0, 1.08, 0] },
+      // Small stout beak
+      { geo: cone(0.075, 0.26, 5), rotateZ: -PI / 2, translate: [0.38, 1.02, 0] },
+      // Flipper wings (small, flat, slightly angled back)
+      { geo: box(0.09, 0.58, 0.22), rotateZ: -PI / 9, rotateY: PI / 14, translate: [0, 0.12, 0.44] },
+      { geo: box(0.09, 0.58, 0.22), rotateZ: PI / 9, rotateY: -PI / 14, translate: [0, 0.12, -0.44] },
+      { geo: box(0.07, 0.35, 0.16), translate: [-0.05, 0.05, 0.44] },
+      { geo: box(0.07, 0.35, 0.16), translate: [-0.05, 0.05, -0.44] },
+      // Stubby tail
+      { geo: cone(0.13, 0.22, 5), rotateZ: PI, translate: [-0.18, -0.82, 0] },
+      { geo: box(0.2, 0.08, 0.12), rotateZ: PI / 6, translate: [-0.28, -0.75, 0] },
       // Webbed feet
-      { geo: box(0.2, 0.06, 0.14), translate: [0.05, -0.95, 0.15] },
-      { geo: box(0.2, 0.06, 0.14), translate: [0.05, -0.95, -0.15] },
+      { geo: box(0.22, 0.055, 0.15), translate: [0.06, -0.98, 0.16] },
+      { geo: box(0.22, 0.055, 0.15), translate: [0.06, -0.98, -0.16] },
+      { geo: box(0.1, 0.03, 0.06), translate: [0.18, -0.98, 0.2] },
+      { geo: box(0.1, 0.03, 0.06), translate: [0.18, -0.98, -0.2] },
     ],
   },
 
   flamingo: {
-    color: 0xFF6B8A,
+    color: 0xFF5C8A,
     parts: [
-      // Slender body
-      { geo: sphere(0.55, 12, 10), scale: [0.8, 0.85, 0.55] },
-      // Long curved neck (flamingo signature)
-      { geo: cyl(0.06, 0.06, 0.5, 6), rotateZ: PI / 8, translate: [0.25, 0.6, 0] },
-      { geo: cyl(0.06, 0.06, 0.4, 6), rotateZ: -PI / 12, translate: [0.35, 1.0, 0] },
+      // Slender horizontal body
+      { geo: sphere(0.52, 8, 6), scale: [0.85, 0.88, 0.52] },
+      // S-curved neck (multiple segments)
+      { geo: cyl(0.055, 0.055, 0.42, 6), rotateZ: PI / 7, translate: [0.22, 0.55, 0] },
+      { geo: cyl(0.05, 0.05, 0.38, 6), rotateZ: -PI / 10, translate: [0.32, 0.88, 0] },
+      { geo: cyl(0.045, 0.045, 0.32, 6), rotateZ: PI / 14, translate: [0.28, 1.18, 0] },
+      { geo: cyl(0.04, 0.04, 0.22, 5), rotateZ: -PI / 18, translate: [0.22, 1.42, 0] },
       // Small head
-      { geo: sphere(0.2, 8, 6), translate: [0.3, 1.3, 0] },
-      // Bent beak (flamingo signature)
-      { geo: cone(0.07, 0.3, 4), rotateZ: -PI / 2.5, translate: [0.55, 1.2, 0] },
-      { geo: sphere(0.05, 6, 4), translate: [0.65, 1.1, 0] },
-      // Wings
-      { geo: box(0.6, 0.04, 0.35), translate: [0, 0.15, 0.38] },
-      { geo: box(0.6, 0.04, 0.35), translate: [0, 0.15, -0.38] },
+      { geo: sphere(0.2, 6, 5), translate: [0.18, 1.58, 0] },
+      // Bent filter beak + small bulge
+      { geo: cone(0.065, 0.28, 5), rotateZ: -PI / 2.4, translate: [0.48, 1.48, 0] },
+      { geo: box(0.12, 0.05, 0.08), rotateZ: -PI / 5, translate: [0.62, 1.35, 0] },
+      { geo: sphere(0.045, 5, 4), translate: [0.68, 1.22, 0] },
+      // Slim wings
+      { geo: box(0.55, 0.035, 0.32), translate: [-0.02, 0.18, 0.36] },
+      { geo: box(0.55, 0.035, 0.32), translate: [-0.02, 0.18, -0.36] },
+      { geo: box(0.25, 0.03, 0.15), rotateZ: PI / 12, translate: [0.15, 0.12, 0.4] },
+      { geo: box(0.25, 0.03, 0.15), rotateZ: -PI / 12, translate: [0.15, 0.12, -0.4] },
       // Short tail
-      { geo: cone(0.1, 0.2, 4), rotateZ: PI / 3, translate: [-0.5, -0.05, 0] },
-      // Very long legs (flamingo signature)
-      { geo: cyl(0.035, 0.035, 1.2, 6), translate: [0, -1.0, 0.08] },
-      { geo: cyl(0.035, 0.035, 1.2, 6), translate: [0, -1.0, -0.08] },
-      // Knee joints
-      { geo: sphere(0.05, 6, 4), translate: [0, -0.6, 0.08] },
-      { geo: sphere(0.05, 6, 4), translate: [0, -0.6, -0.08] },
+      { geo: cone(0.09, 0.2, 5), rotateZ: PI / 3, translate: [-0.48, 0, 0] },
+      // Long thin legs + knee joints + second segment
+      { geo: cyl(0.032, 0.032, 0.55, 6), translate: [0.05, -0.35, 0.1] },
+      { geo: cyl(0.032, 0.032, 0.55, 6), translate: [0.05, -0.35, -0.1] },
+      { geo: sphere(0.048, 5, 4), translate: [0.05, -0.62, 0.1] },
+      { geo: sphere(0.048, 5, 4), translate: [0.05, -0.62, -0.1] },
+      { geo: cyl(0.028, 0.03, 0.65, 6), translate: [0.08, -1.05, 0.1] },
+      { geo: cyl(0.028, 0.03, 0.65, 6), translate: [0.08, -1.05, -0.1] },
+      // Webbed feet
+      { geo: box(0.16, 0.04, 0.12), translate: [0.1, -1.42, 0.1] },
+      { geo: box(0.16, 0.04, 0.12), translate: [0.1, -1.42, -0.1] },
     ],
   },
 
   duck: {
-    color: 0x3D7A3F,
+    color: 0x2E7D32,
     parts: [
       // Plump rounded body
-      { geo: sphere(0.9, 12, 10), scale: [1.15, 0.7, 0.8] },
+      { geo: sphere(0.92, 10, 8), scale: [1.18, 0.72, 0.82] },
+      // Breast fullness
+      { geo: sphere(0.4, 6, 5), scale: [1.1, 0.7, 0.9], translate: [0.35, 0.05, 0] },
       // Round head
-      { geo: sphere(0.4, 10, 8), translate: [0.85, 0.45, 0] },
-      // Flat wide bill (duck signature)
-      { geo: box(0.4, 0.08, 0.22), translate: [1.25, 0.35, 0] },
-      { geo: box(0.35, 0.06, 0.2), translate: [1.3, 0.3, 0] },
-      // Compact wings
-      { geo: box(0.65, 0.04, 0.4), translate: [0, 0.2, 0.5] },
-      { geo: box(0.65, 0.04, 0.4), translate: [0, 0.2, -0.5] },
-      // Upturned tail (duck signature)
-      { geo: cone(0.12, 0.25, 4), translate: [-0.9, 0.25, 0] },
-      // Short legs
-      { geo: cyl(0.04, 0.05, 0.2), translate: [0.2, -0.5, 0.18] },
-      { geo: cyl(0.04, 0.05, 0.2), translate: [0.2, -0.5, -0.18] },
-      // Webbed feet
-      { geo: box(0.18, 0.04, 0.14), translate: [0.22, -0.62, 0.18] },
-      { geo: box(0.18, 0.04, 0.14), translate: [0.22, -0.62, -0.18] },
+      { geo: sphere(0.42, 8, 6), translate: [0.88, 0.48, 0] },
+      // Flat wide bill (upper + lower)
+      { geo: box(0.45, 0.09, 0.24), translate: [1.28, 0.36, 0] },
+      { geo: box(0.38, 0.07, 0.2), translate: [1.35, 0.28, 0] },
+      { geo: box(0.2, 0.05, 0.16), translate: [1.42, 0.32, 0] },
+      // Compact wings (layered)
+      { geo: box(0.68, 0.042, 0.42), translate: [0, 0.22, 0.52] },
+      { geo: box(0.68, 0.042, 0.42), translate: [0, 0.22, -0.52] },
+      { geo: box(0.45, 0.035, 0.35), rotateX: PI / 14, translate: [-0.05, 0.18, 0.52] },
+      { geo: box(0.45, 0.035, 0.35), rotateX: -PI / 14, translate: [-0.05, 0.18, -0.52] },
+      // Upturned tail
+      { geo: cone(0.13, 0.28, 5), rotateX: PI / 2.2, translate: [-0.95, 0.32, 0] },
+      { geo: box(0.2, 0.06, 0.18), rotateZ: PI / 4, translate: [-0.85, 0.38, 0] },
+      // Short legs + webbed feet
+      { geo: cyl(0.038, 0.048, 0.22, 5), translate: [0.22, -0.52, 0.2] },
+      { geo: cyl(0.038, 0.048, 0.22, 5), translate: [0.22, -0.52, -0.2] },
+      { geo: box(0.2, 0.045, 0.15), translate: [0.24, -0.65, 0.2] },
+      { geo: box(0.2, 0.045, 0.15), translate: [0.24, -0.65, -0.2] },
+      { geo: box(0.08, 0.03, 0.1), translate: [0.32, -0.66, 0.24] },
+      { geo: box(0.08, 0.03, 0.1), translate: [0.32, -0.66, -0.24] },
     ],
   },
 
   sparrow: {
-    color: 0xA0785A,
+    color: 0x9E7B5A,
     parts: [
       // Small round body
-      { geo: sphere(0.55, 12, 10), scale: [0.95, 0.7, 0.65] },
+      { geo: sphere(0.56, 8, 6), scale: [0.98, 0.72, 0.68] },
       // Round head
-      { geo: sphere(0.3, 10, 8), translate: [0.55, 0.38, 0] },
-      // Small conical beak (sparrow signature)
-      { geo: cone(0.05, 0.18, 5), rotateZ: -PI / 2, translate: [0.85, 0.35, 0] },
+      { geo: sphere(0.32, 8, 6), translate: [0.58, 0.4, 0] },
+      // Small conical beak
+      { geo: cone(0.048, 0.2, 6), rotateZ: -PI / 2, translate: [0.88, 0.36, 0] },
       // Short wings
-      { geo: box(0.45, 0.04, 0.3), translate: [0, 0.15, 0.38] },
-      { geo: box(0.45, 0.04, 0.3), translate: [0, 0.15, -0.38] },
-      // Notched tail
-      { geo: box(0.25, 0.03, 0.12), rotateZ: PI / 5, translate: [-0.6, -0.02, 0.06] },
-      { geo: box(0.25, 0.03, 0.12), rotateZ: PI / 5, translate: [-0.6, -0.02, -0.06] },
+      { geo: box(0.48, 0.038, 0.32), translate: [0, 0.16, 0.4] },
+      { geo: box(0.48, 0.038, 0.32), translate: [0, 0.16, -0.4] },
+      { geo: box(0.28, 0.032, 0.22), rotateZ: PI / 12, translate: [0.15, 0.14, 0.42] },
+      { geo: box(0.28, 0.032, 0.22), rotateZ: -PI / 12, translate: [0.15, 0.14, -0.42] },
+      // Notched tail (forked)
+      { geo: box(0.28, 0.028, 0.12), rotateZ: PI / 5, translate: [-0.62, -0.02, 0.08] },
+      { geo: box(0.28, 0.028, 0.12), rotateZ: PI / 5, translate: [-0.62, -0.02, -0.08] },
+      { geo: box(0.18, 0.024, 0.08), rotateZ: PI / 4, translate: [-0.75, -0.08, 0] },
       // Tiny legs
-      { geo: cyl(0.025, 0.035, 0.18), translate: [0.1, -0.42, 0.1] },
-      { geo: cyl(0.025, 0.035, 0.18), translate: [0.1, -0.42, -0.1] },
+      { geo: cyl(0.022, 0.032, 0.16, 5), translate: [0.12, -0.44, 0.11] },
+      { geo: cyl(0.022, 0.032, 0.16, 5), translate: [0.12, -0.44, -0.11] },
+      { geo: box(0.08, 0.02, 0.05), translate: [0.14, -0.54, 0.12] },
+      { geo: box(0.08, 0.02, 0.05), translate: [0.14, -0.54, -0.12] },
     ],
   },
 
   crow: {
     color: 0x1A1A1A,
     parts: [
-      // Sleek body
-      { geo: sphere(0.8, 12, 10), scale: [1.25, 0.7, 0.7] },
-      // Angular head
-      { geo: sphere(0.38, 10, 8), translate: [0.9, 0.4, 0] },
-      // Strong straight beak (crow signature)
-      { geo: cone(0.08, 0.45, 5), rotateZ: -PI / 2, translate: [1.35, 0.35, 0] },
-      // Long pointed wings
-      { geo: box(1.1, 0.05, 0.45), translate: [0.05, 0.22, 0.55] },
-      { geo: box(1.1, 0.05, 0.45), translate: [0.05, 0.22, -0.55] },
-      // Wing tips
-      { geo: box(0.3, 0.03, 0.2), rotateZ: PI / 10, translate: [0.7, 0.25, 0.8] },
-      { geo: box(0.3, 0.03, 0.2), rotateZ: -PI / 10, translate: [0.7, 0.25, -0.8] },
-      // Long wedge tail (crow signature)
-      { geo: box(0.5, 0.04, 0.25), rotateZ: PI / 6, translate: [-1.05, -0.05, 0] },
+      // Sleek elongated body
+      { geo: sphere(0.82, 10, 8), scale: [1.32, 0.68, 0.72] },
+      // Angular head + throat
+      { geo: sphere(0.4, 8, 6), translate: [0.92, 0.42, 0] },
+      { geo: sphere(0.18, 5, 4), scale: [0.5, 0.6, 0.7], translate: [0.75, 0.25, 0] },
+      // Strong straight beak
+      { geo: cone(0.085, 0.5, 6), rotateZ: -PI / 2, translate: [1.38, 0.36, 0] },
+      { geo: box(0.1, 0.05, 0.08), translate: [1.55, 0.32, 0] },
+      // Long pointed wings + tips (layered thin boxes)
+      { geo: box(1.15, 0.048, 0.48), translate: [0.06, 0.24, 0.58] },
+      { geo: box(1.15, 0.048, 0.48), translate: [0.06, 0.24, -0.58] },
+      { geo: box(0.85, 0.04, 0.42), rotateZ: PI / 12, translate: [0.2, 0.22, 0.58] },
+      { geo: box(0.85, 0.04, 0.42), rotateZ: -PI / 12, translate: [0.2, 0.22, -0.58] },
+      { geo: box(0.35, 0.032, 0.24), rotateZ: PI / 8, translate: [0.78, 0.26, 0.82] },
+      { geo: box(0.35, 0.032, 0.24), rotateZ: -PI / 8, translate: [0.78, 0.26, -0.82] },
+      { geo: box(0.22, 0.028, 0.18), rotateZ: PI / 6, translate: [1.05, 0.24, 0.9] },
+      { geo: box(0.22, 0.028, 0.18), rotateZ: -PI / 6, translate: [1.05, 0.24, -0.9] },
+      // Long wedge tail
+      { geo: box(0.55, 0.038, 0.28), rotateZ: PI / 7, translate: [-1.08, -0.04, 0] },
+      { geo: box(0.35, 0.03, 0.18), rotateZ: PI / 5, translate: [-1.35, -0.12, 0.1] },
+      { geo: box(0.35, 0.03, 0.18), rotateZ: PI / 5, translate: [-1.35, -0.12, -0.1] },
       // Sturdy legs
-      { geo: cyl(0.04, 0.06, 0.3), translate: [0.15, -0.55, 0.15] },
-      { geo: cyl(0.04, 0.06, 0.3), translate: [0.15, -0.55, -0.15] },
+      { geo: cyl(0.042, 0.055, 0.32, 6), translate: [0.16, -0.56, 0.16] },
+      { geo: cyl(0.042, 0.055, 0.32, 6), translate: [0.16, -0.56, -0.16] },
+      { geo: box(0.12, 0.03, 0.1), translate: [0.2, -0.76, 0.18] },
+      { geo: box(0.12, 0.03, 0.1), translate: [0.2, -0.76, -0.18] },
     ],
   },
 
@@ -347,50 +413,67 @@ const BIRDS = {
     color: 0x1A1A1A,
     parts: [
       // Compact body
-      { geo: sphere(0.65, 12, 10), scale: [0.85, 0.8, 0.65] },
+      { geo: sphere(0.68, 10, 8), scale: [0.88, 0.82, 0.66] },
       // Round head
-      { geo: sphere(0.35, 10, 8), translate: [0.6, 0.45, 0] },
-      // Enormous colorful beak (toucan signature)
-      { geo: sphere(0.15, 8, 6), scale: [2.8, 0.7, 0.6], translate: [1.2, 0.3, 0] },
-      { geo: cone(0.08, 0.2, 5), rotateZ: -PI / 2, translate: [1.65, 0.25, 0] },
+      { geo: sphere(0.38, 8, 6), translate: [0.58, 0.48, 0] },
+      // Enormous colorful beak — prominent upper + lower + ridge
+      { geo: box(0.95, 0.22, 0.28), translate: [1.25, 0.32, 0] },
+      { geo: box(0.75, 0.16, 0.24), rotateZ: -PI / 18, translate: [1.45, 0.22, 0] },
+      { geo: sphere(0.12, 6, 5), scale: [2.2, 0.55, 0.85], translate: [1.05, 0.38, 0] },
+      { geo: cone(0.07, 0.18, 5), rotateZ: -PI / 2, translate: [1.78, 0.2, 0] },
+      { geo: box(0.25, 0.08, 0.12), translate: [1.55, 0.12, 0] },
       // Medium wings
-      { geo: box(0.55, 0.04, 0.35), translate: [0, 0.2, 0.42] },
-      { geo: box(0.55, 0.04, 0.35), translate: [0, 0.2, -0.42] },
+      { geo: box(0.58, 0.042, 0.36), translate: [0, 0.22, 0.44] },
+      { geo: box(0.58, 0.042, 0.36), translate: [0, 0.22, -0.44] },
+      { geo: box(0.4, 0.035, 0.3), rotateZ: PI / 16, translate: [-0.08, 0.18, 0.44] },
+      { geo: box(0.4, 0.035, 0.3), rotateZ: -PI / 16, translate: [-0.08, 0.18, -0.44] },
       // Long graduated tail
-      { geo: box(0.4, 0.04, 0.15), rotateZ: PI / 5, translate: [-0.7, -0.08, 0] },
+      { geo: box(0.45, 0.038, 0.16), rotateZ: PI / 5, translate: [-0.72, -0.1, 0] },
+      { geo: box(0.32, 0.032, 0.12), rotateZ: PI / 4.5, translate: [-0.95, -0.18, 0.08] },
+      { geo: box(0.32, 0.032, 0.12), rotateZ: PI / 4.5, translate: [-0.95, -0.18, -0.08] },
+      { geo: box(0.22, 0.028, 0.1), rotateZ: PI / 4, translate: [-1.12, -0.26, 0] },
       // Perching feet
-      { geo: cyl(0.035, 0.05, 0.28), translate: [0.08, -0.55, 0.12] },
-      { geo: cyl(0.035, 0.05, 0.28), translate: [0.08, -0.55, -0.12] },
+      { geo: cyl(0.036, 0.048, 0.3, 5), translate: [0.06, -0.58, 0.14] },
+      { geo: cyl(0.036, 0.048, 0.3, 5), translate: [0.06, -0.58, -0.14] },
+      { geo: box(0.14, 0.03, 0.08), translate: [0.12, -0.76, 0.16] },
+      { geo: box(0.14, 0.03, 0.08), translate: [0.12, -0.76, -0.16] },
     ],
   },
 
   peacock: {
-    color: 0x1565C0,
+    color: 0x0D47A1,
     parts: [
       // Elegant body
-      { geo: sphere(0.7, 12, 10), scale: [0.85, 0.9, 0.65] },
-      // Long neck
-      { geo: cyl(0.055, 0.055, 0.5, 6), translate: [0.3, 0.7, 0] },
+      { geo: sphere(0.72, 10, 8), scale: [0.88, 0.92, 0.66] },
+      // Long neck (two segments)
+      { geo: cyl(0.05, 0.05, 0.38, 6), translate: [0.28, 0.62, 0] },
+      { geo: cyl(0.045, 0.045, 0.28, 5), rotateZ: -PI / 12, translate: [0.22, 0.92, 0] },
       // Small head
-      { geo: sphere(0.22, 10, 8), translate: [0.3, 1.05, 0] },
-      // Small beak
-      { geo: cone(0.05, 0.18, 4), rotateZ: -PI / 2, translate: [0.52, 1.0, 0] },
-      // Crown crest (peacock signature)
-      { geo: cone(0.04, 0.22, 3), translate: [0.3, 1.28, 0] },
-      { geo: cone(0.03, 0.18, 3), translate: [0.25, 1.25, 0.08] },
-      { geo: cone(0.03, 0.18, 3), translate: [0.25, 1.25, -0.08] },
+      { geo: sphere(0.24, 8, 6), translate: [0.18, 1.18, 0] },
+      { geo: cone(0.05, 0.2, 4), rotateZ: -PI / 2, translate: [0.42, 1.12, 0] },
+      // Crown crest — multiple feathers
+      { geo: cone(0.045, 0.26, 4), translate: [0.15, 1.42, 0] },
+      { geo: cone(0.035, 0.2, 4), translate: [0.08, 1.38, 0.1] },
+      { geo: cone(0.035, 0.2, 4), translate: [0.08, 1.38, -0.1] },
+      { geo: cone(0.03, 0.18, 3), translate: [0.22, 1.4, 0.08] },
+      { geo: cone(0.03, 0.18, 3), translate: [0.22, 1.4, -0.08] },
       // Wings
-      { geo: box(0.55, 0.04, 0.35), translate: [0, 0.2, 0.42] },
-      { geo: box(0.55, 0.04, 0.35), translate: [0, 0.2, -0.42] },
-      // Magnificent train/tail fan (peacock signature)
-      { geo: box(0.04, 1.0, 0.7), rotateZ: PI / 3.5, translate: [-0.7, 0.5, 0] },
-      { geo: box(0.04, 0.9, 0.55), rotateZ: PI / 3, translate: [-0.8, 0.45, 0.3] },
-      { geo: box(0.04, 0.9, 0.55), rotateZ: PI / 3, translate: [-0.8, 0.45, -0.3] },
-      { geo: box(0.04, 0.75, 0.4), rotateZ: PI / 2.8, translate: [-0.85, 0.35, 0.5] },
-      { geo: box(0.04, 0.75, 0.4), rotateZ: PI / 2.8, translate: [-0.85, 0.35, -0.5] },
+      { geo: box(0.58, 0.042, 0.36), translate: [0, 0.22, 0.44] },
+      { geo: box(0.58, 0.042, 0.36), translate: [0, 0.22, -0.44] },
+      { geo: box(0.35, 0.035, 0.28), translate: [-0.05, 0.15, 0.44] },
+      { geo: box(0.35, 0.035, 0.28), translate: [-0.05, 0.15, -0.44] },
+      // Magnificent train — multi-segment fan (eyespots implied by torus hints)
+      { geo: box(0.045, 1.15, 0.85), rotateZ: PI / 3.6, translate: [-0.65, 0.55, 0] },
+      { geo: box(0.04, 1.02, 0.72), rotateZ: PI / 3.2, translate: [-0.78, 0.48, 0.28] },
+      { geo: box(0.04, 1.02, 0.72), rotateZ: PI / 3.2, translate: [-0.78, 0.48, -0.28] },
+      { geo: box(0.038, 0.88, 0.58), rotateZ: PI / 2.9, translate: [-0.88, 0.4, 0.48] },
+      { geo: box(0.038, 0.88, 0.58), rotateZ: PI / 2.9, translate: [-0.88, 0.4, -0.48] },
+      { geo: box(0.035, 0.72, 0.45), rotateZ: PI / 2.6, translate: [-0.95, 0.32, 0.62] },
+      { geo: box(0.035, 0.72, 0.45), rotateZ: PI / 2.6, translate: [-0.95, 0.32, -0.62] },
+      { geo: torus(0.35, 0.025, 12, 6), rotateX: PI / 2.2, rotateZ: PI / 4, translate: [-0.75, 0.45, 0] },
       // Legs
-      { geo: cyl(0.04, 0.06, 0.35), translate: [0.08, -0.65, 0.15] },
-      { geo: cyl(0.04, 0.06, 0.35), translate: [0.08, -0.65, -0.15] },
+      { geo: cyl(0.038, 0.05, 0.38, 6), translate: [0.06, -0.68, 0.16] },
+      { geo: cyl(0.038, 0.05, 0.38, 6), translate: [0.06, -0.68, -0.16] },
     ],
   },
 
@@ -398,53 +481,66 @@ const BIRDS = {
     color: 0xCC2222,
     parts: [
       // Compact upright body
-      { geo: sphere(0.55, 12, 10), scale: [0.8, 1.0, 0.6] },
-      // Strong head
-      { geo: sphere(0.3, 10, 8), translate: [0.15, 0.8, 0] },
+      { geo: sphere(0.58, 10, 8), scale: [0.82, 1.05, 0.62] },
+      // Head
+      { geo: sphere(0.32, 8, 6), translate: [0.12, 0.82, 0] },
       // Red crest (woodpecker signature)
-      { geo: sphere(0.15, 8, 6), scale: [1.0, 0.6, 0.8], translate: [0.1, 1.05, 0] },
-      // Long chisel beak (woodpecker signature)
-      { geo: cone(0.05, 0.5, 5), rotateZ: -PI / 2, translate: [0.6, 0.75, 0] },
-      // Stiff wings
-      { geo: box(0.5, 0.04, 0.3), translate: [0, 0.3, 0.38] },
-      { geo: box(0.5, 0.04, 0.3), translate: [0, 0.3, -0.38] },
-      // Stiff prop tail (woodpecker signature - used for support)
-      { geo: box(0.08, 0.45, 0.15), translate: [-0.3, -0.5, 0] },
+      { geo: sphere(0.16, 6, 5), scale: [1.1, 0.55, 0.85], translate: [0.05, 1.08, 0] },
+      { geo: cone(0.07, 0.22, 5), translate: [-0.05, 1.18, 0] },
+      { geo: box(0.18, 0.06, 0.2), translate: [0.08, 1.12, 0] },
+      // Long chisel beak
+      { geo: cone(0.048, 0.55, 6), rotateZ: -PI / 2, translate: [0.62, 0.78, 0] },
+      { geo: box(0.08, 0.05, 0.06), translate: [0.78, 0.72, 0] },
+      // Stiff wings (layered)
+      { geo: box(0.52, 0.04, 0.32), translate: [0, 0.32, 0.4] },
+      { geo: box(0.52, 0.04, 0.32), translate: [0, 0.32, -0.4] },
+      { geo: box(0.35, 0.035, 0.26), rotateZ: PI / 14, translate: [-0.05, 0.28, 0.4] },
+      { geo: box(0.35, 0.035, 0.26), rotateZ: -PI / 14, translate: [-0.05, 0.28, -0.4] },
+      // Stiff prop tail (broad support)
+      { geo: box(0.1, 0.52, 0.18), translate: [-0.32, -0.48, 0] },
+      { geo: box(0.08, 0.35, 0.14), rotateZ: PI / 12, translate: [-0.42, -0.55, 0] },
+      { geo: box(0.06, 0.22, 0.1), translate: [-0.48, -0.62, 0] },
       // Strong clinging feet
-      { geo: cyl(0.035, 0.045, 0.22), translate: [0.05, -0.65, 0.1] },
-      { geo: cyl(0.035, 0.045, 0.22), translate: [0.05, -0.65, -0.1] },
+      { geo: cyl(0.032, 0.042, 0.24, 5), translate: [0.04, -0.68, 0.12] },
+      { geo: cyl(0.032, 0.042, 0.24, 5), translate: [0.04, -0.68, -0.12] },
+      { geo: box(0.12, 0.03, 0.08), rotateZ: PI / 4, translate: [0.12, -0.82, 0.14] },
+      { geo: box(0.12, 0.03, 0.08), rotateZ: PI / 4, translate: [0.12, -0.82, -0.14] },
     ],
   },
 
   seagull: {
-    color: 0xEEEEEE,
+    color: 0xF5F5F5,
     parts: [
       // Streamlined body
-      { geo: sphere(0.75, 12, 10), scale: [1.2, 0.65, 0.7] },
+      { geo: sphere(0.78, 10, 8), scale: [1.22, 0.62, 0.72] },
       // Round head
-      { geo: sphere(0.32, 10, 8), translate: [0.85, 0.35, 0] },
-      // Medium straight beak
-      { geo: cone(0.07, 0.35, 5), rotateZ: -PI / 2, translate: [1.22, 0.3, 0] },
-      // Long narrow wings (seagull signature - gliding)
-      { geo: box(1.4, 0.04, 0.35), translate: [0.1, 0.2, 0.55] },
-      { geo: box(1.4, 0.04, 0.35), translate: [0.1, 0.2, -0.55] },
-      // Angled wing tips
-      { geo: box(0.3, 0.03, 0.2), rotateZ: PI / 8, translate: [0.95, 0.25, 0.78] },
-      { geo: box(0.3, 0.03, 0.2), rotateZ: -PI / 8, translate: [0.95, 0.25, -0.78] },
+      { geo: sphere(0.34, 8, 6), translate: [0.88, 0.38, 0] },
+      // Medium straight beak with gape hint
+      { geo: cone(0.07, 0.38, 6), rotateZ: -PI / 2, translate: [1.25, 0.32, 0] },
+      { geo: box(0.12, 0.04, 0.06), translate: [1.38, 0.28, 0] },
+      // Long narrow gliding wings + angled tips (multi-layer)
+      { geo: box(1.45, 0.038, 0.36), translate: [0.1, 0.2, 0.58] },
+      { geo: box(1.45, 0.038, 0.36), translate: [0.1, 0.2, -0.58] },
+      { geo: box(1.1, 0.032, 0.32), rotateZ: PI / 18, translate: [0.15, 0.18, 0.58] },
+      { geo: box(1.1, 0.032, 0.32), rotateZ: -PI / 18, translate: [0.15, 0.18, -0.58] },
+      { geo: box(0.38, 0.028, 0.22), rotateZ: PI / 7, rotateY: PI / 10, translate: [0.95, 0.22, 0.82] },
+      { geo: box(0.38, 0.028, 0.22), rotateZ: -PI / 7, rotateY: -PI / 10, translate: [0.95, 0.22, -0.82] },
+      { geo: box(0.22, 0.024, 0.16), rotateZ: PI / 5, translate: [1.2, 0.2, 0.92] },
+      { geo: box(0.22, 0.024, 0.16), rotateZ: -PI / 5, translate: [1.2, 0.2, -0.92] },
       // Short square tail
-      { geo: box(0.3, 0.04, 0.2), rotateZ: PI / 6, translate: [-0.9, 0.0, 0] },
-      // Short legs
-      { geo: cyl(0.03, 0.04, 0.2), translate: [0.15, -0.45, 0.12] },
-      { geo: cyl(0.03, 0.04, 0.2), translate: [0.15, -0.45, -0.12] },
-      // Webbed feet
-      { geo: box(0.12, 0.03, 0.1), translate: [0.18, -0.57, 0.12] },
-      { geo: box(0.12, 0.03, 0.1), translate: [0.18, -0.57, -0.12] },
+      { geo: box(0.32, 0.038, 0.22), rotateZ: PI / 7, translate: [-0.92, 0.02, 0] },
+      { geo: box(0.18, 0.03, 0.14), translate: [-1.05, 0, 0] },
+      // Short legs + webbed feet
+      { geo: cyl(0.028, 0.038, 0.2, 5), translate: [0.14, -0.46, 0.13] },
+      { geo: cyl(0.028, 0.038, 0.2, 5), translate: [0.14, -0.46, -0.13] },
+      { geo: box(0.14, 0.032, 0.11), translate: [0.18, -0.58, 0.14] },
+      { geo: box(0.14, 0.032, 0.11), translate: [0.18, -0.58, -0.14] },
     ],
   },
 };
 
 function main() {
-  console.log("Building high-quality bird GLB assets (v19)...\n");
+  console.log("Building high-quality bird GLB assets (v20)...\n");
 
   for (const [name, def] of Object.entries(BIRDS)) {
     const geometry = buildBird(def.parts);

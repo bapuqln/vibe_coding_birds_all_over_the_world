@@ -5,14 +5,15 @@ import {
   Vector3,
   Quaternion,
   MeshStandardMaterial,
+  MeshPhysicalMaterial,
   RingGeometry,
   MeshBasicMaterial,
   DoubleSide,
   AdditiveBlending,
   Box3,
+  Color,
   type Mesh,
   type Group,
-  type BufferGeometry,
   type Material,
 } from "three";
 import type { Bird } from "../../types";
@@ -40,18 +41,24 @@ const FLOAT_SPEED_2D = Math.PI * 0.8;
 const IDLE_FLAP_AMPLITUDE = 0.04;
 const IDLE_FLAP_SPEED = 1.0;
 
+type EmissiveMeshMaterial = MeshStandardMaterial | MeshPhysicalMaterial;
+
+function isEmissiveMeshMaterial(mat: Material): mat is EmissiveMeshMaterial {
+  return (
+    mat instanceof MeshStandardMaterial || mat instanceof MeshPhysicalMaterial
+  );
+}
+
 for (const p of ALL_MODEL_PATHS) {
   useGLTF.preload(p);
 }
 
-function useNormalizedBirdModel(modelPath: string): {
-  geometry: BufferGeometry | null;
-  material: Material | Material[] | null;
-} {
+function useNormalizedBirdScene(modelPath: string): Group | null {
   const gltf = useGLTF(modelPath);
   return useMemo(() => {
     const scene = gltf.scene.clone(true);
 
+    // Normalize to 1-unit bounding box
     const box = new Box3().setFromObject(scene);
     const size = new Vector3();
     box.getSize(size);
@@ -60,18 +67,12 @@ function useNormalizedBirdModel(modelPath: string): {
       scene.scale.multiplyScalar(1.0 / maxDim);
     }
 
-    const meshes: Mesh[] = [];
-    scene.traverse((child) => {
-      if ((child as Mesh).isMesh) {
-        meshes.push(child as Mesh);
-      }
-    });
-    const firstMesh = meshes[0] ?? null;
+    // Center at origin
+    const center = new Vector3();
+    new Box3().setFromObject(scene).getCenter(center);
+    scene.position.sub(center);
 
-    return {
-      geometry: firstMesh?.geometry ?? null,
-      material: firstMesh?.material ?? null,
-    };
+    return scene as Group;
   }, [gltf]);
 }
 
@@ -82,15 +83,18 @@ interface BirdMarkerProps {
 
 export function BirdMarker({ bird, index }: BirdMarkerProps) {
   const groupRef = useRef<Group>(null);
-  const meshRef = useRef<Mesh>(null);
-  const matRef = useRef<MeshStandardMaterial>(null);
+  const meshRef = useRef<Group>(null);
+  const fallbackMatRef = useRef<MeshStandardMaterial>(null);
   const ringMatRef = useRef<MeshBasicMaterial>(null);
   const hoveredRef = useRef(false);
   const scaleRef = useRef(1);
   const emissiveRef = useRef(0.5);
+  const opacityAnimRef = useRef(1);
   const pausedUntilRef = useRef(0);
   const clickAnimStartRef = useRef(0);
   const discoveryGlowRef = useRef(0);
+  const glbEmissiveMaterialsRef = useRef<EmissiveMeshMaterial[]>([]);
+  const glbOpacityMaterialsRef = useRef<Material[]>([]);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const setModelsReady = useAppStore((s) => s.setModelsReady);
   const setHoveredBird = useAppStore((s) => s.setHoveredBird);
@@ -107,11 +111,44 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     () => getModelPath(bird.silhouette),
     [bird.silhouette],
   );
-  const { geometry: glbGeometry } = useNormalizedBirdModel(modelPath);
+  const birdScene = useNormalizedBirdScene(modelPath);
 
   useEffect(() => {
-    if (index === 0 && glbGeometry) setModelsReady(true);
-  }, [index, glbGeometry, setModelsReady]);
+    if (index === 0 && birdScene) setModelsReady(true);
+  }, [index, birdScene, setModelsReady]);
+
+  useEffect(() => {
+    glbEmissiveMaterialsRef.current = [];
+    glbOpacityMaterialsRef.current = [];
+    if (!birdScene) return;
+
+    birdScene.traverse((child) => {
+      if (!(child as Mesh).isMesh) return;
+      const mesh = child as Mesh;
+      const mats = Array.isArray(mesh.material)
+        ? mesh.material
+        : [mesh.material];
+      for (const mat of mats) {
+        if (isEmissiveMeshMaterial(mat)) {
+          if (!mat.userData._birdBaseEmissiveStored) {
+            mat.userData._birdBaseEmissiveStored = true;
+            mat.userData._birdBaseEmissive = mat.emissive.clone();
+            mat.userData._birdBaseEmissiveIntensity = mat.emissiveIntensity;
+          }
+          glbEmissiveMaterialsRef.current.push(mat);
+        }
+        if (!mat.userData._birdBaseOpacityStored) {
+          mat.userData._birdBaseOpacityStored = true;
+          mat.userData._birdBaseOpacity =
+            "opacity" in mat && typeof mat.opacity === "number"
+              ? mat.opacity
+              : 1;
+          mat.transparent = true;
+        }
+        glbOpacityMaterialsRef.current.push(mat);
+      }
+    });
+  }, [birdScene]);
 
   const isVisible = !activeRegion || bird.region === activeRegion;
   const isHovered = hoveredBirdId === bird.id;
@@ -268,8 +305,28 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
       ? 2.0
       : rarityGlow + hintPulse + discoveryBoost;
     emissiveRef.current += (targetEmissive - emissiveRef.current) * 0.15;
-    if (matRef.current) {
-      matRef.current.emissiveIntensity = emissiveRef.current;
+
+    const baseEmissiveColor =
+      bird.rarity === "legendary"
+        ? 0x664400
+        : bird.rarity === "rare"
+          ? 0x223366
+          : 0x332200;
+    const emissiveColorHex = !isDiscovered ? 0x663300 : baseEmissiveColor;
+    const tintColor = new Color(emissiveColorHex);
+
+    const glbMats = glbEmissiveMaterialsRef.current;
+    if (glbMats.length > 0) {
+      for (const mat of glbMats) {
+        const baseE = mat.userData._birdBaseEmissive as Color;
+        const baseI = mat.userData._birdBaseEmissiveIntensity as number;
+        const intensity = emissiveRef.current;
+        mat.emissive.copy(baseE).lerp(tintColor, Math.min(0.85, intensity / 4));
+        mat.emissiveIntensity = baseI + intensity * 0.5;
+      }
+    } else if (fallbackMatRef.current) {
+      fallbackMatRef.current.emissive.setHex(emissiveColorHex);
+      fallbackMatRef.current.emissiveIntensity = emissiveRef.current;
     }
 
     if (ringMatRef.current) {
@@ -340,9 +397,20 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
     );
 
     const targetOpacity = isVisible ? 1 : 0.1;
-    if (matRef.current) {
-      matRef.current.opacity +=
-        (targetOpacity - matRef.current.opacity) * 0.1;
+    opacityAnimRef.current +=
+      (targetOpacity - opacityAnimRef.current) * 0.1;
+
+    const opacityMats = glbOpacityMaterialsRef.current;
+    if (opacityMats.length > 0) {
+      for (const mat of opacityMats) {
+        const base =
+          typeof mat.userData._birdBaseOpacity === "number"
+            ? mat.userData._birdBaseOpacity
+            : 1;
+        mat.opacity = base * opacityAnimRef.current;
+      }
+    } else if (fallbackMatRef.current) {
+      fallbackMatRef.current.opacity = opacityAnimRef.current;
     }
   });
 
@@ -359,7 +427,7 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
   return (
     <group
       ref={groupRef}
-      visible={isVisible || (matRef.current?.opacity ?? 0) > 0.05}
+      visible={isVisible || opacityAnimRef.current > 0.05}
     >
       {/* Glowing base ring */}
       <mesh geometry={ringGeo} position={position} quaternion={quaternion}>
@@ -374,8 +442,8 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
         />
       </mesh>
 
-      {/* Bird mesh — uses normalized GLB geometry, fallback sphere */}
-      <mesh
+      {/* Bird — full normalized GLB scene or fallback sphere */}
+      <group
         ref={meshRef}
         position={position}
         quaternion={quaternion}
@@ -392,23 +460,25 @@ export function BirdMarker({ bird, index }: BirdMarkerProps) {
           document.body.style.cursor = "auto";
         }}
       >
-        {glbGeometry ? (
-          <primitive object={glbGeometry} attach="geometry" />
+        {birdScene ? (
+          <primitive object={birdScene} />
         ) : (
-          <sphereGeometry args={[0.015, 16, 16]} />
+          <mesh>
+            <sphereGeometry args={[0.015, 16, 16]} />
+            <meshStandardMaterial
+              ref={fallbackMatRef}
+              color={0xffb347}
+              emissive={emissiveColor}
+              emissiveIntensity={rarityGlow}
+              metalness={0.2}
+              roughness={0.6}
+              transparent
+              opacity={1}
+              flatShading
+            />
+          </mesh>
         )}
-        <meshStandardMaterial
-          ref={matRef}
-          color={0xffb347}
-          emissive={emissiveColor}
-          emissiveIntensity={rarityGlow}
-          metalness={0.2}
-          roughness={0.6}
-          transparent
-          opacity={1}
-          flatShading
-        />
-      </mesh>
+      </group>
 
       {isHovered && (
         <Html

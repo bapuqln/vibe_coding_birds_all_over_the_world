@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v19)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v20)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -11,7 +11,111 @@
 > v16 phases (127–134) are complete.
 > v17 phases (135–141) are complete.
 > v18 phases (142–149) are complete.
-> v19 phases (150–161) are new.
+> v19 phases (150–161) are complete.
+> v20 phases (162–173) are new.
+
+---
+
+# v20 Tasks (Asset Quality & Exploration Upgrade)
+
+---
+
+## Phase 162: Improved Bird Model Geometry
+
+- [x] **162.1** Rebuild all 12 bird models in `build-bird-assets.mjs` with improved anatomy and species-specific features.
+- [x] **162.2** Ensure each model has clear recognizable silhouette with proper wing shapes and body proportions.
+- [x] **162.3** Verify all models remain under 2000 triangles and fit 1-unit bounding box.
+
+---
+
+## Phase 163: Full Scene Clone Rendering
+
+- [x] **163.1** Update `BirdMarker.tsx` to clone full normalized GLB scene instead of extracting first mesh geometry.
+- [x] **163.2** Render bird models using `<primitive object={scene}>` to preserve original materials.
+- [x] **163.3** Verify all 12 bird types render correctly with their embedded materials.
+
+---
+
+## Phase 164: Enhanced Idle Animation
+
+- [x] **164.1** Implement dual-layer idle animation: wing flap (Y-scale sine, amplitude 0.04, ~4s period) + vertical float (normal offset sine, amplitude 0.02-0.05, 3-5s period).
+- [x] **164.2** Per-bird phase offsets for natural variety across all markers.
+- [x] **164.3** Click animation layers: rapid flap, hop, look-toward-camera, circle flight phases.
+
+---
+
+## Phase 165: Bird Marker Enhancement
+
+- [x] **165.1** Glowing base ring with additive blending at marker position.
+- [x] **165.2** Hover effect: scale 1.35x with glow pulse intensification.
+- [x] **165.3** Click effect: discovery glow pulse on first-time discovery.
+- [x] **165.4** Undiscovered bird hint: proximity-based pulse and flutter animation.
+
+---
+
+## Phase 166: Discovery System Improvement
+
+- [x] **166.1** "You discovered a new bird!" notification with celebration animation.
+- [x] **166.2** Discovery counter: Birds Found X / Total display in notification.
+- [x] **166.3** Discovered birds remain highlighted on the map with rarity-based glow.
+
+---
+
+## Phase 167: Camera Experience
+
+- [x] **167.1** Smooth camera fly-to bird location on click (~1s smoothstep easing).
+- [x] **167.2** Camera stops above bird marker (ZOOM_DISTANCE = 1.8, above globe radius).
+- [x] **167.3** Gentle auto-rotate orbit after arrival (speed 0.5).
+
+---
+
+## Phase 168: UI Layer Structure
+
+- [x] **168.1** Enforce z-index hierarchy: globe 0, markers 5, sidebar 20, bottom panel 30, info card 60, modal 80, overlay 100.
+- [x] **168.2** Sidebar dims when bird card open (opacity 0.4, shift left 10px).
+- [x] **168.3** Info cards never covered by sidebar (z-card: 60 > z-sidebar: 20).
+
+---
+
+## Phase 169: Safe UI Margins
+
+- [x] **169.1** Info card desktop position with left margin 200px.
+- [x] **169.2** Consistent spacing tokens: xs=6px, sm=10px, md=16px, lg=24px.
+- [x] **169.3** All panels respect 20px safe area margins.
+
+---
+
+## Phase 170: Globe Visual Improvement
+
+- [x] **170.1** Increase globe sphere geometry to 80 segments for smoother appearance.
+- [x] **170.2** Adjust cloud layer opacity to 0.5 for better visibility.
+- [x] **170.3** Refine atmosphere shell Fresnel shaders for softer glow.
+
+---
+
+## Phase 171: Model Preloading
+
+- [x] **171.1** Preload all 12 bird GLB paths using useGLTF.preload() at module init.
+- [x] **171.2** Verify models are cached before BirdMarker components mount.
+
+---
+
+## Phase 172: Draco Compression
+
+- [x] **172.1** Maintain DRACOLoader configuration with Google-hosted decoder.
+- [x] **172.2** Verify both compressed and uncompressed GLB files load correctly.
+
+---
+
+## Phase 173: Final Verification (v20)
+
+- [x] **173.1** All 12 bird models render with improved geometry and original materials.
+- [x] **173.2** Idle animations smooth and natural with per-bird variety.
+- [x] **173.3** UI layers correct with no overlap issues.
+- [x] **173.4** Globe visuals improved (smoother sphere, better clouds, refined atmosphere).
+- [x] **173.5** Camera fly-to smooth with orbit after arrival.
+- [x] **173.6** Discovery system working with counter and celebration.
+- [x] **173.7** Performance stable at 60 FPS with all improvements active.
 
 ---
 

@@ -117,7 +117,7 @@ export function Globe() {
   return (
     <>
       <mesh ref={meshRef}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 80, 80]} />
         <primitive ref={matRef} object={material} attach="material" />
       </mesh>
       <CityLightsGlow matRef={matRef} />
@@ -172,7 +172,7 @@ function CityLightsGlow({ matRef }: { matRef: React.RefObject<ShaderMaterial | n
 
   return (
     <mesh scale={[1.003, 1.003, 1.003]}>
-      <sphereGeometry args={[1, 48, 48]} />
+      <sphereGeometry args={[1, 64, 64]} />
       <primitive ref={glowMatRef} object={glowMaterial} attach="material" />
     </mesh>
   );

@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v19)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v20)
 
+> **v20 changelog**: Asset Quality & Exploration Upgrade — rebuilt build-bird-assets.mjs with improved bird geometry (better silhouettes, species-specific features, proper proportions), improved BirdMarker to render full GLB scene clones with original materials, enhanced idle animation with dual-layer wing flap + floating system, improved marker hover/click feedback, strengthened UI z-index hierarchy and spacing tokens, improved globe visuals (higher-res sphere, better clouds, refined atmosphere), improved camera fly-to (1s smoothstep + orbit), enhanced discovery notification with counter, improved BirdInfoCard layout margins, added model preloading, maintained Draco compression.
+>
 > **v19 changelog**: High-Quality Bird Models Upgrade — removed all procedurally generated bird geometry and the generate-bird-models.mjs script, established proper GLB asset pipeline, integrated 12 high-quality stylized low-poly bird models loaded via useGLTF with DRACOLoader support, added bounding-box normalization (1-unit scale), idle animation system (wing flap + floating sine wave), improved markers with glow ring and hover effects, enhanced discovery interaction with progress tracking, fixed UI z-index layering, added safe layout margins, improved camera fly-to, enabled Draco compression.
 >
 > **v18 changelog**: Stability & Core Experience — fixed critical UI overlap (sidebar covering info cards) by enforcing z-index hierarchy and adding sidebar collision avoidance with opacity/shift, replaced unrealistic bird geometry with stylized low-poly procedural bird model with wing-flap animation, improved marker visuals with glowing base circle, enhanced info card with section titles and 200px left margin, improved camera fly-to (~1s), added discovery glow pulse, enforced consistent spacing tokens and safe margins across all UI.
@@ -23,6 +25,32 @@
 > **v9 changelog**: Educational exploration expansion — migration mode, guided discovery tour, AI bird guide, enhanced quiz, bird rarity system, bird radar, story-based exploration. Complete UI system overhaul with ActionButton component, right control panel, mobile safe areas, responsive layout, z-index hierarchy, bird tooltip, loading UI with progress.
 >
 > **v8 changelog**: Core interactive learning — bird info card redesign, animated birds, bird collection system, region filter, kid quest system, globe visual improvements, bird data model refactor.
+
+## Key Technical Decisions (v20)
+
+### TD-128: Improved Bird Model Geometry
+**Problem**: The build-bird-assets.mjs script produces bird models with basic primitive shapes that look like chickens. Wings are flat boxes, bodies are simple spheres, and species-specific features are minimal.
+**Solution**: Rebuild all 12 bird models in build-bird-assets.mjs with significantly improved geometry. Each bird gets more anatomically accurate proportions, better wing shapes (curved, tapered), proper body contours, and enhanced species-specific features (eagle's hooked beak and broad wings, owl's facial disc and ear tufts, flamingo's S-curved neck and long legs, etc.). All models remain under 2000 triangles and fit within a 1-unit bounding box.
+
+### TD-129: Full Scene Clone Rendering
+**Problem**: BirdMarker extracts only the first mesh geometry from GLB files, losing multi-mesh models and embedded materials. All birds render with the same orange MeshStandardMaterial.
+**Solution**: Modify BirdMarker to clone the entire normalized GLB scene and render it as a group using `<primitive object={scene}>`. This preserves the original materials, colors, and multi-mesh structure from the GLB files. The scene is normalized to fit within a 1-unit bounding box on load.
+
+### TD-130: Enhanced Idle Animation System
+**Problem**: Bird idle animations need to feel more natural with smooth, layered motion.
+**Solution**: Implement a dual-layer animation system: (1) gentle wing flap via Y-axis scale modulation with sine wave (amplitude 0.04, period ~4s), (2) vertical floating via normal-direction offset with sine wave (amplitude 0.02-0.05 units, period ~3-5s). Both use per-bird phase offsets for variety. Click animations layer on top with rapid flap, hop, look-toward-camera, and circle flight phases.
+
+### TD-131: Globe Visual Enhancement
+**Problem**: Globe sphere geometry is 64 segments which can show faceting at close zoom. Cloud layer and atmosphere could be more visually refined.
+**Solution**: Increase globe sphere geometry to 80 segments for smoother appearance. Adjust cloud layer opacity to 0.5 for better visibility. Refine atmosphere shell Fresnel shaders with adjusted falloff exponents for softer, more natural glow. Ensure all visual improvements maintain 60 FPS.
+
+### TD-132: UI Layer Enforcement
+**Problem**: Z-index hierarchy needs consistent enforcement across all UI layers with proper spacing tokens.
+**Solution**: Verify and enforce z-index CSS custom properties: globe 0, markers 5, sidebar 20, bottom panel 30, info card 60, modal 80, overlay 100. Ensure spacing tokens (xs=6px, sm=10px, md=16px, lg=24px) are used consistently. BirdInfoCard desktop position uses left: 200px to prevent sidebar overlap.
+
+### TD-133: Model Preloading
+**Problem**: Bird models load on demand which can cause visible pop-in as the user explores the globe.
+**Solution**: Preload all 12 bird GLB model paths using useGLTF.preload() at module initialization time. This ensures models are cached before any BirdMarker component mounts, eliminating load-time visual artifacts.
 
 ## Key Technical Decisions (v19)
 

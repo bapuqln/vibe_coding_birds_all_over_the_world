@@ -15,11 +15,11 @@ export function CloudLayer() {
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[1.006, 48, 48]} />
+      <sphereGeometry args={[1.006, 64, 64]} />
       <meshStandardMaterial
         map={texture}
         transparent
-        opacity={0.45}
+        opacity={0.5}
         depthWrite={false}
         roughness={1}
         metalness={0}
