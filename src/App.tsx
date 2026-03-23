@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
+import { ACESFilmicToneMapping } from "three";
 import { GlobeScene } from "./components/three/GlobeScene";
 import { BirdInfoCard } from "./components/ui/BirdInfoCard";
 import { LangToggle } from "./components/ui/LangToggle";
@@ -18,6 +19,7 @@ import { SoundGuessPanel } from "./components/ui/SoundGuessPanel";
 import { BirdEncyclopediaPanel } from "./components/ui/BirdEncyclopediaPanel";
 import { ContinentBirdPanel } from "./components/ui/ContinentBirdPanel";
 import { EvolutionTimeline } from "./components/ui/EvolutionTimeline";
+import { TimeIndicator } from "./components/ui/TimeIndicator";
 import { DiscoveryNotification } from "./components/ui/DiscoveryNotification";
 import { DiscoveryProgressBar } from "./components/ui/DiscoveryProgressBar";
 import { ARViewerModal } from "./components/ui/ARViewerModal";
@@ -25,6 +27,20 @@ import { BottomDiscoveryPanel } from "./components/ui/BottomDiscoveryPanel";
 import { DailyMissionsPanel } from "./components/ui/DailyMissionsPanel";
 import { PhotoGalleryPanel } from "./components/ui/PhotoGalleryPanel";
 import { AchievementPanel, AchievementNotification } from "./components/ui/AchievementPanel";
+import {
+  ExpeditionPanel,
+  ExpeditionNotification,
+} from "./components/ui/ExpeditionPanel";
+import { StoryModePanel } from "./components/ui/StoryModePanel";
+import { ExpeditionProgressBar } from "./components/ui/ExpeditionProgressBar";
+import { SharePanel } from "./components/ui/SharePanel";
+import { ScreenshotFlash } from "./components/ui/ScreenshotFlash";
+import { PerformanceMonitor } from "./components/ui/PerformanceMonitor";
+import { BirdEntryPanel } from "./components/ui/BirdEntryPanel";
+import { AIBirdGuidePanel } from "./components/ui/AIBirdGuidePanel";
+import { PhotographerMode } from "./components/ui/PhotographerMode";
+import { ClassroomPanel } from "./components/ui/ClassroomPanel";
+import { SandboxToolbar } from "./components/ui/SandboxToolbar";
 import { useAppStore } from "./store";
 
 export default function App() {
@@ -35,8 +51,10 @@ export default function App() {
       {/* Layer 0 — Globe Canvas */}
       <div className="absolute inset-0" style={{ zIndex: "var(--z-globe)" }}>
         <Canvas
+          shadows
           camera={{ fov: 45, position: [0, 0, 2.5], near: 0.1, far: 100 }}
           style={{ background: "#050a18" }}
+          gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
         >
           <Suspense fallback={null}>
             <GlobeScene />
@@ -57,6 +75,7 @@ export default function App() {
         <AppTitle />
         <LangToggle />
         <DiscoveryProgressBar />
+        <ExpeditionProgressBar />
         <RightControlPanel />
         <BirdGuide />
         <BirdRadar />
@@ -65,6 +84,7 @@ export default function App() {
         <QuizPanel />
         <SoundGuessPanel />
         <EvolutionTimeline />
+        <TimeIndicator />
       </div>
 
       {/* Layer 3 — Bottom Panels */}
@@ -74,6 +94,7 @@ export default function App() {
       >
         <GuidedTour />
         <BottomDiscoveryPanel />
+        <SandboxToolbar />
       </div>
 
       {/* Layer 4 — Information Cards */}
@@ -83,7 +104,10 @@ export default function App() {
       >
         <BirdInfoCard />
         <DiscoveryNotification />
+        <ExpeditionNotification />
         <AchievementNotification />
+        <BirdEntryPanel />
+        <AIBirdGuidePanel />
       </div>
 
       {/* Layer 5 — Modal Dialogs */}
@@ -99,6 +123,10 @@ export default function App() {
         <DailyMissionsPanel />
         <PhotoGalleryPanel />
         <AchievementPanel />
+        <ExpeditionPanel />
+        <StoryModePanel />
+        <SharePanel />
+        <ClassroomPanel />
       </div>
 
       {/* Layer 6 — Full Screen Overlays */}
@@ -107,6 +135,9 @@ export default function App() {
         style={{ zIndex: "var(--z-overlay)" }}
       >
         <LoadingScreen />
+        <ScreenshotFlash />
+        <PerformanceMonitor />
+        <PhotographerMode />
       </div>
 
       <AudioPlayer />
@@ -115,10 +146,23 @@ export default function App() {
 }
 
 function AppTitle() {
+  const setClassroom = useAppStore((s) => s.setClassroomModeActive);
+  const timerRef = { current: null as ReturnType<typeof setTimeout> | null };
+
+  const handlePointerDown = () => {
+    timerRef.current = setTimeout(() => setClassroom(true), 3000);
+  };
+  const handlePointerUp = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
   return (
     <div
-      className="pointer-events-none fixed select-none"
+      className="pointer-events-auto fixed cursor-default select-none"
       style={{ left: "var(--safe-area)", top: "var(--safe-area)" }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
     >
       <h1 className="text-xl font-bold tracking-wide text-white/90 drop-shadow-lg md:text-2xl">
         万羽拾音

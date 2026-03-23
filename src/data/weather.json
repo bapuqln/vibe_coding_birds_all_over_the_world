@@ -1,0 +1,9 @@
+[
+  { "region": "asia", "weather": "cloudy", "intensity": 0.6 },
+  { "region": "europe", "weather": "rainy", "intensity": 0.4 },
+  { "region": "africa", "weather": "clear", "intensity": 0.2 },
+  { "region": "north-america", "weather": "cloudy", "intensity": 0.5 },
+  { "region": "south-america", "weather": "rainy", "intensity": 0.7 },
+  { "region": "oceania", "weather": "clear", "intensity": 0.3 },
+  { "region": "antarctica", "weather": "stormy", "intensity": 0.8 }
+]

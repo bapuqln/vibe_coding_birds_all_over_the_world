@@ -1,0 +1,126 @@
+[
+  {
+    "id": "migration-lesson",
+    "titleZh": "鸟类迁徙",
+    "titleEn": "Bird Migration",
+    "descriptionZh": "了解鸟类为什么迁徙以及它们如何找到路",
+    "descriptionEn": "Learn why birds migrate and how they find their way",
+    "steps": [
+      {
+        "narrationZh": "每年，数十亿只鸟类会进行长途旅行，这就是迁徙。让我们来看看一些最令人惊叹的迁徙路线。",
+        "narrationEn": "Every year, billions of birds make long journeys called migration. Let's look at some of the most amazing migration routes.",
+        "action": "narrate",
+        "durationMs": 8000
+      },
+      {
+        "narrationZh": "北极燕鸥是迁徙冠军！它每年从北极飞到南极，往返距离超过7万公里。",
+        "narrationEn": "The Arctic Tern is the migration champion! It flies from the Arctic to the Antarctic every year, a round trip of over 70,000 km.",
+        "action": "show_migration",
+        "target": "arctic-tern",
+        "durationMs": 10000
+      },
+      {
+        "narrationZh": "斑尾塍鹬可以不停歇地飞行11000公里，从阿拉斯加到新西兰！",
+        "narrationEn": "The Bar-tailed Godwit can fly 11,000 km non-stop from Alaska to New Zealand!",
+        "action": "focus_bird",
+        "target": "bar-tailed-godwit",
+        "durationMs": 8000
+      },
+      {
+        "narrationZh": "现在让我们测试一下你学到了什么！",
+        "narrationEn": "Now let's test what you've learned!",
+        "action": "start_quiz",
+        "durationMs": 5000
+      }
+    ]
+  },
+  {
+    "id": "tropical-birds-lesson",
+    "titleZh": "热带鸟类",
+    "titleEn": "Tropical Birds",
+    "descriptionZh": "探索生活在热带雨林中的色彩斑斓的鸟类",
+    "descriptionEn": "Explore the colorful birds that live in tropical rainforests",
+    "steps": [
+      {
+        "narrationZh": "热带雨林是地球上鸟类种类最多的地方。让我们去南美洲看看！",
+        "narrationEn": "Tropical rainforests have the most bird species on Earth. Let's visit South America!",
+        "action": "focus_region",
+        "target": "South America",
+        "durationMs": 8000
+      },
+      {
+        "narrationZh": "金刚鹦鹉是热带雨林中最美丽的鸟类之一。它们鲜艳的羽毛帮助它们在茂密的森林中互相识别。",
+        "narrationEn": "Macaws are among the most beautiful birds in the rainforest. Their bright feathers help them recognize each other in the dense forest.",
+        "action": "focus_bird",
+        "target": "scarlet-macaw",
+        "durationMs": 10000
+      },
+      {
+        "narrationZh": "巨嘴鸟有一个巨大的喙，但它其实很轻！这个喙帮助它们够到远处的水果。",
+        "narrationEn": "Toucans have a huge beak, but it's actually very light! This beak helps them reach fruit that's far away.",
+        "action": "focus_bird",
+        "target": "toucan",
+        "durationMs": 10000
+      }
+    ]
+  },
+  {
+    "id": "arctic-survival-lesson",
+    "titleZh": "北极生存",
+    "titleEn": "Arctic Survival",
+    "descriptionZh": "了解鸟类如何在极端寒冷中生存",
+    "descriptionEn": "Learn how birds survive in extreme cold",
+    "steps": [
+      {
+        "narrationZh": "北极是地球上最寒冷的地方之一，但许多鸟类在这里生活得很好。让我们去看看！",
+        "narrationEn": "The Arctic is one of the coldest places on Earth, but many birds thrive here. Let's take a look!",
+        "action": "focus_region",
+        "target": "Antarctica",
+        "durationMs": 8000
+      },
+      {
+        "narrationZh": "帝企鹅可以在零下60度的严寒中生存。它们挤在一起取暖，轮流站在外面挡风。",
+        "narrationEn": "Emperor Penguins can survive temperatures of -60°C. They huddle together for warmth, taking turns standing on the outside.",
+        "action": "focus_bird",
+        "target": "emperor-penguin",
+        "durationMs": 10000
+      },
+      {
+        "narrationZh": "雪鸮有厚厚的羽毛，甚至脚趾上都有羽毛来保暖！",
+        "narrationEn": "Snowy Owls have thick feathers, even on their toes, to stay warm!",
+        "action": "focus_bird",
+        "target": "snowy-owl",
+        "durationMs": 10000
+      }
+    ]
+  },
+  {
+    "id": "bird-anatomy-lesson",
+    "titleZh": "鸟类身体结构",
+    "titleEn": "Bird Anatomy",
+    "descriptionZh": "了解鸟类身体的神奇之处",
+    "descriptionEn": "Learn about the amazing features of bird bodies",
+    "steps": [
+      {
+        "narrationZh": "鸟类的身体有许多特殊的设计，让它们能够飞翔、游泳或奔跑。",
+        "narrationEn": "Birds have many special body features that let them fly, swim, or run.",
+        "action": "narrate",
+        "durationMs": 8000
+      },
+      {
+        "narrationZh": "白头鹰的翼展可以超过2米！它们强壮的翅膀让它们能在高空翱翔数小时。",
+        "narrationEn": "A Bald Eagle's wingspan can be over 2 meters! Their strong wings let them soar for hours.",
+        "action": "focus_bird",
+        "target": "bald-eagle",
+        "durationMs": 10000
+      },
+      {
+        "narrationZh": "蜂鸟是唯一能向后飞的鸟！它们的翅膀每秒可以拍打80次。",
+        "narrationEn": "Hummingbirds are the only birds that can fly backwards! Their wings can beat 80 times per second.",
+        "action": "focus_bird",
+        "target": "ruby-throated-hummingbird",
+        "durationMs": 10000
+      }
+    ]
+  }
+]

@@ -1,5 +1,25 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v20
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v30
 
+> **v30 changelog**: Educational Layer — Bird Encyclopedia panel with search, continent filter, diet filter, wingspan filter, each bird entry with 3D model preview, habitat map highlight, sound playback, and detailed facts, performance monitoring overlay, dynamic LOD tuning, improved asset preloading, texture compression pipeline.
+>
+> **v29 changelog**: Shareable Discoveries — screenshot capture button saving canvas as PNG, share card generator creating shareable images with bird name/location/fun fact, export progress as JSON file, share UI panel with copy-to-clipboard and download options.
+>
+> **v28 changelog**: Story Mode — guided "Bird Adventure" exploration system with story sequences (Journey of the Arctic Tern, Rainforest Guardians, Birds of the African Savannah), camera auto-travel between story locations, voice narration per story step, highlighted birds at each location, Story panel UI with story selection and progress tracking.
+>
+> **v27 changelog**: Flocking System — replaced static bird markers with dynamic flock behavior using simplified boids algorithm (separation, alignment, cohesion), species-specific flock parameters (flock size, speed, altitude range), GPU-friendly instanced mesh updates for flock rendering, birds wander, flock, and circle habitats naturally.
+>
+> **v26 changelog**: Dynamic World Simulation — enhanced day/night cycle with real Earth rotation and sun position changes, night side city lights texture with smooth fade transitions, weather zone system with cloud clusters/rain particles/storm visuals per region, bird activity variation where day birds are active in daytime and nocturnal birds appear at night, time-of-day indicator in HUD.
+>
+> **v25 changelog**: Exploration Experience — added Bird Expedition Mode with structured mission system ("Find 3 birds in Africa", "Discover a bird that migrates"), mission panel with active/completed states, achievement badge rewards on mission completion, progress tracker showing expedition completion percentage, completion celebration with confetti and badge reveal, expedition history in explorer profile, new ExpeditionSystem.ts managing mission lifecycle, MissionPanel.tsx and ProgressPanel.tsx UI components, integration with existing discovery and achievement systems.
+>
+> **v24 changelog**: Visual Polish — added atmosphere glow shell around Earth with animated Fresnel shader, cloud layer with slow rotation and soft opacity, directional sun light with shadow casting, soft shadow projection for bird markers on globe surface, improved marker visuals with animated glow rings and rarity-based colors, subtle camera inertia with damping for smooth exploration feel, enhanced lighting setup with hemisphere + directional + ambient lights.
+>
+> **v23 changelog**: Performance Optimization — implemented model LOD system (high-poly near camera, simplified mesh when far), lazy loading for bird models loaded on-demand when entering view, instanced markers using THREE.InstancedMesh for distant birds reducing draw calls, render loop optimization avoiding blocking operations, target 60 FPS on mid-range laptop verified.
+>
+> **v22 changelog**: Content Expansion — expanded bird database to 30 fully-detailed birds across all 7 regions (North America, South America, Africa, Europe, Asia, Oceania, Antarctica), each bird includes name/continent/habitat/diet/wingspan/funFact/modelPath/soundPath, added region cluster markers on globe showing bird count per region, region clusters clickable to filter birds by region.
+>
+> **v21 changelog**: Architecture Refactor — restructured monolithic codebase into modular architecture with /src/core/ (Engine.ts, SceneManager.ts, CameraController.ts), /src/systems/ (BirdSystem.ts, MigrationSystem.ts, QuizSystem.ts, AudioSystem.ts, AchievementSystem.ts), /src/ui/ (HUD.ts, BirdPanel.ts, QuizPanel.ts, ProgressPanel.ts), /src/data/ (birds.json, migrations.json, achievements.json), separated data from logic, created clear module boundaries for easier bird additions and feature development.
+>
 > **v20 changelog**: Asset Quality & Exploration Upgrade — rebuilt build-bird-assets.mjs with significantly improved bird geometry (more anatomically accurate silhouettes with species-specific features, better wing shapes, proper body proportions, and enhanced detail for all 12 bird types), improved BirdMarker rendering to use full GLB scene clones with original materials instead of extracting only the first mesh geometry (preserving multi-mesh models and embedded materials), enhanced bird idle animation with dual-layer system (gentle wing flap via Y-scale sine wave + smooth vertical floating via normal-direction offset, both with per-bird phase offsets for natural variety), improved marker hover/click feedback with enhanced glow pulse and scale animations, strengthened UI layer structure with explicit z-index CSS custom properties and spacing tokens (xs=6px, sm=10px, md=16px, lg=24px), improved globe visuals with higher-resolution sphere geometry (80 segments), enhanced cloud layer opacity and rotation, improved atmosphere shell with refined Fresnel shaders for softer glow, improved camera fly-to with 1s smoothstep animation and gentle orbit after arrival, enhanced discovery notification with discovery counter and celebration animations, improved BirdInfoCard with 200px left margin on desktop to prevent sidebar overlap, added model preloading for all 12 bird GLB assets, maintained Draco compression support for GLB loading.
 >
 > **v19 changelog**: High-Quality Bird Models Upgrade — removed ALL procedurally generated bird geometry (scripts/generate-bird-models.mjs and its outputs), established proper asset pipeline with /public/models/birds/ for external GLB bird models, integrated high-quality stylized low-poly bird starter set (eagle, owl, parrot, penguin, flamingo, duck, sparrow, crow, toucan, peacock, woodpecker, seagull) loaded exclusively from GLB files via useGLTF with Draco compression support, standardized model scale normalization (1-unit bounding box with auto-scaling on load), added idle bird animation system (subtle wing flap + vertical sine-wave floating with 3–5s loop), improved bird markers with glowing ring base and soft hover glow, enhanced bird discovery interaction with "You discovered a new bird!" feedback and X/Total progress tracking, fixed UI layering with strict z-index hierarchy (globe 0, markers 5, sidebar 20, bottom panel 30, info card 60, modal 100), added safe layout margins (info card left: 200px on desktop), improved camera fly-to experience (~1s smooth animation stopping above bird marker), enabled DRACOLoader for compressed GLB loading, added visual polish with subtle floating sine-wave motion on all bird models.
@@ -1189,3 +1209,931 @@ interface Achievement {
 - [ ] All animations via useFrame.
 - [ ] All geometry via useMemo.
 - [ ] Declarative R3F patterns throughout.
+
+---
+
+## V21 — Architecture Refactor
+
+### US-48: Modular Codebase (v21)
+As a developer, I can find and modify any feature in a clearly organized module structure so that adding new birds or features is straightforward.
+
+### R-63: Module Architecture (v21)
+- Refactor project into clear module boundaries:
+  - `/src/core/` — Engine.ts (render loop manager), SceneManager.ts (scene setup/teardown), CameraController.ts (camera animation/controls)
+  - `/src/systems/` — BirdSystem.ts (bird data, markers, discovery), MigrationSystem.ts (migration routes/animation), QuizSystem.ts (quiz logic), AudioSystem.ts (sound playback), AchievementSystem.ts (achievements/missions)
+  - `/src/ui/` — HUD.ts (heads-up display), BirdPanel.ts (bird info card), QuizPanel.ts (quiz UI), ProgressPanel.ts (progress tracking UI)
+  - `/src/data/` — birds.json, migrations.json, achievements.json (pure data, no logic)
+- Remove monolithic files by extracting logic into system modules.
+- Each system module exports a React hook or component that encapsulates its domain.
+- Data files contain only JSON data; all business logic lives in system modules.
+- Barrel exports (`index.ts`) in each directory for clean imports.
+
+### AC-V21-1: Architecture Refactor
+- [ ] `/src/core/` directory exists with Engine.ts, SceneManager.ts, CameraController.ts.
+- [ ] `/src/systems/` directory exists with BirdSystem.ts, MigrationSystem.ts, QuizSystem.ts, AudioSystem.ts, AchievementSystem.ts.
+- [ ] `/src/ui/` directory exists with HUD.ts, BirdPanel.ts, QuizPanel.ts, ProgressPanel.ts.
+- [ ] `/src/data/` directory contains birds.json, migrations.json, achievements.json.
+- [ ] No monolithic files remain; logic is separated from data.
+- [ ] All existing features continue to work after refactor.
+- [ ] Build succeeds with zero TypeScript errors.
+
+---
+
+## V22 — Content Expansion
+
+### US-49: Explore 30 Detailed Birds (v22)
+As a child, I can discover 30 birds from every continent, each with rich information including habitat, diet, wingspan, and fun facts.
+
+### US-50: See Region Clusters (v22)
+As a child, I can see cluster markers on the globe showing how many birds are in each region, making it easy to find bird-rich areas.
+
+### R-64: Expanded Bird Database (v22)
+- 30 birds minimum, each with complete fields:
+  - `name` (zh + en), `continent`, `habitat`, `diet`, `wingspan`, `funFact`, `modelPath`, `soundPath`
+- Regions covered: North America, South America, Africa, Europe, Asia, Oceania, Antarctica.
+- Each region has at least 3 birds.
+- Bird data validated: no missing required fields.
+
+### R-65: Region Clusters on Globe (v22)
+- Cluster markers displayed at region center positions on globe.
+- Each cluster shows region name and bird count badge.
+- Clicking a cluster filters to that region's birds and zooms camera.
+- Clusters use distinct colors per region.
+- Clusters visible at far zoom, individual markers visible at close zoom.
+
+### AC-V22-1: Content Expansion
+- [ ] 30+ birds in birds.json with all required fields.
+- [ ] All 7 regions represented with at least 3 birds each.
+- [ ] Each bird has name, continent, habitat, diet, wingspan, funFact, modelPath, soundPath.
+- [ ] Region cluster markers visible on globe.
+- [ ] Clicking cluster zooms to region and filters birds.
+- [ ] Build succeeds with zero TypeScript errors.
+
+---
+
+## V23 — Performance Optimization
+
+### US-51: Smooth Experience (v23)
+As a child, I experience smooth animations and fast loading even with many birds on the globe.
+
+### R-66: Model LOD System (v23)
+- Near camera (distance < 3 units): render high-poly 3D bird model.
+- Far from camera (distance >= 3 units): render simplified low-poly mesh or sprite.
+- LOD transition is smooth with no visible pop-in.
+- LOD distance thresholds configurable.
+
+### R-67: Lazy Loading (v23)
+- Bird 3D models loaded only when the bird enters the camera's visible region.
+- Models cached after first load for instant re-display.
+- Loading indicator shown briefly while model loads.
+- Unloaded birds display lightweight icon markers.
+
+### R-68: Instanced Markers (v23)
+- Use `THREE.InstancedMesh` for rendering distant bird markers.
+- Single draw call for all instanced markers.
+- Instance attributes: position, color, scale.
+- Reduces draw calls from O(n) to O(1) for distant markers.
+
+### R-69: Render Loop Optimization (v23)
+- No blocking operations in `requestAnimationFrame` / `useFrame`.
+- Heavy computations (distance sorting, LOD decisions) throttled to run every N frames.
+- Geometry and material creation via `useMemo` to prevent re-allocation.
+- Target: 60 FPS on mid-range laptop (Intel i5, integrated GPU).
+
+### AC-V23-1: Performance Optimization
+- [ ] LOD system switches between high-poly and low-poly based on camera distance.
+- [ ] Bird models lazy-loaded on demand.
+- [ ] InstancedMesh used for distant markers.
+- [ ] Draw calls reduced compared to V22.
+- [ ] 60 FPS maintained on mid-range hardware.
+- [ ] No jank during globe rotation or bird interaction.
+
+---
+
+## V24 — Visual Polish
+
+### US-52: Beautiful Globe (v24)
+As a child, I see a beautiful, realistic globe with glowing atmosphere, clouds, and proper lighting that makes exploration feel magical.
+
+### R-70: Atmosphere Glow (v24)
+- Animated Fresnel-based atmosphere shell around Earth.
+- Soft blue-white glow visible from all angles.
+- Glow intensity varies with view angle (stronger at edges).
+- Two-layer system: inner warm glow + outer cool halo.
+
+### R-71: Cloud Layer (v24)
+- Semi-transparent cloud texture layer above globe surface.
+- Slow rotation independent of globe (creates parallax effect).
+- Opacity ~0.4 for subtle effect without obscuring geography.
+- Visible in both day and night regions.
+
+### R-72: Sun Light Direction (v24)
+- Directional light simulating sun position.
+- Slowly rotating to create day/night cycle.
+- Warm color temperature (slightly yellow-white).
+- Shadow casting enabled for bird markers.
+
+### R-73: Soft Shadows (v24)
+- Bird markers cast soft shadows on globe surface.
+- Shadow map resolution appropriate for performance (512x512).
+- Shadows fade with distance from marker.
+- Shadow intensity subtle, not distracting.
+
+### R-74: Improved Marker Visuals (v24)
+- Animated glow ring at marker base with pulse effect.
+- Rarity-based glow colors (common: blue, rare: gold, legendary: purple).
+- Smooth scale animation on hover (1.2x with ease-out).
+- Discovered markers have subtle sparkle effect.
+
+### R-75: Camera Inertia (v24)
+- Camera rotation has momentum/inertia after user releases drag.
+- Smooth deceleration (damping factor ~0.92).
+- Inertia respects zoom level (less inertia when zoomed in).
+- Feels natural and fluid for children to use.
+
+### AC-V24-1: Visual Polish
+- [ ] Atmosphere glow visible around globe from all angles.
+- [ ] Cloud layer rotates independently with parallax effect.
+- [ ] Directional sun light creates day/night regions.
+- [ ] Bird markers cast soft shadows on globe.
+- [ ] Marker glow colors match rarity.
+- [ ] Camera has smooth inertia after drag release.
+- [ ] All visual improvements maintain 60 FPS.
+
+---
+
+## V25 — Exploration Experience
+
+### US-53: Bird Expedition Mode (v25)
+As a child, I can start Bird Expedition missions that give me specific goals like "Find 3 birds in Africa" or "Discover a bird that migrates", making exploration feel like an adventure.
+
+### US-54: Earn Expedition Badges (v25)
+As a child, I earn achievement badges when I complete expedition missions, motivating me to keep exploring.
+
+### US-55: Track My Progress (v25)
+As a child, I can see my expedition progress showing how many missions I've completed and what badges I've earned.
+
+### US-56: Celebrate Completion (v25)
+As a child, when I complete an expedition mission, I see a fun celebration with confetti and my new badge, making me feel accomplished.
+
+### R-76: Bird Expedition Mode (v25)
+- Structured expedition system with predefined missions.
+- Mission types: region exploration ("Find 3 birds in Africa"), trait discovery ("Discover a bird that migrates"), collection goals ("Collect 5 birds").
+- Missions have clear objectives, progress tracking, and completion state.
+- Active mission displayed prominently in HUD.
+- Multiple missions available; one active at a time.
+
+### R-77: Mission Rewards (v25)
+- Each completed mission awards an achievement badge.
+- Badges stored in localStorage and displayed in explorer profile.
+- Badge designs: region badges (continent icons), trait badges (migration, diet), milestone badges (first 5, first 10).
+- Badge unlock triggers celebration animation.
+
+### R-78: Progress Tracker (v25)
+- Progress panel showing overall expedition completion.
+- Visual progress bar: "Expeditions Complete: 5/12".
+- Per-mission progress: "Find 3 birds in Africa: 2/3".
+- Progress persisted in localStorage across sessions.
+
+### R-79: Mission Panel UI (v25)
+- Dedicated mission panel accessible from HUD.
+- Shows available missions with descriptions and rewards.
+- Active mission highlighted with progress indicator.
+- Completed missions show earned badge.
+- Minimum tap size 56px for all interactive elements.
+- Panel positioned to not overlap other UI elements.
+
+### R-80: Completion Celebration (v25)
+- On mission completion: confetti burst + badge reveal animation.
+- Badge scales in from center with glow effect.
+- "Mission Complete!" message with mission name.
+- Celebration duration ~2.5s, non-blocking.
+- Sound effect optional (CSS animation primary).
+
+### AC-V25-1: Exploration Experience
+- [ ] Bird Expedition Mode with structured missions available.
+- [ ] Mission types include region, trait, and collection goals.
+- [ ] Active mission progress tracked and displayed.
+- [ ] Completed missions award achievement badges.
+- [ ] Progress tracker shows overall expedition completion.
+- [ ] Mission panel UI with 56px minimum tap targets.
+- [ ] Completion celebration with confetti and badge reveal.
+- [ ] All expedition data persisted in localStorage.
+- [ ] No UI overlap with existing panels.
+- [ ] 60 FPS maintained with expedition features active.
+
+---
+
+## V26 — Dynamic World Simulation
+
+### US-57: See Real Day/Night Cycle (v26)
+As a child, I can see the Earth rotating with realistic lighting where the sun position changes over time, making the globe feel like a living planet.
+
+### US-58: See City Lights at Night (v26)
+As a child, I can see subtle city lights glowing on the dark side of the Earth, making nighttime exploration magical.
+
+### US-59: See Weather on the Globe (v26)
+As a child, I can see cloud clusters, rain particles, and storm visuals in different regions, making the world feel dynamic.
+
+### US-60: See Birds Change with Time (v26)
+As a child, I notice that some birds are active during the day while others appear at night, teaching me about nocturnal and diurnal birds.
+
+### R-81: Enhanced Day/Night Cycle (v26)
+- Earth rotates with real lighting simulation.
+- Sun position changes continuously over time.
+- Day side fully lit, night side dark with city lights texture.
+- City lights fade in/out smoothly based on sun angle per fragment.
+- Sun rotation speed configurable (default ~0.03 rad/s for visible cycle).
+- Time-of-day indicator in HUD showing approximate time.
+
+### R-82: Weather Zone System (v26)
+- Regions can display weather effects: cloud clusters, rain particles, storm visuals.
+- Weather data defined per region in weather configuration.
+- Cloud clusters: groups of small cloud sprites above region.
+- Rain particles: vertical particle streams in rainy regions.
+- Storm visuals: darker clouds with occasional lightning flash effect.
+- Weather effects are subtle and do not obscure bird markers.
+- Weather toggle button in control panel.
+
+### R-83: Bird Activity Variation (v26)
+- Birds have `activityPeriod` field: "diurnal" | "nocturnal" | "crepuscular".
+- Diurnal birds visible and animated during day cycle.
+- Nocturnal birds appear with glow effect during night cycle.
+- Crepuscular birds active during dawn/dusk transitions.
+- Activity state determined by sun angle at bird's position.
+- Nocturnal birds have subtle eye-glow shader effect.
+
+### AC-V26-1: Dynamic World Simulation
+- [ ] Day/night cycle with smooth sun rotation visible.
+- [ ] City lights visible on night side of globe.
+- [ ] Weather effects (clouds, rain, storms) visible in regions.
+- [ ] Day birds active during daytime, nocturnal birds at night.
+- [ ] Time-of-day indicator in HUD.
+- [ ] Weather toggle button works.
+- [ ] 60 FPS maintained with all V26 features.
+
+---
+
+## V27 — Flocking System
+
+### US-61: See Birds Flying in Flocks (v27)
+As a child, I can see groups of birds flying together in natural-looking flocks, making the globe feel alive with movement.
+
+### US-62: See Different Flock Behaviors (v27)
+As a child, I notice that different bird species fly in different patterns — some in tight groups, others spread out, and some circling their habitats.
+
+### R-84: Boids Flocking Algorithm (v27)
+- Implement simplified boids algorithm with three rules: separation, alignment, cohesion.
+- Each bird species has configurable flock parameters:
+  - `flockSize`: number of birds in group (3-12).
+  - `speed`: movement speed (0.001-0.01 units/frame).
+  - `altitudeRange`: [min, max] altitude above globe surface.
+  - `wanderRadius`: how far flock wanders from home position.
+- Flocks wander naturally around their habitat region.
+- Flocks circle habitat center with gentle orbital motion.
+- Collision avoidance with globe surface.
+
+### R-85: GPU-Friendly Flock Rendering (v27)
+- Use InstancedMesh for each flock group.
+- Update instance matrices per frame from boids computation.
+- Boids computation runs on main thread but optimized:
+  - Spatial hashing for neighbor lookups.
+  - Throttled to every 2 frames for distant flocks.
+- Each flock member has slight animation offset for variety.
+- Maximum 8 active flocks visible simultaneously.
+
+### AC-V27-1: Flocking System
+- [ ] Birds move in natural-looking flocks.
+- [ ] Separation, alignment, cohesion behaviors visible.
+- [ ] Species have different flock sizes and speeds.
+- [ ] Flocks wander and circle habitats.
+- [ ] GPU-friendly rendering with InstancedMesh.
+- [ ] Maximum 8 active flocks enforced.
+- [ ] 60 FPS maintained with flocking active.
+
+---
+
+## V28 — Story Mode
+
+### US-63: Follow a Bird Adventure (v28)
+As a child, I can start a "Bird Adventure" story that takes me on a guided journey to different parts of the world, learning about birds along the way.
+
+### US-64: Hear Story Narration (v28)
+As a child, I can hear friendly narration as the camera travels to each story location, making the adventure feel like a nature documentary.
+
+### US-65: See Highlighted Story Birds (v28)
+As a child, I can see the featured birds highlighted with special effects at each story location, making them easy to find and learn about.
+
+### R-86: Story System (v28)
+- Story data structure: sequence of locations with camera positions, narration text, and featured bird IDs.
+- Predefined stories:
+  - "Journey of the Arctic Tern" — follows migration from Arctic to Antarctic.
+  - "Rainforest Guardians" — explores tropical birds of South America.
+  - "Birds of the African Savannah" — discovers savannah birds of Africa.
+- Each story step: location (lat/lng), camera zoom, narration text (zh/en), featured bird ID, duration.
+- Story auto-advances after each step's duration.
+- User can pause, resume, skip steps, or exit story.
+
+### R-87: Story Camera System (v28)
+- Camera auto-travels between story locations with smooth animation.
+- Travel duration proportional to distance (1-3 seconds).
+- Camera arrives at comfortable viewing angle for featured bird.
+- During travel, subtle zoom-out then zoom-in for cinematic feel.
+- OrbitControls disabled during story camera travel.
+
+### R-88: Story Narration (v28)
+- Each story step has narration text in zh and en.
+- Narration played via Web Speech API (SpeechSynthesis).
+- Narration starts when camera arrives at location.
+- Fallback: display narration text in story panel if speech unavailable.
+- Voice: friendly, moderate speed (rate 0.9).
+
+### R-89: Story Panel UI (v28)
+- Story selection panel showing available stories with cover images.
+- Active story panel showing current step, progress dots, narration text.
+- Controls: play/pause, next step, exit story.
+- Featured bird highlighted with golden glow effect.
+- Story completion awards a badge.
+- Panel positioned in modal layer (z-80).
+
+### AC-V28-1: Story Mode
+- [ ] Story selection panel shows available stories.
+- [ ] Camera auto-travels between story locations.
+- [ ] Narration plays at each story step.
+- [ ] Featured birds highlighted with glow effect.
+- [ ] Story progress tracked with dots.
+- [ ] Play/pause/skip/exit controls work.
+- [ ] Story completion awards badge.
+- [ ] 60 FPS maintained during story mode.
+
+---
+
+## V29 — Shareable Discoveries
+
+### US-66: Take a Screenshot (v29)
+As a child, I can capture a screenshot of the globe showing my discovered birds to share with friends and family.
+
+### US-67: Create a Share Card (v29)
+As a child, I can generate a beautiful share card showing a bird I discovered with its name, location, and a fun fact.
+
+### US-68: Export My Progress (v29)
+As a child (or parent), I can export my discovery progress as a file to save or share.
+
+### R-90: Screenshot Capture (v29)
+- "Screenshot" button in control panel.
+- Captures the Three.js canvas as PNG image.
+- Uses `renderer.domElement.toDataURL('image/png')`.
+- Shows brief flash animation on capture.
+- Triggers browser download of the image file.
+- Filename: `bird-globe-{timestamp}.png`.
+
+### R-91: Share Card Generator (v29)
+- "Share" button on bird info card.
+- Generates a shareable image card containing:
+  - Bird name (zh + en).
+  - Bird silhouette or model preview.
+  - Location on mini-globe or region name.
+  - Fun fact text.
+  - App branding ("万羽拾音 — Kids Bird Globe").
+- Card rendered to off-screen canvas (600x400px).
+- Download as PNG or copy to clipboard.
+
+### R-92: Progress Export (v29)
+- "Export Progress" button in settings/control panel.
+- Exports JSON file containing:
+  - Discovered birds list.
+  - Collection data.
+  - Achievement progress.
+  - Expedition progress.
+  - Total statistics.
+- Filename: `bird-globe-progress-{timestamp}.json`.
+- Triggers browser download.
+
+### R-93: Share UI Panel (v29)
+- Share panel accessible from control panel.
+- Shows recent screenshots thumbnails.
+- "Copy to Clipboard" button for share cards.
+- "Download" button for all shareable content.
+- Glass UI styling consistent with design system.
+
+### AC-V29-1: Shareable Discoveries
+- [ ] Screenshot capture button works and downloads PNG.
+- [ ] Flash animation on screenshot capture.
+- [ ] Share card generates image with bird info.
+- [ ] Share card downloadable as PNG.
+- [ ] Progress export downloads JSON file.
+- [ ] Share panel shows recent captures.
+- [ ] 60 FPS maintained.
+
+---
+
+## V30 — Educational Layer
+
+### US-69: Browse Bird Encyclopedia (v30)
+As a child, I can open a comprehensive Bird Encyclopedia that lets me search and browse all birds with detailed information.
+
+### US-70: Filter Birds by Properties (v30)
+As a child, I can filter birds by continent, diet, and wingspan to find specific types of birds I'm interested in.
+
+### US-71: See Detailed Bird Entries (v30)
+As a child, I can see detailed bird entries with a 3D model preview, habitat map, sound playback, and interesting facts.
+
+### R-94: Bird Encyclopedia Panel (v30)
+- Full-featured encyclopedia panel in modal layer.
+- Search bar: filter birds by name (zh/en).
+- Filter controls:
+  - By continent (multi-select checkboxes).
+  - By diet type (insect, fish, seeds, fruit, meat, omnivore).
+  - By wingspan range (small <50cm, medium 50-100cm, large >100cm).
+- Results grid showing bird cards with photo, name, region badge.
+- Discovered birds show full info, undiscovered show silhouette.
+- Pagination or virtual scroll for performance.
+
+### R-95: Detailed Bird Entry (v30)
+- Each bird entry panel shows:
+  - 3D model preview (rotating model in small viewport).
+  - Habitat map: mini-globe with bird's region highlighted.
+  - Sound playback button with waveform visualization.
+  - Facts section: habitat, diet, wingspan, lifespan, fun fact.
+  - Scientific name in italic.
+  - Conservation status indicator (if available).
+- Entry panel slides in from right on desktop, bottom sheet on mobile.
+
+### R-96: Performance Monitoring (v30)
+- Optional FPS counter overlay (developer toggle).
+- Scene statistics: draw calls, triangles, textures.
+- Memory usage indicator.
+- Accessible via hidden gesture (triple-tap corner).
+
+### R-97: Dynamic LOD Tuning (v30)
+- Automatic LOD distance adjustment based on FPS.
+- If FPS drops below 45, increase LOD distance (show fewer 3D models).
+- If FPS stable above 55, decrease LOD distance (show more detail).
+- LOD tuning runs every 60 frames.
+- Configurable min/max LOD distances.
+
+### R-98: Asset Preloading (v30)
+- Progressive asset preloading on app start.
+- Priority: Earth textures → bird models → sound files.
+- Loading progress shown in loading screen.
+- Background preloading continues after initial render.
+- Preload queue with priority levels.
+
+### R-99: Texture Compression (v30)
+- Use compressed texture formats where supported (KTX2/Basis).
+- Fallback to standard textures on unsupported devices.
+- Texture atlas for bird silhouettes to reduce draw calls.
+- Lazy texture loading for off-screen content.
+
+### AC-V30-1: Educational Layer
+- [ ] Bird Encyclopedia panel with search and filters.
+- [ ] Filter by continent, diet, wingspan works.
+- [ ] Bird entries show 3D model preview.
+- [ ] Habitat map highlights bird's region.
+- [ ] Sound playback works in encyclopedia.
+- [ ] Performance monitoring available via hidden toggle.
+- [ ] Dynamic LOD tuning adjusts based on FPS.
+- [ ] Asset preloading shows progress.
+- [ ] 60 FPS maintained with all V30 features.
+
+---
+
+## V31 — AI Bird Guide
+
+### US-72: Ask the AI Bird Guide (v31)
+As a child, I can click on any bird and ask questions like "Why do flamingos stand on one leg?" and get a friendly, simplified answer from the AI Bird Guide character.
+
+### US-73: See the Bird Guide Character (v31)
+As a child, I see a friendly animated bird character (the Guide) that appears with a speech bubble when I interact with birds, making learning feel like a conversation.
+
+### US-74: Hear the Guide Speak (v31)
+As a child, I can press a narration button to hear the AI Guide read its answer aloud, making the experience accessible even if I can't read well yet.
+
+### R-100: AI Bird Guide System (v31)
+- Friendly animated bird guide character displayed as a floating UI element.
+- Children can click a bird and ask predefined questions or type simple queries.
+- Guide responds with simplified, child-friendly explanations.
+- Local knowledge base with 100+ Q&A pairs covering common bird questions.
+- Fallback: small LLM prompt interface for questions not in knowledge base.
+- Speech bubble UI with typing animation effect.
+- Narration button triggers Web Speech API to read the answer aloud.
+- Guide character has idle animation (gentle bobbing).
+- Questions categorized: behavior, habitat, diet, appearance, migration.
+- Response length: 2-3 sentences maximum for child comprehension.
+
+### R-101: Bird Guide Knowledge Base (v31)
+- JSON knowledge base with structured Q&A entries.
+- Each entry: question pattern, bird ID (or "general"), answer text (zh/en).
+- Pattern matching for question routing (keyword-based).
+- Categories: "why" questions, "how" questions, "what" questions, "where" questions.
+- Fallback responses for unmatched questions.
+- Knowledge base loaded from `/src/data/bird-knowledge.json`.
+
+### R-102: Guide UI (v31)
+- Speech bubble component with glass-morphism styling.
+- Typing animation (characters appear one by one, 30ms per character).
+- Narration button (speaker icon) triggers TTS.
+- Close button to dismiss.
+- Guide character: small bird avatar with bobbing animation.
+- Positioned bottom-left, above existing BirdGuide component.
+- Does not overlap with bird info card or control panel.
+- z-index: card layer (60).
+
+### AC-V31-1: AI Bird Guide
+- [ ] AI Bird Guide character visible with idle animation.
+- [ ] Clicking a bird shows question prompts.
+- [ ] Guide responds with child-friendly answers.
+- [ ] Knowledge base contains 100+ Q&A pairs.
+- [ ] Speech bubble with typing animation works.
+- [ ] Narration button reads answer aloud.
+- [ ] Guide does not overlap other UI.
+- [ ] 60 FPS maintained.
+
+---
+
+## V32 — AR Bird Mode
+
+### US-75: Place Birds in My Room (v32)
+As a child, I can enter AR mode and place a 3D bird on my table or floor, then walk around it to see it from all angles.
+
+### US-76: Watch AR Bird Animations (v32)
+As a child, I can see the AR bird play animations like flapping wings and hopping, making it feel like a real bird is in my room.
+
+### R-103: Enhanced AR Mode (v32)
+- WebXR integration when available (AR session request).
+- Camera feed background with 3D bird overlay.
+- Hit-test for surface detection to place bird on detected surfaces.
+- Bird model rendered at real-world scale.
+- Touch controls: pinch to scale, drag to rotate, tap to place.
+- Bird plays idle animation (wing flap, hop) in AR.
+- Fallback: simulated AR using device camera feed as background with gyroscope-based rotation.
+- AR session management: enter/exit cleanly.
+- Performance: maintain 30+ FPS in AR mode.
+
+### R-104: AR UI Overlay (v32)
+- "Enter AR" button on bird info card (replaces/enhances existing "View in AR").
+- AR mode overlay with: place button, animation toggle, exit button.
+- Instructions overlay: "Point at a flat surface and tap to place the bird".
+- Semi-transparent UI controls that don't obscure the bird.
+- Screenshot button in AR mode.
+
+### AC-V32-1: AR Bird Mode
+- [ ] WebXR AR mode launches on supported devices.
+- [ ] Camera feed visible as background.
+- [ ] Bird model placed on detected surface.
+- [ ] Bird animations play in AR.
+- [ ] Touch controls for scale/rotate work.
+- [ ] Fallback simulated AR works on non-WebXR devices.
+- [ ] Clean enter/exit AR transitions.
+- [ ] 30+ FPS in AR mode.
+
+---
+
+## V33 — Advanced Bird Animation
+
+### US-77: See Birds Take Off and Land (v33)
+As a child, I can see birds perform takeoff and landing animations, making them feel more alive and realistic.
+
+### US-78: See Birds Perch and Rest (v33)
+As a child, I can see birds occasionally rest on invisible anchor points near their habitat, then take off again to fly around.
+
+### US-79: See Birds Fly Between Habitats (v33)
+As a child, I occasionally see birds fly from one habitat area to another, showing natural movement patterns.
+
+### R-105: Advanced Animation System (v33)
+- Takeoff animation: bird crouches slightly, rapid wing flaps, lifts off surface.
+- Landing animation: bird descends, spreads wings to brake, settles on surface.
+- Perching behavior: birds periodically land on invisible anchor points near habitat.
+- Perch duration: 5-15 seconds with idle perch animation (head turns, tail flicks).
+- Inter-habitat flight: birds occasionally fly between nearby habitat zones.
+- Flight path: curved arc between habitats with altitude variation.
+- Animation state machine: idle → takeoff → flying → landing → perching → idle.
+- Transition blending between animation states (0.3s crossfade).
+- Per-bird random timing for natural variety.
+
+### R-106: Animation Anchor Points (v33)
+- Invisible anchor points defined per habitat region.
+- 3-5 anchor points per region at surface level.
+- Birds select random anchor point within their habitat for perching.
+- Anchor points positioned at biologically plausible locations.
+
+### AC-V33-1: Advanced Bird Animation
+- [ ] Takeoff animation plays when bird leaves perch.
+- [ ] Landing animation plays when bird arrives at perch.
+- [ ] Birds perch for 5-15 seconds with idle animation.
+- [ ] Birds occasionally fly between habitats.
+- [ ] Animation state machine transitions smoothly.
+- [ ] Per-bird random timing creates natural variety.
+- [ ] 60 FPS maintained with advanced animations.
+
+---
+
+## V34 — Bird Photographer Game
+
+### US-80: Play the Bird Photographer Game (v34)
+As a child, I can enter a special camera mode where I try to take the best photos of birds, earning scores based on how well I frame the shot.
+
+### US-81: See My Photography Score (v34)
+As a child, after taking a photo I see a score based on the bird's distance, pose, and composition, motivating me to take better photos.
+
+### R-107: Bird Photographer Mini-Game (v34)
+- Dedicated "Photographer Mode" accessible from control panel.
+- Camera viewfinder overlay with rule-of-thirds grid.
+- Scoring system based on:
+  - Distance: closer = higher score (max 30 points).
+  - Bird pose: mid-animation (flying, flapping) = bonus (max 30 points).
+  - Composition: bird near grid intersections = bonus (max 20 points).
+  - Rarity: rare/legendary birds = bonus multiplier (max 20 points).
+- Score displayed immediately after capture with star rating (1-5 stars).
+- Photo saved to gallery with score metadata.
+- Leaderboard: top 10 best photos by score.
+- Timer mode: capture as many high-scoring photos as possible in 60 seconds.
+
+### R-108: Photographer UI (v34)
+- Viewfinder overlay with crosshair and grid lines.
+- Score popup animation after capture.
+- Star rating display (1-5 stars based on score).
+- Timer display for timed mode.
+- Best score indicator.
+- Glass-morphism styling consistent with design system.
+
+### AC-V34-1: Bird Photographer Game
+- [ ] Photographer mode accessible from control panel.
+- [ ] Viewfinder overlay with grid lines.
+- [ ] Scoring based on distance, pose, composition, rarity.
+- [ ] Score and star rating displayed after capture.
+- [ ] Photos saved with score metadata.
+- [ ] Timer mode works (60 seconds).
+- [ ] 60 FPS maintained in photographer mode.
+
+---
+
+## V35 — Habitat Ecosystems
+
+### US-82: Explore Different Biomes (v35)
+As a child, I can see distinct biome environments on the globe — rainforest, savannah, arctic, and ocean islands — each with unique visual styling.
+
+### US-83: Hear Biome Sounds (v35)
+As a child, when I zoom into a biome region, I hear ambient sounds like rainforest insects, savannah wind, or arctic wind, making each region feel unique.
+
+### US-84: See Biome-Specific Birds (v35)
+As a child, I can see that each biome has its own set of unique birds that only appear in that environment.
+
+### R-109: Habitat Biome System (v35)
+- Four distinct biome zones on the globe:
+  - Rainforest: lush green tint, particle effects (floating leaves), warm lighting.
+  - Savannah: golden-amber tint, dust particles, warm directional light.
+  - Arctic: blue-white tint, snow particles, cool lighting.
+  - Ocean Islands: turquoise water tint, wave shimmer effect, bright lighting.
+- Biome visual effects rendered as localized overlays on globe surface.
+- Each biome has custom ambient lighting adjustments.
+- Biome boundaries defined by lat/lng regions.
+- Smooth transition when camera moves between biomes.
+
+### R-110: Biome Ambient Sound (v35)
+- Each biome has an ambient sound loop.
+- Sound fades in when camera enters biome region, fades out when leaving.
+- Rainforest: insects, birds, rain drops.
+- Savannah: wind, distant animal calls.
+- Arctic: wind, ice cracking.
+- Ocean: waves, seabirds.
+- Volume adjusts based on camera zoom level (louder when closer).
+- Uses Web Audio API for spatial audio effect.
+
+### R-111: Biome Bird Assignment (v35)
+- Each bird in birds.json has a `biome` field mapping to its primary biome.
+- Biome filter in encyclopedia and control panel.
+- Birds visually enhanced when in their home biome (subtle glow).
+- Biome info displayed in bird info card.
+
+### AC-V35-1: Habitat Ecosystems
+- [ ] Four biome zones visible on globe with distinct visual styling.
+- [ ] Biome-specific particle effects (leaves, dust, snow, shimmer).
+- [ ] Ambient sounds play when camera enters biome region.
+- [ ] Sound volume adjusts with zoom level.
+- [ ] Birds assigned to biomes.
+- [ ] Biome filter available in encyclopedia.
+- [ ] Smooth transitions between biomes.
+- [ ] 60 FPS maintained with biome effects.
+
+---
+
+## V36 — Real Migration Data
+
+### US-85: See Real Migration Routes (v36)
+As a child, I can see animated migration paths based on real data, showing how birds like the Arctic Tern travel thousands of miles across the globe.
+
+### US-86: Learn Migration Facts (v36)
+As a child, I can tap on a migration route to learn interesting facts about the journey, like distance traveled and time taken.
+
+### R-112: Real Migration Data System (v36)
+- Migration routes based on public datasets (eBird, BirdLife International patterns).
+- Expanded migration data for 10+ species:
+  - Arctic Tern (Arctic ↔ Antarctic, ~70,000 km).
+  - Barn Swallow (Europe ↔ Africa, ~10,000 km).
+  - Bar-tailed Godwit (Alaska → New Zealand, ~11,000 km non-stop).
+  - Ruby-throated Hummingbird (Eastern US ↔ Central America).
+  - Whooping Crane (Canada ↔ Texas).
+  - Flamingo (seasonal movements within Africa/Americas).
+  - Osprey (North America ↔ South America).
+  - Peregrine Falcon (Arctic ↔ South America).
+  - Sooty Shearwater (circumnavigation route).
+  - Snow Goose (Arctic ↔ Southern US).
+- Each route: waypoints array, total distance, travel time, season.
+- Animated migration paths with speed proportional to real travel time.
+- Migration info popup on route tap: distance, duration, fun fact.
+
+### R-113: Migration Visualization Enhancement (v36)
+- Thicker, more visible migration arcs with gradient coloring.
+- Bird silhouette icon animating along the path.
+- Season indicator showing when migration occurs.
+- Multiple birds can migrate simultaneously.
+- Migration speed control (1x, 2x, 5x).
+
+### AC-V36-1: Real Migration Data
+- [ ] 10+ migration routes with real data.
+- [ ] Animated paths with bird silhouette icons.
+- [ ] Route tap shows migration facts.
+- [ ] Distance and duration displayed per route.
+- [ ] Migration speed control works.
+- [ ] 60 FPS maintained with migration animations.
+
+---
+
+## V37 — Advanced Visual Rendering
+
+### US-87: See a More Realistic Earth (v37)
+As a child, I see a beautiful, realistic Earth with HDR lighting, volumetric clouds, and atmospheric scattering that makes the globe feel like a real planet.
+
+### R-114: HDR Environment Lighting (v37)
+- HDR environment map for realistic reflections and ambient lighting.
+- Tone mapping (ACES Filmic) for natural color reproduction.
+- Exposure control adjusting with time of day.
+- Environment map influences bird model materials.
+
+### R-115: Volumetric Clouds (v37)
+- Enhanced cloud system with volumetric appearance.
+- Multiple cloud layers at different altitudes.
+- Cloud density varies by region (more over tropics, less over deserts).
+- Soft shadow casting from clouds onto globe surface.
+- Cloud animation: slow drift with turbulence.
+
+### R-116: Atmospheric Scattering (v37)
+- Rayleigh scattering simulation for sky color.
+- Blue atmosphere visible at globe edges.
+- Orange/red tint during dawn/dusk transitions.
+- Scattering intensity varies with sun angle.
+- Subtle god-ray effect from sun direction.
+
+### AC-V37-1: Advanced Visual Rendering
+- [ ] HDR environment lighting with tone mapping.
+- [ ] Volumetric cloud appearance with multiple layers.
+- [ ] Atmospheric scattering visible at globe edges.
+- [ ] Dawn/dusk color transitions work.
+- [ ] Cloud shadows on globe surface.
+- [ ] 60 FPS maintained with advanced rendering.
+
+---
+
+## V38 — Bird Encyclopedia Pro
+
+### US-88: Search and Filter Birds Professionally (v38)
+As a child, I can search birds by name and filter by continent, wingspan, and diet with an intuitive, professional-quality encyclopedia interface.
+
+### US-89: See 3D Bird Previews (v38)
+As a child, I can see a rotating 3D preview of each bird in the encyclopedia, along with its habitat map and bird call.
+
+### US-90: Read Fun Facts (v38)
+As a child, each bird entry has multiple fun facts, conservation status, and comparison data that teaches me interesting things.
+
+### R-117: Encyclopedia Pro System (v38)
+- Upgraded encyclopedia with professional-grade filtering:
+  - Full-text search across all bird fields.
+  - Multi-select continent filter with visual map.
+  - Wingspan range slider (0-300cm).
+  - Diet type filter with icons.
+  - Activity period filter (day/night/dawn-dusk).
+  - Rarity filter (common/rare/legendary).
+- Sort options: name, wingspan, rarity, continent.
+- Results count and active filter indicators.
+- Pagination with smooth scroll.
+
+### R-118: Enhanced Bird Entry (v38)
+- 3D model preview with orbit controls in entry panel.
+- Habitat map: interactive mini-globe showing bird's range.
+- Bird call playback with waveform visualization.
+- Multiple fun facts (3-5 per bird) displayed as cards.
+- Conservation status indicator (if applicable).
+- Size comparison: bird silhouette next to human hand/child.
+- Related birds section showing similar species.
+
+### AC-V38-1: Bird Encyclopedia Pro
+- [ ] Full-text search works across all fields.
+- [ ] All filter types functional (continent, wingspan, diet, activity, rarity).
+- [ ] Sort options work correctly.
+- [ ] 3D model preview with orbit controls.
+- [ ] Habitat map shows bird's range.
+- [ ] Bird call playback with waveform.
+- [ ] Multiple fun facts per bird.
+- [ ] 60 FPS maintained.
+
+---
+
+## V39 — Classroom Mode
+
+### US-91: Teacher Controls the Experience (v39)
+As a teacher, I can enter Classroom Mode to control the globe experience for my students, triggering specific birds, migration demos, and quiz sessions.
+
+### US-92: Fullscreen Presentation (v39)
+As a teacher, I can use a fullscreen presentation mode that hides unnecessary UI and shows only the globe and educational content.
+
+### US-93: Guided Lessons (v39)
+As a teacher, I can start guided lesson sequences that walk students through specific topics like "Bird Migration" or "Tropical Birds".
+
+### R-119: Classroom Mode System (v39)
+- Teacher mode toggle (password-protected or long-press activation).
+- Teacher control panel with:
+  - Bird selector: search and highlight specific birds on globe.
+  - Migration demo: trigger specific migration route animations.
+  - Quiz launcher: start quiz sessions with custom question sets.
+  - Region focus: zoom to specific continent/region.
+  - Time control: set time of day for day/night demonstration.
+  - Weather control: toggle weather effects for teaching.
+- Guided lesson system with predefined lesson plans:
+  - "Bird Migration" lesson.
+  - "Tropical Birds" lesson.
+  - "Arctic Survival" lesson.
+  - "Bird Anatomy" lesson.
+- Each lesson: sequence of steps with narration, bird highlights, quiz questions.
+
+### R-120: Presentation UI (v39)
+- Fullscreen presentation mode hiding control panel and sidebar.
+- Large, readable text for classroom projection.
+- Teacher controls accessible via floating toolbar.
+- Student view: clean globe with highlighted content only.
+- Presentation mode toggle in teacher panel.
+- Font size scaling for projection (1.5x-2x).
+
+### AC-V39-1: Classroom Mode
+- [ ] Teacher mode activatable with long-press.
+- [ ] Teacher control panel with bird/migration/quiz/region/time/weather controls.
+- [ ] Guided lessons available with step sequences.
+- [ ] Fullscreen presentation mode works.
+- [ ] Large text for projection readability.
+- [ ] Teacher controls accessible in presentation mode.
+- [ ] 60 FPS maintained in classroom mode.
+
+---
+
+## V40 — Exploration Sandbox
+
+### US-94: Spawn Birds Freely (v40)
+As a child, I can tap anywhere on the globe to spawn a bird of my choice, creating my own bird world.
+
+### US-95: Create Custom Flocks (v40)
+As a child, I can create flocks of birds that fly together, adjusting their size and speed.
+
+### US-96: Control Time and Weather (v40)
+As a child, I can adjust the time of day and toggle weather effects to see how birds behave in different conditions.
+
+### US-97: Free Exploration (v40)
+As a child, I have a sandbox where I can experiment freely with birds, time, and weather, encouraging creativity and discovery.
+
+### R-121: Sandbox Mode System (v40)
+- Sandbox mode toggle from control panel.
+- Bird spawner: tap globe surface to place a bird.
+  - Bird type selector (grid of available birds).
+  - Spawned birds animate and flock naturally.
+  - Maximum 50 spawned birds for performance.
+- Flock creator: select multiple spawned birds to form a flock.
+  - Adjustable flock speed (slow/medium/fast).
+  - Adjustable flock size (tight/loose).
+  - Flock follows touch/click point on globe.
+- Time control slider: drag to change time of day (0-24h).
+  - Real-time lighting updates.
+  - Bird activity changes with time.
+- Weather toggle panel: enable/disable rain, clouds, storms per region.
+- Reset sandbox button to clear all spawned birds.
+
+### R-122: Sandbox UI (v40)
+- Sandbox toolbar at bottom of screen.
+- Bird spawner palette (scrollable grid of bird icons).
+- Time slider with sun/moon icon.
+- Weather toggles with icons.
+- Flock controls (speed/size sliders).
+- "Clear All" button with confirmation.
+- Sandbox mode indicator in HUD.
+- Glass-morphism styling consistent with design system.
+
+### AC-V40-1: Exploration Sandbox
+- [ ] Sandbox mode toggleable from control panel.
+- [ ] Tap to spawn birds on globe surface.
+- [ ] Bird type selector works.
+- [ ] Spawned birds animate naturally.
+- [ ] Flock creation works with speed/size controls.
+- [ ] Time slider changes lighting and bird activity.
+- [ ] Weather toggles work per region.
+- [ ] Maximum 50 spawned birds enforced.
+- [ ] Reset clears all spawned birds.
+- [ ] 60 FPS maintained in sandbox mode.
+

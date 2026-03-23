@@ -9,7 +9,7 @@ export function CloudLayer() {
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.00012;
+      meshRef.current.rotation.y += 0.0005;
     }
   });
 
@@ -19,7 +19,7 @@ export function CloudLayer() {
       <meshStandardMaterial
         map={texture}
         transparent
-        opacity={0.5}
+        opacity={0.4}
         depthWrite={false}
         roughness={1}
         metalness={0}

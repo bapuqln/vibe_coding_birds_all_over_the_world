@@ -25,7 +25,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "collared-kingfisher",
@@ -53,7 +55,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/duck.glb",
+    "soundPath": ""
   },
   {
     "id": "red-crowned-crane",
@@ -81,7 +85,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "mandarin-duck",
@@ -109,7 +115,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/duck.glb",
+    "soundPath": ""
   },
   {
     "id": "great-hornbill",
@@ -137,7 +145,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/toucan.glb",
+    "soundPath": ""
   },
   {
     "id": "himalayan-monal",
@@ -165,7 +175,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "indian-peafowl",
@@ -193,7 +205,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "european-robin",
@@ -221,7 +235,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "atlantic-puffin",
@@ -249,7 +265,9 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/seagull.glb",
+    "soundPath": ""
   },
   {
     "id": "lilac-breasted-roller",
@@ -277,7 +295,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "secretary-bird",
@@ -305,7 +325,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "african-grey-parrot",
@@ -333,7 +355,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "shoebill",
@@ -361,7 +385,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "marabou-stork",
@@ -389,7 +415,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "bald-eagle",
@@ -417,7 +445,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "snowy-owl",
@@ -445,7 +475,9 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "peregrine-falcon",
@@ -473,7 +505,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "canada-goose",
@@ -501,7 +535,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/duck.glb",
+    "soundPath": ""
   },
   {
     "id": "california-condor",
@@ -529,7 +565,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "northern-cardinal",
@@ -557,7 +595,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "andean-condor",
@@ -586,7 +626,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "harpy-eagle",
@@ -614,7 +656,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "scarlet-macaw",
@@ -642,7 +686,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "hoatzin",
@@ -670,7 +716,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "toco-toucan",
@@ -698,7 +746,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/toucan.glb",
+    "soundPath": ""
   },
   {
     "id": "kookaburra",
@@ -726,7 +776,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/duck.glb",
+    "soundPath": ""
   },
   {
     "id": "cassowary",
@@ -754,7 +806,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "kiwi",
@@ -782,7 +836,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "sulphur-crested-cockatoo",
@@ -810,7 +866,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "superb-fairywren",
@@ -838,7 +896,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "emperor-penguin",
@@ -866,7 +926,9 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "wandering-albatross",
@@ -894,7 +956,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "arctic-tern",
@@ -923,7 +987,9 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "resplendent-quetzal",
@@ -951,7 +1017,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "blue-footed-booby",
@@ -979,7 +1047,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/seagull.glb",
+    "soundPath": ""
   },
   {
     "id": "greater-flamingo",
@@ -1007,7 +1077,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "golden-eagle",
@@ -1035,7 +1107,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "barn-owl",
@@ -1063,7 +1137,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "ostrich",
@@ -1091,7 +1167,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "emu",
@@ -1119,7 +1197,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "kakapo",
@@ -1147,7 +1227,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "magnificent-frigatebird",
@@ -1175,7 +1257,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "king-penguin",
@@ -1203,7 +1287,9 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "barn-swallow",
@@ -1231,7 +1317,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "bar-tailed-godwit",
@@ -1259,7 +1347,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "snowy-egret",
@@ -1287,7 +1377,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "ruby-throated-hummingbird",
@@ -1315,7 +1407,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "galapagos-penguin",
@@ -1343,7 +1437,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/penguin.glb",
+    "soundPath": ""
   },
   {
     "id": "superb-lyrebird",
@@ -1371,7 +1467,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/sparrow.glb",
+    "soundPath": ""
   },
   {
     "id": "white-stork",
@@ -1399,7 +1497,9 @@
     "storyTheme": "grassland",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   },
   {
     "id": "toucan-barbet",
@@ -1427,7 +1527,9 @@
     "storyTheme": "rainforest",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/toucan.glb",
+    "soundPath": ""
   },
   {
     "id": "african-fish-eagle",
@@ -1455,7 +1557,9 @@
     "storyTheme": "ocean",
     "soundUrl": "",
     "migration": false,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/eagle.glb",
+    "soundPath": ""
   },
   {
     "id": "whooping-crane",
@@ -1463,8 +1567,8 @@
     "pinyin": "měi zhōu hè",
     "nameEn": "Whooping Crane",
     "scientificName": "Grus americana",
-    "lat": 59.0,
-    "lng": -112.0,
+    "lat": 59,
+    "lng": -112,
     "region": "north-america",
     "funFactZh": "美洲鹤是北美最高的鸟类，站立时可达1.5米！它们曾濒临灭绝，仅剩21只，如今通过保护已恢复到800多只。",
     "funFactEn": "The Whooping Crane is the tallest bird in North America, standing up to 1.5 metres! They nearly went extinct with only 21 left, but conservation efforts have brought their numbers back to over 800.",
@@ -1483,6 +1587,8 @@
     "storyTheme": "arctic",
     "soundUrl": "",
     "migration": true,
-    "model": ""
+    "model": "",
+    "modelPath": "/models/birds/flamingo.glb",
+    "soundPath": ""
   }
 ]

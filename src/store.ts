@@ -5,19 +5,25 @@ import type {
   BirdPhoto,
   CollectedBird,
   DailyMission,
+  ExpeditionProgress,
   Language,
   MissionTemplate,
+  PhotoScore,
   QuestProgress,
   QuizQuestion,
   QuizState,
   SoundGuessOption,
   SoundGuessState,
+  SpawnedBird,
+  StoryPlayState,
+  TimeOfDay,
   TourState,
 } from "./types";
 import birdsData from "./data/birds.json";
 import missionTemplates from "./data/missions.json";
 import achievementDefs from "./data/achievements.json";
-import type { AchievementDef, Bird } from "./types";
+import expeditionsData from "./data/expeditions.json";
+import type { AchievementDef, Bird, Expedition } from "./types";
 
 export type PanelType =
   | "birdCard"
@@ -34,7 +40,13 @@ export type PanelType =
   | "ar"
   | "missions"
   | "photoGallery"
-  | "achievements";
+  | "achievements"
+  | "expeditions"
+  | "share"
+  | "aiGuide"
+  | "photographer"
+  | "classroom"
+  | "sandbox";
 
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
@@ -47,6 +59,7 @@ const PHOTOS_KEY = "kids-bird-globe-photos";
 const ACHIEVEMENTS_KEY = "kids-bird-globe-achievements";
 const LISTEN_COUNT_KEY = "kids-bird-globe-listen-count";
 const COMPLETED_MISSIONS_KEY = "kids-bird-globe-completed-missions";
+const EXPEDITIONS_KEY = "kids-bird-globe-expeditions";
 
 const allBirds = birdsData as Bird[];
 const templates = missionTemplates as MissionTemplate[];
@@ -177,6 +190,58 @@ interface AppStore {
   achievementNotification: string | null;
   listenCount: number;
 
+  expeditions: ExpeditionProgress[];
+  expeditionPanelOpen: boolean;
+  expeditionNotification: string | null;
+
+  storyModeActive: boolean;
+  storyPlayState: StoryPlayState;
+  activeStoryId: string | null;
+  storyStepIndex: number;
+  storyHighlightBirdId: string | null;
+  completedStories: string[];
+
+  weatherVisible: boolean;
+  timeOfDay: TimeOfDay;
+
+  sharePanelOpen: boolean;
+  screenshotFlash: boolean;
+  recentScreenshots: string[];
+
+  currentFps: number;
+  dynamicLodDistance: number;
+  encyclopediaEntryBirdId: string | null;
+
+  // V31 — AI Guide
+  aiGuideOpen: boolean;
+  aiGuideQuestion: string | null;
+  aiGuideAnswer: string | null;
+
+  // V32 — AR
+  arSessionActive: boolean;
+
+  // V34 — Photographer
+  photographerModeActive: boolean;
+  photographerScore: PhotoScore | null;
+
+  // V35 — Biomes
+  activeBiome: string | null;
+  biomeAudioEnabled: boolean;
+
+  // V36 — Migration
+  migrationSpeed: number;
+
+  // V39 — Classroom
+  classroomModeActive: boolean;
+  presentationMode: boolean;
+  activeLessonId: string | null;
+  lessonStepIndex: number;
+
+  // V40 — Sandbox
+  sandboxModeActive: boolean;
+  spawnedBirds: SpawnedBird[];
+  sandboxTimeHour: number;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -245,6 +310,62 @@ interface AppStore {
   checkAchievements: () => void;
   dismissAchievementNotification: () => void;
   incrementListenCount: () => void;
+
+  setExpeditionPanelOpen: (open: boolean) => void;
+  updateExpeditionProgress: () => void;
+  dismissExpeditionNotification: () => void;
+
+  setStoryModeActive: (active: boolean) => void;
+  startStoryAdventure: (storyId: string) => void;
+  nextStoryStep: () => void;
+  pauseStoryAdventure: () => void;
+  resumeStoryAdventure: () => void;
+  exitStoryAdventure: () => void;
+  completeStoryAdventure: () => void;
+
+  setWeatherVisible: (visible: boolean) => void;
+  setTimeOfDay: (time: TimeOfDay) => void;
+
+  setSharePanelOpen: (open: boolean) => void;
+  addScreenshot: (dataUrl: string) => void;
+  setScreenshotFlash: (flash: boolean) => void;
+
+  setCurrentFps: (fps: number) => void;
+  setDynamicLodDistance: (distance: number) => void;
+  setEncyclopediaEntryBirdId: (id: string | null) => void;
+
+  // V31
+  setAiGuideOpen: (open: boolean) => void;
+  setAiGuideQuestion: (q: string | null) => void;
+  setAiGuideAnswer: (a: string | null) => void;
+
+  // V32
+  setArSessionActive: (active: boolean) => void;
+
+  // V34
+  setPhotographerModeActive: (active: boolean) => void;
+  setPhotographerScore: (score: PhotoScore | null) => void;
+
+  // V35
+  setActiveBiome: (biome: string | null) => void;
+  setBiomeAudioEnabled: (enabled: boolean) => void;
+
+  // V36
+  setMigrationSpeed: (speed: number) => void;
+
+  // V39
+  setClassroomModeActive: (active: boolean) => void;
+  setPresentationMode: (active: boolean) => void;
+  setActiveLessonId: (id: string | null) => void;
+  setLessonStepIndex: (index: number) => void;
+  nextLessonStep: () => void;
+
+  // V40
+  setSandboxModeActive: (active: boolean) => void;
+  addSpawnedBird: (bird: SpawnedBird) => void;
+  removeSpawnedBird: (id: string) => void;
+  clearSpawnedBirds: () => void;
+  setSandboxTimeHour: (hour: number) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -317,6 +438,51 @@ export const useAppStore = create<AppStore>((set, get) => ({
   achievementPanelOpen: false,
   achievementNotification: null,
   listenCount: loadFromStorage<number>(LISTEN_COUNT_KEY, 0),
+
+  expeditions: loadFromStorage<ExpeditionProgress[]>(EXPEDITIONS_KEY, []),
+  expeditionPanelOpen: false,
+  expeditionNotification: null,
+
+  storyModeActive: false,
+  storyPlayState: "idle" as StoryPlayState,
+  activeStoryId: null,
+  storyStepIndex: 0,
+  storyHighlightBirdId: null,
+  completedStories: loadFromStorage<string[]>("kids-bird-globe-completed-stories", []),
+
+  weatherVisible: false,
+  timeOfDay: "morning" as TimeOfDay,
+
+  sharePanelOpen: false,
+  screenshotFlash: false,
+  recentScreenshots: [],
+
+  currentFps: 60,
+  dynamicLodDistance: 2.5,
+  encyclopediaEntryBirdId: null,
+
+  aiGuideOpen: false,
+  aiGuideQuestion: null,
+  aiGuideAnswer: null,
+
+  arSessionActive: false,
+
+  photographerModeActive: false,
+  photographerScore: null,
+
+  activeBiome: null,
+  biomeAudioEnabled: true,
+
+  migrationSpeed: 1,
+
+  classroomModeActive: false,
+  presentationMode: false,
+  activeLessonId: null,
+  lessonStepIndex: 0,
+
+  sandboxModeActive: false,
+  spawnedBirds: [],
+  sandboxTimeHour: 12,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -472,6 +638,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const updated = [...state.discoveredBirds, birdId];
     saveToStorage(DISCOVERY_KEY, updated);
     set({ discoveredBirds: updated, discoveryNotification: birdId });
+    setTimeout(() => get().updateExpeditionProgress(), 100);
   },
   dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
 
@@ -517,6 +684,21 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
     if (activePanel !== null && activePanel !== "achievements") {
       reset.achievementPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "expeditions") {
+      reset.expeditionPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "share") {
+      reset.sharePanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "aiGuide") {
+      reset.aiGuideOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "classroom") {
+      reset.classroomModeActive = false;
+    }
+    if (activePanel !== null && activePanel !== "sandbox") {
+      reset.sandboxModeActive = false;
     }
     set(reset);
   },
@@ -641,4 +823,156 @@ export const useAppStore = create<AppStore>((set, get) => ({
     saveToStorage(LISTEN_COUNT_KEY, newCount);
     set({ listenCount: newCount });
   },
+
+  setExpeditionPanelOpen: (expeditionPanelOpen) => set({ expeditionPanelOpen }),
+
+  updateExpeditionProgress: () => {
+    const state = get();
+    const discovered = state.discoveredBirds;
+    const allExpeditions = expeditionsData as Expedition[];
+    let newCompletion: string | null = null;
+
+    const updated = allExpeditions.map((exp) => {
+      const existing = state.expeditions.find((e) => e.expeditionId === exp.id);
+      if (existing?.completed) return existing;
+
+      let current = 0;
+
+      if (exp.type === "region") {
+        current = allBirds.filter(
+          (b) => b.region === exp.target && discovered.includes(b.id),
+        ).length;
+      } else if (exp.type === "collection") {
+        current = discovered.length;
+      } else if (exp.type === "trait" && exp.target === "migration") {
+        current = allBirds.filter(
+          (b) => Boolean(b.migration) && discovered.includes(b.id),
+        ).length;
+      } else if (exp.type === "trait" && exp.target === "rare") {
+        current = allBirds.filter(
+          (b) =>
+            (b.rarity === "rare" || b.rarity === "legendary") &&
+            discovered.includes(b.id),
+        ).length;
+      } else if (exp.type === "continents") {
+        const regions = new Set(
+          allBirds
+            .filter((b) => discovered.includes(b.id))
+            .map((b) => b.region),
+        );
+        current = regions.size;
+      }
+
+      const completed = current >= exp.goal;
+      if (completed && !existing?.completed) {
+        newCompletion = exp.id;
+      }
+
+      return {
+        expeditionId: exp.id,
+        current: Math.min(current, exp.goal),
+        completed,
+        completedAt: completed ? existing?.completedAt || Date.now() : undefined,
+      };
+    });
+
+    saveToStorage(EXPEDITIONS_KEY, updated);
+    set({
+      expeditions: updated,
+      expeditionNotification: newCompletion,
+    });
+  },
+
+  dismissExpeditionNotification: () => set({ expeditionNotification: null }),
+
+  setStoryModeActive: (storyModeActive) => set({ storyModeActive }),
+
+  startStoryAdventure: (storyId) =>
+    set({
+      storyModeActive: true,
+      storyPlayState: "playing",
+      activeStoryId: storyId,
+      storyStepIndex: 0,
+      storyHighlightBirdId: null,
+    }),
+
+  nextStoryStep: () =>
+    set((state) => ({
+      storyStepIndex: state.storyStepIndex + 1,
+      storyHighlightBirdId: null,
+    })),
+
+  pauseStoryAdventure: () => set({ storyPlayState: "paused" }),
+
+  resumeStoryAdventure: () => set({ storyPlayState: "playing" }),
+
+  exitStoryAdventure: () =>
+    set({
+      storyModeActive: false,
+      storyPlayState: "idle",
+      activeStoryId: null,
+      storyStepIndex: 0,
+      storyHighlightBirdId: null,
+    }),
+
+  completeStoryAdventure: () => {
+    const state = get();
+    if (!state.activeStoryId) return;
+    const updated = state.completedStories.includes(state.activeStoryId)
+      ? state.completedStories
+      : [...state.completedStories, state.activeStoryId];
+    saveToStorage("kids-bird-globe-completed-stories", updated);
+    set({
+      storyPlayState: "complete",
+      completedStories: updated,
+    });
+  },
+
+  setWeatherVisible: (weatherVisible) => set({ weatherVisible }),
+  setTimeOfDay: (timeOfDay) => set({ timeOfDay }),
+
+  setSharePanelOpen: (sharePanelOpen) => set({ sharePanelOpen }),
+  addScreenshot: (dataUrl) =>
+    set((state) => ({
+      recentScreenshots: [dataUrl, ...state.recentScreenshots].slice(0, 10),
+    })),
+  setScreenshotFlash: (screenshotFlash) => set({ screenshotFlash }),
+
+  setCurrentFps: (currentFps) => set({ currentFps }),
+  setDynamicLodDistance: (dynamicLodDistance) => set({ dynamicLodDistance }),
+  setEncyclopediaEntryBirdId: (encyclopediaEntryBirdId) => set({ encyclopediaEntryBirdId }),
+
+  setAiGuideOpen: (aiGuideOpen) => set({ aiGuideOpen }),
+  setAiGuideQuestion: (aiGuideQuestion) => set({ aiGuideQuestion }),
+  setAiGuideAnswer: (aiGuideAnswer) => set({ aiGuideAnswer }),
+
+  setArSessionActive: (arSessionActive) => set({ arSessionActive }),
+
+  setPhotographerModeActive: (photographerModeActive) => set({ photographerModeActive, photographerScore: null }),
+  setPhotographerScore: (photographerScore) => set({ photographerScore }),
+
+  setActiveBiome: (activeBiome) => set({ activeBiome }),
+  setBiomeAudioEnabled: (biomeAudioEnabled) => set({ biomeAudioEnabled }),
+
+  setMigrationSpeed: (migrationSpeed) => set({ migrationSpeed }),
+
+  setClassroomModeActive: (classroomModeActive) => set({ classroomModeActive }),
+  setPresentationMode: (presentationMode) => set({ presentationMode }),
+  setActiveLessonId: (activeLessonId) => set({ activeLessonId, lessonStepIndex: 0 }),
+  setLessonStepIndex: (lessonStepIndex) => set({ lessonStepIndex }),
+  nextLessonStep: () => set((state) => ({ lessonStepIndex: state.lessonStepIndex + 1 })),
+
+  setSandboxModeActive: (sandboxModeActive) => set({ sandboxModeActive }),
+  addSpawnedBird: (bird) =>
+    set((state) => ({
+      spawnedBirds: state.spawnedBirds.length < 50
+        ? [...state.spawnedBirds, bird]
+        : state.spawnedBirds,
+    })),
+  removeSpawnedBird: (id) =>
+    set((state) => ({
+      spawnedBirds: state.spawnedBirds.filter((b) => b.id !== id),
+    })),
+  clearSpawnedBirds: () => set({ spawnedBirds: [] }),
+  setSandboxTimeHour: (sandboxTimeHour) => set({ sandboxTimeHour }),
 }));

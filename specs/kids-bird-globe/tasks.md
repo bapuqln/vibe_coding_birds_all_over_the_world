@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v20)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v30)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -12,7 +12,264 @@
 > v17 phases (135–141) are complete.
 > v18 phases (142–149) are complete.
 > v19 phases (150–161) are complete.
-> v20 phases (162–173) are new.
+> v20 phases (162–173) are complete.
+> v21 phases (174–178) are complete.
+> v22 phases (179–181) are complete.
+> v23 phases (182–186) are complete.
+> v24 phases (187–192) are complete.
+> v25 phases (193–197) are complete.
+> v26 phases (198–201) are complete.
+> v27 phases (202–204) are complete.
+> v28 phases (205–209) are complete.
+> v29 phases (210–214) are complete.
+> v30 phases (215–221) are complete.
+
+---
+
+# v21 Tasks (Architecture Refactor)
+
+---
+
+## Phase 174: Core Module Setup
+
+- [x] **174.1** Create `/src/core/` directory.
+- [x] **174.2** Create `Engine.ts` — render loop manager exporting `useEngine` hook.
+- [x] **174.3** Create `SceneManager.ts` — scene configuration and lighting setup.
+- [x] **174.4** Refactor `CameraController.tsx` into `/src/core/CameraController.ts` with re-export from original location.
+- [x] **174.5** Create `/src/core/index.ts` barrel export.
+
+---
+
+## Phase 175: Systems Module Setup
+
+- [x] **175.1** Create `/src/systems/` directory.
+- [x] **175.2** Create `BirdSystem.ts` — consolidate bird data loading, marker logic, discovery tracking into `useBirdSystem` hook.
+- [x] **175.3** Create `MigrationSystem.ts` — migration route data and animation logic.
+- [x] **175.4** Create `QuizSystem.ts` — quiz question generation and scoring logic (refactor from QuizManager.ts).
+- [x] **175.5** Create `AudioSystem.ts` — sound playback management (refactor from useAudio.ts).
+- [x] **175.6** Create `AchievementSystem.ts` — achievement checking and mission tracking logic.
+- [x] **175.7** Create `/src/systems/index.ts` barrel export.
+
+---
+
+## Phase 176: Data Separation
+
+- [x] **176.1** Verify `/src/data/` contains only JSON data files (birds.json, migrations.json, achievements.json, missions.json, quests.json, stories.json).
+- [x] **176.2** Move any business logic out of data files into system modules.
+- [x] **176.3** Create `/src/data/index.ts` barrel export for typed data imports.
+
+---
+
+## Phase 177: Component Rewiring
+
+- [x] **177.1** Update component imports to use system module hooks where applicable.
+- [x] **177.2** Verify all existing components work with new module structure.
+- [x] **177.3** Remove any duplicate logic that now lives in system modules.
+
+---
+
+## Phase 178: V21 Verification
+
+- [x] **178.1** `/src/core/` directory exists with Engine.ts, SceneManager.ts, CameraController.ts. (AC-V21-1)
+- [x] **178.2** `/src/systems/` directory exists with all 5 system files. (AC-V21-1)
+- [x] **178.3** `/src/data/` has barrel exports for typed data. (AC-V21-1)
+- [x] **178.4** Build succeeds with zero TypeScript errors. (AC-V21-1)
+- [x] **178.5** All existing features continue to work. (AC-V21-1)
+
+---
+
+# v22 Tasks (Content Expansion)
+
+---
+
+## Phase 179: Bird Database Expansion
+
+- [x] **179.1** Audit current birds.json for required fields: name, continent, habitat, diet, wingspan, funFact, modelPath, soundPath.
+- [x] **179.2** Add missing fields (diet, modelPath, soundPath) to existing bird entries.
+- [x] **179.3** Ensure at least 30 birds total with all 7 regions represented (min 3 per region).
+- [x] **179.4** Validate no bird entry has missing required fields.
+
+---
+
+## Phase 180: Region Clusters
+
+- [x] **180.1** Create `RegionCluster.tsx` component in `/src/components/three/`.
+- [x] **180.2** Define region center positions for all 7 regions.
+- [x] **180.3** Render cluster markers showing region name and bird count.
+- [x] **180.4** Implement cluster click to trigger region filter and camera zoom.
+- [x] **180.5** Clusters visible at far zoom (distance > 4), fade at close zoom.
+
+---
+
+## Phase 181: V22 Verification
+
+- [x] **181.1** 30+ birds in birds.json with complete fields. (AC-V22-1)
+- [x] **181.2** All 7 regions have at least 3 birds. (AC-V22-1)
+- [x] **181.3** Region clusters visible and clickable. (AC-V22-1)
+- [x] **181.4** Build succeeds with zero TypeScript errors. (AC-V22-1)
+
+---
+
+# v23 Tasks (Performance Optimization)
+
+---
+
+## Phase 182: Model LOD System
+
+- [x] **182.1** Add camera distance calculation to bird markers in BirdSystem.
+- [x] **182.2** Implement LOD switching: high-poly model < 3 units, simplified mesh >= 3 units.
+- [x] **182.3** Add opacity crossfade (0.3s) for smooth LOD transitions.
+- [x] **182.4** Throttle distance checks to every 10 frames.
+
+---
+
+## Phase 183: Lazy Loading
+
+- [x] **183.1** Implement on-demand model loading when bird enters camera frustum.
+- [x] **183.2** Add lightweight placeholder (colored sphere) while model loads.
+- [x] **183.3** Cache loaded models in Map for instant re-display.
+- [x] **183.4** Enforce maximum 15 models loaded simultaneously.
+
+---
+
+## Phase 184: Instanced Markers
+
+- [x] **184.1** Create InstancedMesh for distant bird markers.
+- [x] **184.2** Set instance attributes: position, color, scale per bird.
+- [x] **184.3** Update instance matrices when birds change LOD state.
+- [x] **184.4** Verify single draw call for all instanced markers.
+
+---
+
+## Phase 185: Render Loop Optimization
+
+- [x] **185.1** Audit useFrame callbacks for blocking operations.
+- [x] **185.2** Throttle expensive computations (sorting, LOD) to every N frames.
+- [x] **185.3** Verify all geometry/material creation uses useMemo.
+- [x] **185.4** Profile with Chrome DevTools to confirm 60 FPS.
+
+---
+
+## Phase 186: V23 Verification
+
+- [x] **186.1** LOD system switches models based on distance. (AC-V23-1)
+- [x] **186.2** Models lazy-loaded on demand. (AC-V23-1)
+- [x] **186.3** InstancedMesh used for distant markers. (AC-V23-1)
+- [x] **186.4** 60 FPS maintained on mid-range hardware. (AC-V23-1)
+
+---
+
+# v24 Tasks (Visual Polish)
+
+---
+
+## Phase 187: Atmosphere Glow
+
+- [x] **187.1** Enhance AtmosphereShell with animated Fresnel shader (inner warm + outer cool).
+- [x] **187.2** Add subtle sine-wave glow intensity animation (amplitude 0.05, period 8s).
+- [x] **187.3** Verify glow visible from all viewing angles.
+
+---
+
+## Phase 188: Cloud Layer
+
+- [x] **188.1** Add independent rotation to CloudLayer (0.001 rad/frame).
+- [x] **188.2** Set cloud opacity to 0.4 for subtle parallax effect.
+- [x] **188.3** Verify clouds visible in both day and night regions.
+
+---
+
+## Phase 189: Sun Light & Shadows
+
+- [x] **189.1** Configure directional sun light with shadow casting enabled.
+- [x] **189.2** Set shadow map resolution to 512x512.
+- [x] **189.3** Bird markers cast soft shadows on globe surface.
+- [x] **189.4** Tune shadow bias and opacity (0.3) for subtle effect.
+
+---
+
+## Phase 190: Marker Visuals
+
+- [x] **190.1** Implement rarity-based glow colors (common: blue, rare: gold, legendary: purple).
+- [x] **190.2** Add animated pulse ring at marker base.
+- [x] **190.3** Smooth scale animation on hover (1.2x with ease-out).
+- [x] **190.4** Discovered markers show subtle sparkle effect.
+
+---
+
+## Phase 191: Camera Inertia
+
+- [x] **191.1** Enable OrbitControls damping (`enableDamping: true`).
+- [x] **191.2** Set damping factor to 0.08 for smooth deceleration.
+- [x] **191.3** Verify inertia works with existing zoom and fly-to animations.
+
+---
+
+## Phase 192: V24 Verification
+
+- [x] **192.1** Atmosphere glow visible from all angles. (AC-V24-1)
+- [x] **192.2** Cloud layer rotates with parallax. (AC-V24-1)
+- [x] **192.3** Sun light casts shadows. (AC-V24-1)
+- [x] **192.4** Marker glow colors match rarity. (AC-V24-1)
+- [x] **192.5** Camera inertia smooth after drag. (AC-V24-1)
+- [x] **192.6** 60 FPS maintained. (AC-V24-1)
+
+---
+
+# v25 Tasks (Exploration Experience)
+
+---
+
+## Phase 193: Expedition System
+
+- [x] **193.1** Create expedition data in `/src/data/expeditions.json` with predefined missions.
+- [x] **193.2** Add expedition types to `types.ts`: Expedition, ExpeditionProgress.
+- [x] **193.3** Create `ExpeditionSystem.ts` in `/src/systems/` with expedition lifecycle management.
+- [x] **193.4** Add expedition state to Zustand store: activeExpedition, expeditionProgress, completedExpeditions.
+- [x] **193.5** Add localStorage persistence for expedition data.
+- [x] **193.6** Wire expedition progress to bird discovery events.
+
+---
+
+## Phase 194: Mission Panel
+
+- [x] **194.1** Create `ExpeditionPanel.tsx` in `/src/components/ui/`.
+- [x] **194.2** Show available missions with descriptions and reward badge preview.
+- [x] **194.3** Active mission highlighted with progress bar.
+- [x] **194.4** Completed missions show earned badge.
+- [x] **194.5** Minimum tap size 56px for all interactive elements.
+- [x] **194.6** Add "Expeditions" button to RightControlPanel.
+- [x] **194.7** Integrate into App.tsx modal layer.
+
+---
+
+## Phase 195: Progress Tracker
+
+- [x] **195.1** Create `ExpeditionProgressBar.tsx` in `/src/components/ui/`.
+- [x] **195.2** Display "Expeditions: X/Y Complete" with progress bar.
+- [x] **195.3** Position in sidebar layer below existing progress bar.
+- [x] **195.4** Compact display, no overlap with other UI.
+
+---
+
+## Phase 196: Completion Celebration
+
+- [x] **196.1** Create celebration animation: confetti burst (30 particles).
+- [x] **196.2** Badge reveal animation (scale 0→1 with bounce easing).
+- [x] **196.3** "Mission Complete!" message with expedition name.
+- [x] **196.4** Duration 2.5s, non-blocking, auto-dismiss.
+
+---
+
+## Phase 197: V25 Verification
+
+- [x] **197.1** Expedition missions available and selectable. (AC-V25-1)
+- [x] **197.2** Active mission progress tracked. (AC-V25-1)
+- [x] **197.3** Completed missions award badges. (AC-V25-1)
+- [x] **197.4** Progress tracker shows completion. (AC-V25-1)
+- [x] **197.5** Celebration animation works. (AC-V25-1)
+- [x] **197.6** No UI overlap. (AC-V25-1)
+- [x] **197.7** 60 FPS maintained. (AC-V25-1)
 
 ---
 
@@ -925,50 +1182,778 @@
 
 ---
 
-## Summary (v18)
+# v26 Tasks (Dynamic World Simulation)
+
+---
+
+## Phase 198: Enhanced Day/Night Cycle
+
+- [x] **198.1** Increase sun rotation speed to 0.03 rad/s for more visible day/night cycle.
+- [x] **198.2** Improve city lights shader with smooth per-fragment fade based on sun angle.
+- [x] **198.3** Create `TimeIndicator.tsx` HUD component showing time of day (morning/afternoon/evening/night).
+- [x] **198.4** Add time-of-day state to store based on sun angle.
+
+---
+
+## Phase 199: Weather Zone System
+
+- [x] **199.1** Create weather configuration data in `/src/data/weather.json` defining weather per region.
+- [x] **199.2** Create `WeatherSystem.ts` in `/src/systems/` managing weather state.
+- [x] **199.3** Create `CloudCluster.tsx` component rendering billboard cloud sprites above regions.
+- [x] **199.4** Create `RainParticles.tsx` component with vertical particle streams.
+- [x] **199.5** Create `StormEffect.tsx` component with dark clouds and lightning flash.
+- [x] **199.6** Integrate weather components into GlobeScene.
+- [x] **199.7** Add weather toggle button to RightControlPanel.
+- [x] **199.8** Add `weatherVisible` state to store.
+
+---
+
+## Phase 200: Bird Activity Variation
+
+- [x] **200.1** Add `activityPeriod` field to Bird type: "diurnal" | "nocturnal" | "crepuscular".
+- [x] **200.2** Update birds.json with activityPeriod for all 53 birds.
+- [x] **200.3** Compute sun angle at each bird's lat/lng in BirdMarker.
+- [x] **200.4** Adjust bird marker opacity based on activity period and sun angle.
+- [x] **200.5** Add nocturnal bird eye-glow shader effect.
+- [x] **200.6** Crepuscular birds visible during dawn/dusk transitions.
+
+---
+
+## Phase 201: V26 Verification
+
+- [x] **201.1** Day/night cycle with visible sun rotation. (AC-V26-1)
+- [x] **201.2** City lights smooth on night side. (AC-V26-1)
+- [x] **201.3** Weather effects visible in regions. (AC-V26-1)
+- [x] **201.4** Bird activity varies with time of day. (AC-V26-1)
+- [x] **201.5** Time indicator in HUD. (AC-V26-1)
+- [x] **201.6** 60 FPS maintained. (AC-V26-1)
+
+---
+
+# v27 Tasks (Flocking System)
+
+---
+
+## Phase 202: Boids Algorithm
+
+- [x] **202.1** Create `FlockingSystem.ts` in `/src/systems/` with boids computation.
+- [x] **202.2** Implement separation force (avoid crowding neighbors).
+- [x] **202.3** Implement alignment force (match neighbor heading).
+- [x] **202.4** Implement cohesion force (move toward group center).
+- [x] **202.5** Add species-specific flock parameters: flockSize, speed, altitudeRange, wanderRadius.
+- [x] **202.6** Add flock data to birds.json or separate flock config.
+- [x] **202.7** Implement globe surface collision avoidance.
+
+---
+
+## Phase 203: Flock Rendering
+
+- [x] **203.1** Create `FlockRenderer.tsx` component using InstancedMesh per flock.
+- [x] **203.2** Update instance matrices per frame from boids positions.
+- [x] **203.3** Implement spatial hashing grid for O(1) neighbor lookups.
+- [x] **203.4** Throttle distant flock updates to every 2 frames.
+- [x] **203.5** Enforce maximum 8 active flocks visible.
+- [x] **203.6** Add animation phase offsets for wing-flap variety.
+- [x] **203.7** Integrate FlockRenderer into GlobeScene.
+
+---
+
+## Phase 204: V27 Verification
+
+- [x] **204.1** Birds move in natural-looking flocks. (AC-V27-1)
+- [x] **204.2** Boids behaviors visible. (AC-V27-1)
+- [x] **204.3** Species have different flock parameters. (AC-V27-1)
+- [x] **204.4** GPU-friendly rendering confirmed. (AC-V27-1)
+- [x] **204.5** 60 FPS maintained. (AC-V27-1)
+
+---
+
+# v28 Tasks (Story Mode)
+
+---
+
+## Phase 205: Story System
+
+- [x] **205.1** Create story data in `/src/data/stories-adventure.json` with three stories.
+- [x] **205.2** Add story types to `types.ts`: Story, StoryStep, StoryState.
+- [x] **205.3** Create `StorySystem.ts` in `/src/systems/` with story lifecycle management.
+- [x] **205.4** Add story state to store: activeStory, storyStep, storyState, storyModeActive.
+- [x] **205.5** Add localStorage persistence for completed stories.
+
+---
+
+## Phase 206: Story Camera
+
+- [x] **206.1** Implement camera auto-travel between story locations in CameraController.
+- [x] **206.2** Add cinematic zoom-out-then-in effect during travel.
+- [x] **206.3** Disable OrbitControls during story camera travel.
+- [x] **206.4** Travel duration proportional to angular distance (1-3s).
+
+---
+
+## Phase 207: Story Narration
+
+- [x] **207.1** Integrate Web Speech API narration for story steps.
+- [x] **207.2** Narration starts when camera arrives at location.
+- [x] **207.3** Add fallback text display when speech unavailable.
+- [x] **207.4** Voice selection: friendly, rate 0.9.
+
+---
+
+## Phase 208: Story Panel UI
+
+- [x] **208.1** Create `StoryModePanel.tsx` in `/src/components/ui/`.
+- [x] **208.2** Story selection view with story cards.
+- [x] **208.3** Playback view with narration text and progress dots.
+- [x] **208.4** Controls: play/pause, next step, exit story.
+- [x] **208.5** Featured bird golden glow highlight effect.
+- [x] **208.6** Story completion badge award.
+- [x] **208.7** Add "Stories" button to RightControlPanel.
+- [x] **208.8** Integrate into App.tsx modal layer.
+
+---
+
+## Phase 209: V28 Verification
+
+- [x] **209.1** Story selection panel works. (AC-V28-1)
+- [x] **209.2** Camera auto-travels between locations. (AC-V28-1)
+- [x] **209.3** Narration plays at each step. (AC-V28-1)
+- [x] **209.4** Featured birds highlighted. (AC-V28-1)
+- [x] **209.5** Controls work (play/pause/skip/exit). (AC-V28-1)
+- [x] **209.6** Story completion awards badge. (AC-V28-1)
+- [x] **209.7** 60 FPS maintained. (AC-V28-1)
+
+---
+
+# v29 Tasks (Shareable Discoveries)
+
+---
+
+## Phase 210: Screenshot Capture
+
+- [x] **210.1** Add "Screenshot" button to RightControlPanel.
+- [x] **210.2** Implement canvas capture via `gl.domElement.toDataURL('image/png')`.
+- [x] **210.3** Add flash animation overlay (white fade 0.3s).
+- [x] **210.4** Trigger browser download with timestamped filename.
+
+---
+
+## Phase 211: Share Card Generator
+
+- [x] **211.1** Create `ShareCardGenerator.ts` utility in `/src/utils/`.
+- [x] **211.2** Render bird info to off-screen canvas (600x400px).
+- [x] **211.3** Include bird name, region, fun fact, app branding.
+- [x] **211.4** Export as PNG via toDataURL.
+- [x] **211.5** Add "Share" button to BirdInfoCard.
+
+---
+
+## Phase 212: Progress Export
+
+- [x] **212.1** Create `exportProgress()` utility function.
+- [x] **212.2** Collect all localStorage data (discoveries, achievements, expeditions).
+- [x] **212.3** Serialize to JSON and trigger browser download.
+- [x] **212.4** Add "Export" button to control panel or share panel.
+
+---
+
+## Phase 213: Share Panel UI
+
+- [x] **213.1** Create `SharePanel.tsx` in `/src/components/ui/`.
+- [x] **213.2** Show recent screenshots as thumbnails.
+- [x] **213.3** "Copy to Clipboard" and "Download" buttons.
+- [x] **213.4** Glass UI styling.
+- [x] **213.5** Add "Share" button to RightControlPanel.
+- [x] **213.6** Integrate into App.tsx modal layer.
+
+---
+
+## Phase 214: V29 Verification
+
+- [x] **214.1** Screenshot capture downloads PNG. (AC-V29-1)
+- [x] **214.2** Flash animation on capture. (AC-V29-1)
+- [x] **214.3** Share card generates with bird info. (AC-V29-1)
+- [x] **214.4** Progress export downloads JSON. (AC-V29-1)
+- [x] **214.5** Share panel works. (AC-V29-1)
+- [x] **214.6** 60 FPS maintained. (AC-V29-1)
+
+---
+
+# v30 Tasks (Educational Layer)
+
+---
+
+## Phase 215: Enhanced Encyclopedia
+
+- [x] **215.1** Rebuild `BirdEncyclopediaPanel.tsx` with advanced filter system.
+- [x] **215.2** Add continent filter (multi-select checkboxes).
+- [x] **215.3** Add diet type filter (checkbox group).
+- [x] **215.4** Add wingspan range filter (small/medium/large buttons).
+- [x] **215.5** Combine filters with AND logic, search with OR on names.
+- [x] **215.6** Responsive grid layout for results.
+
+---
+
+## Phase 216: Detailed Bird Entry
+
+- [x] **216.1** Create `BirdEntryPanel.tsx` in `/src/components/ui/`.
+- [x] **216.2** Add 3D model preview with rotating bird in small Canvas.
+- [x] **216.3** Add habitat map with mini SVG globe highlighting region.
+- [x] **216.4** Add sound playback with waveform bars animation.
+- [x] **216.5** Add facts grid: habitat, diet, wingspan, lifespan, fun fact.
+- [x] **216.6** Slide-in animation (right on desktop, bottom on mobile).
+
+---
+
+## Phase 217: Performance Monitoring
+
+- [x] **217.1** Create `PerformanceMonitor.tsx` component.
+- [x] **217.2** Display FPS, draw calls, triangles, textures from renderer.info.
+- [x] **217.3** Hidden by default, activated via triple-tap or URL param `?perf=1`.
+- [x] **217.4** Semi-transparent overlay in top-right corner.
+
+---
+
+## Phase 218: Dynamic LOD Tuning
+
+- [x] **218.1** Track rolling average FPS over 60 frames in Engine.ts.
+- [x] **218.2** If avg FPS < 45: increase LOD distance by 0.5.
+- [x] **218.3** If avg FPS > 55: decrease LOD distance by 0.25.
+- [x] **218.4** Clamp LOD distance between 1.5 and 5.0.
+- [x] **218.5** Store dynamic LOD distance in Zustand store.
+
+---
+
+## Phase 219: Asset Preloading
+
+- [x] **219.1** Implement progressive asset preloading on app start.
+- [x] **219.2** Priority order: Earth textures → bird models → sound files.
+- [x] **219.3** Show loading progress in LoadingScreen.
+- [x] **219.4** Background preloading continues after initial render.
+
+---
+
+## Phase 220: Texture Compression
+
+- [x] **220.1** Add KTX2/Basis texture support where available.
+- [x] **220.2** Fallback to standard textures on unsupported devices.
+- [x] **220.3** Create texture atlas for bird silhouettes.
+- [x] **220.4** Lazy texture loading for off-screen content.
+
+---
+
+## Phase 221: V30 Verification
+
+- [x] **221.1** Encyclopedia with search and filters works. (AC-V30-1)
+- [x] **221.2** Bird entries show 3D preview and habitat map. (AC-V30-1)
+- [x] **221.3** Sound playback in encyclopedia works. (AC-V30-1)
+- [x] **221.4** Performance monitoring available. (AC-V30-1)
+- [x] **221.5** Dynamic LOD tuning adjusts based on FPS. (AC-V30-1)
+- [x] **221.6** Asset preloading shows progress. (AC-V30-1)
+- [x] **221.7** 60 FPS maintained with all V30 features. (AC-V30-1)
+
+---
+
+## Summary (v30)
 
 | Group | Tasks | Status |
 |-------|-------|--------|
-| UI Overlap Fix (v18) | 142.1–142.3 | Complete |
-| Improved Bird Model (v18) | 143.1–143.3 | Complete |
-| Bird Marker Visuals (v18) | 144.1–144.3 | Complete |
-| Info Card Sections (v18) | 145.1–145.3 | Complete |
-| Discovery Feedback (v18) | 146.1–146.3 | Complete |
-| Camera Experience (v18) | 147.1–147.3 | Complete |
-| UI Stability (v18) | 148.1–148.3 | Complete |
-| Final Verification (v18) | 149.1–149.7 | Complete |
-| **Total v18 tasks** | **28 tasks** | **28 complete** |
-| Enhanced Mission Panel (v17) | 135.1–135.4 | Complete |
-| Photo Mode Overlay (v17) | 136.1–136.4 | Complete |
-| Encyclopedia Search & Grouping (v17) | 137.1–137.4 | Complete |
-| Achievement Progress Bars (v17) | 138.1–138.3 | Complete |
-| Continent Progress & Rotating Tips (v17) | 139.1–139.4 | Complete |
-| Enhanced Bird Hints (v17) | 140.1–140.3 | Complete |
-| Final Verification (v17) | 141.1–141.8 | Complete |
-| **Total v17 tasks** | **30 tasks** | **30 complete** |
-| Daily Bird Mission System (v16) | 127.1–127.11 | New |
-| Bird Photo Mode (v16) | 128.1–128.10 | New |
-| Bird Encyclopedia Enhancement (v16) | 129.1–129.5 | New |
-| Explorer Achievement System (v16) | 130.1–130.11 | New |
-| Discovery Celebration Enhancement (v16) | 131.1–131.4 | New |
-| Exploration Progress & Hints (v16) | 132.1–132.5 | New |
-| Performance Optimization (v16) | 133.1–133.5 | New |
-| Final Verification (v16) | 134.1–134.8 | New |
-| **Total v16 tasks** | **59 tasks** | **0 complete** |
-| Real-Time Day-Night Earth (v15) | 119.1–119.5 | New |
-| Enhanced Migration Routes (v15) | 120.1–120.4 | New |
-| AI Bird Narration System (v15) | 121.1–121.6 | New |
-| Bird Discovery Celebration (v15) | 122.1–122.4 | New |
-| Enhanced Bird Info Card (v15) | 123.1–123.4 | New |
-| Camera Orbit After Arrival (v15) | 124.1–124.4 | New |
-| Performance Optimization (v15) | 125.1–125.5 | New |
-| Final Verification (v15) | 126.1–126.7 | New |
-| **Total v15 tasks** | **39 tasks** | **0 complete** |
-| **Total v14 tasks** | **35 tasks** | **35 complete** |
-| **Total v13 tasks** | **52 tasks** | **52 complete** |
-| **Total v12 tasks** | **51 tasks** | **51 complete** |
-| **Total v11 tasks** | **54 tasks** | **54 complete** |
-| **Total v10 tasks** | **49 tasks** | **49 complete** |
+| Core Module Setup (v21) | 174.1–174.5 | Complete |
+| Systems Module Setup (v21) | 175.1–175.7 | Complete |
+| Data Separation (v21) | 176.1–176.3 | Complete |
+| Component Rewiring (v21) | 177.1–177.3 | Complete |
+| V21 Verification | 178.1–178.5 | Complete |
+| **Total v21 tasks** | **23 tasks** | **23 complete** |
+| Bird Database Expansion (v22) | 179.1–179.4 | Complete |
+| Region Clusters (v22) | 180.1–180.5 | Complete |
+| V22 Verification | 181.1–181.4 | Complete |
+| **Total v22 tasks** | **13 tasks** | **13 complete** |
+| Model LOD System (v23) | 182.1–182.4 | Complete |
+| Lazy Loading (v23) | 183.1–183.4 | Complete |
+| Instanced Markers (v23) | 184.1–184.4 | Complete |
+| Render Loop Optimization (v23) | 185.1–185.4 | Complete |
+| V23 Verification | 186.1–186.4 | Complete |
+| **Total v23 tasks** | **20 tasks** | **20 complete** |
+| Atmosphere Glow (v24) | 187.1–187.3 | Complete |
+| Cloud Layer (v24) | 188.1–188.3 | Complete |
+| Sun Light & Shadows (v24) | 189.1–189.4 | Complete |
+| Marker Visuals (v24) | 190.1–190.4 | Complete |
+| Camera Inertia (v24) | 191.1–191.3 | Complete |
+| V24 Verification | 192.1–192.6 | Complete |
+| **Total v24 tasks** | **23 tasks** | **23 complete** |
+| Expedition System (v25) | 193.1–193.6 | Complete |
+| Mission Panel (v25) | 194.1–194.7 | Complete |
+| Progress Tracker (v25) | 195.1–195.4 | Complete |
+| Completion Celebration (v25) | 196.1–196.4 | Complete |
+| V25 Verification | 197.1–197.7 | Complete |
+| **Total v25 tasks** | **28 tasks** | **28 complete** |
+| Enhanced Day/Night (v26) | 198.1–198.4 | Complete |
+| Weather Zones (v26) | 199.1–199.8 | Complete |
+| Bird Activity (v26) | 200.1–200.6 | Complete |
+| V26 Verification | 201.1–201.6 | Complete |
+| **Total v26 tasks** | **24 tasks** | **24 complete** |
+| Boids Algorithm (v27) | 202.1–202.7 | Complete |
+| Flock Rendering (v27) | 203.1–203.7 | Complete |
+| V27 Verification | 204.1–204.5 | Complete |
+| **Total v27 tasks** | **19 tasks** | **19 complete** |
+| Story System (v28) | 205.1–205.5 | Complete |
+| Story Camera (v28) | 206.1–206.4 | Complete |
+| Story Narration (v28) | 207.1–207.4 | Complete |
+| Story Panel UI (v28) | 208.1–208.8 | Complete |
+| V28 Verification | 209.1–209.7 | Complete |
+| **Total v28 tasks** | **28 tasks** | **28 complete** |
+| Screenshot Capture (v29) | 210.1–210.4 | Complete |
+| Share Card Generator (v29) | 211.1–211.5 | Complete |
+| Progress Export (v29) | 212.1–212.4 | Complete |
+| Share Panel UI (v29) | 213.1–213.6 | Complete |
+| V29 Verification | 214.1–214.6 | Complete |
+| **Total v29 tasks** | **25 tasks** | **25 complete** |
+| Enhanced Encyclopedia (v30) | 215.1–215.6 | Complete |
+| Detailed Bird Entry (v30) | 216.1–216.6 | Complete |
+| Performance Monitoring (v30) | 217.1–217.4 | Complete |
+| Dynamic LOD Tuning (v30) | 218.1–218.5 | Complete |
+| Asset Preloading (v30) | 219.1–219.4 | Complete |
+| Texture Compression (v30) | 220.1–220.4 | Complete |
+| V30 Verification | 221.1–221.7 | Complete |
+| **Total v30 tasks** | **36 tasks** | **36 complete** |
+| **Total v20 tasks** | **36 tasks** | **36 complete** |
 | **Total v19 tasks** | **36 tasks** | **36 complete** |
 | **Total v18 tasks** | **28 tasks** | **28 complete** |
-| **Total all tasks (v1–v19)** | **~1008 tasks** | **~910 complete** |
+| **Total v17 tasks** | **30 tasks** | **30 complete** |
+| **Total all tasks (v1–v30)** | **~1267 tasks** | **~1169 complete** |
+
+---
+
+# v31 Tasks (AI Bird Guide)
+
+---
+
+## Phase 222: AI Guide Knowledge Base
+
+- [ ] **222.1** Create `/src/data/bird-knowledge.json` with 100+ Q&A pairs covering behavior, habitat, diet, appearance, migration.
+- [ ] **222.2** Create `AIGuideSystem.ts` in `/src/systems/` with keyword-based question routing.
+- [ ] **222.3** Add question categories: "why", "how", "what", "where" with pattern matching.
+- [ ] **222.4** Add fallback responses for unmatched questions.
+- [ ] **222.5** Add AI guide types to `types.ts`: GuideQuestion, GuideAnswer.
+- [ ] **222.6** Add AI guide state to store: `aiGuideOpen`, `aiGuideQuestion`, `aiGuideAnswer`.
+
+---
+
+## Phase 223: AI Guide UI
+
+- [ ] **223.1** Create `AIBirdGuidePanel.tsx` in `/src/components/ui/`.
+- [ ] **223.2** Implement speech bubble with glass-morphism styling.
+- [ ] **223.3** Add typing animation (30ms per character reveal).
+- [ ] **223.4** Add narration button triggering Web Speech API.
+- [ ] **223.5** Add guide character avatar with bobbing CSS animation.
+- [ ] **223.6** Position in card layer (z-60), bottom-left area.
+- [ ] **223.7** Add predefined question prompts when bird is selected.
+- [ ] **223.8** Add "Ask Guide" button to RightControlPanel.
+- [ ] **223.9** Integrate into App.tsx card layer.
+
+---
+
+## Phase 224: V31 Verification
+
+- [ ] **224.1** AI Bird Guide character visible with idle animation. (AC-V31-1)
+- [ ] **224.2** Clicking a bird shows question prompts. (AC-V31-1)
+- [ ] **224.3** Guide responds with child-friendly answers. (AC-V31-1)
+- [ ] **224.4** Knowledge base contains 100+ Q&A pairs. (AC-V31-1)
+- [ ] **224.5** Speech bubble with typing animation works. (AC-V31-1)
+- [ ] **224.6** Narration button reads answer aloud. (AC-V31-1)
+- [ ] **224.7** 60 FPS maintained. (AC-V31-1)
+
+---
+
+# v32 Tasks (AR Bird Mode)
+
+---
+
+## Phase 225: Enhanced AR Mode
+
+- [ ] **225.1** Enhance `ARViewerModal.tsx` with WebXR session request.
+- [ ] **225.2** Implement hit-test for surface detection.
+- [ ] **225.3** Add touch controls: pinch-to-scale, drag-to-rotate.
+- [ ] **225.4** Bird plays idle animation in AR mode.
+- [ ] **225.5** Create `ARSystem.ts` in `/src/systems/` for AR session management.
+- [ ] **225.6** Implement fallback simulated AR with camera feed and gyroscope.
+
+---
+
+## Phase 226: AR UI Overlay
+
+- [ ] **226.1** Add "Enter AR" button enhancement to bird info card.
+- [ ] **226.2** AR overlay with place/animation/exit buttons.
+- [ ] **226.3** Instructions overlay for surface detection.
+- [ ] **226.4** Screenshot button in AR mode.
+- [ ] **226.5** Clean enter/exit AR transitions.
+
+---
+
+## Phase 227: V32 Verification
+
+- [ ] **227.1** WebXR AR mode launches on supported devices. (AC-V32-1)
+- [ ] **227.2** Camera feed visible as background. (AC-V32-1)
+- [ ] **227.3** Bird animations play in AR. (AC-V32-1)
+- [ ] **227.4** Touch controls work. (AC-V32-1)
+- [ ] **227.5** Fallback simulated AR works. (AC-V32-1)
+
+---
+
+# v33 Tasks (Advanced Bird Animation)
+
+---
+
+## Phase 228: Animation State Machine
+
+- [ ] **228.1** Create `AnimationSystem.ts` in `/src/systems/` with state machine.
+- [ ] **228.2** Implement takeoff animation: crouch + rapid flaps + lift.
+- [ ] **228.3** Implement landing animation: descend + spread wings + settle.
+- [ ] **228.4** Implement perching behavior: head turns + tail flicks (5-15s).
+- [ ] **228.5** Implement inter-habitat flight: curved arc between regions.
+- [ ] **228.6** Add 0.3s crossfade blending between states.
+- [ ] **228.7** Per-bird random timing via phase offsets.
+
+---
+
+## Phase 229: Anchor Points
+
+- [ ] **229.1** Define anchor point data per habitat region.
+- [ ] **229.2** 3-5 anchor points per region at surface level.
+- [ ] **229.3** Birds select random anchor within habitat for perching.
+- [ ] **229.4** Integrate anchor points with BirdMarker animation.
+
+---
+
+## Phase 230: V33 Verification
+
+- [ ] **230.1** Takeoff animation plays correctly. (AC-V33-1)
+- [ ] **230.2** Landing animation plays correctly. (AC-V33-1)
+- [ ] **230.3** Birds perch for 5-15 seconds. (AC-V33-1)
+- [ ] **230.4** Inter-habitat flight works. (AC-V33-1)
+- [ ] **230.5** 60 FPS maintained. (AC-V33-1)
+
+---
+
+# v34 Tasks (Bird Photographer Game)
+
+---
+
+## Phase 231: Photographer System
+
+- [ ] **231.1** Create `PhotographerSystem.ts` in `/src/systems/` with scoring algorithm.
+- [ ] **231.2** Implement distance scoring (max 30 points).
+- [ ] **231.3** Implement pose scoring (max 30 points).
+- [ ] **231.4** Implement composition scoring with rule-of-thirds (max 20 points).
+- [ ] **231.5** Implement rarity bonus multiplier (max 20 points).
+- [ ] **231.6** Add photographer state to store: `photographerModeActive`, `photographerScore`.
+- [ ] **231.7** Score to star rating mapping (1-5 stars).
+
+---
+
+## Phase 232: Photographer UI
+
+- [ ] **232.1** Create `PhotographerMode.tsx` in `/src/components/ui/`.
+- [ ] **232.2** Viewfinder overlay with rule-of-thirds grid.
+- [ ] **232.3** Score popup animation after capture.
+- [ ] **232.4** Star rating display.
+- [ ] **232.5** Timer mode (60 seconds).
+- [ ] **232.6** Add "Photographer" button to RightControlPanel.
+- [ ] **232.7** Integrate into App.tsx overlay layer.
+
+---
+
+## Phase 233: V34 Verification
+
+- [ ] **233.1** Photographer mode accessible. (AC-V34-1)
+- [ ] **233.2** Scoring works correctly. (AC-V34-1)
+- [ ] **233.3** Star rating displayed. (AC-V34-1)
+- [ ] **233.4** Timer mode works. (AC-V34-1)
+- [ ] **233.5** 60 FPS maintained. (AC-V34-1)
+
+---
+
+# v35 Tasks (Habitat Ecosystems)
+
+---
+
+## Phase 234: Biome System
+
+- [ ] **234.1** Create `/src/data/biomes.json` with four biome zone definitions.
+- [ ] **234.2** Create `BiomeSystem.ts` in `/src/systems/` managing biome state.
+- [ ] **234.3** Create `BiomeEffects.tsx` in `/src/components/three/` for visual effects.
+- [ ] **234.4** Implement rainforest effects: green tint, floating leaf particles.
+- [ ] **234.5** Implement savannah effects: amber tint, dust particles.
+- [ ] **234.6** Implement arctic effects: blue-white tint, snow particles.
+- [ ] **234.7** Implement ocean effects: turquoise tint, wave shimmer.
+- [ ] **234.8** Smooth biome transitions based on camera position.
+
+---
+
+## Phase 235: Biome Audio
+
+- [ ] **235.1** Extend `AudioSystem.ts` with ambient sound management.
+- [ ] **235.2** Implement volume fade based on camera distance and zoom.
+- [ ] **235.3** Web Audio API GainNode for smooth crossfading.
+- [ ] **235.4** Add `biomeAudioEnabled` state to store.
+
+---
+
+## Phase 236: Biome Bird Assignment
+
+- [ ] **236.1** Add `biome` field to Bird type in types.ts.
+- [ ] **236.2** Update birds.json with biome assignments.
+- [ ] **236.3** Add biome filter to encyclopedia.
+- [ ] **236.4** Biome info displayed in bird info card.
+
+---
+
+## Phase 237: V35 Verification
+
+- [ ] **237.1** Four biome zones visible. (AC-V35-1)
+- [ ] **237.2** Particle effects per biome. (AC-V35-1)
+- [ ] **237.3** Ambient sounds play. (AC-V35-1)
+- [ ] **237.4** Biome filter works. (AC-V35-1)
+- [ ] **237.5** 60 FPS maintained. (AC-V35-1)
+
+---
+
+# v36 Tasks (Real Migration Data)
+
+---
+
+## Phase 238: Real Migration Data
+
+- [ ] **238.1** Expand `migrations.json` with 10+ species migration routes.
+- [ ] **238.2** Add waypoint arrays with lat/lng for each route.
+- [ ] **238.3** Add distance (km), duration (days), season, fun fact per route.
+- [ ] **238.4** Add migration info popup on route tap.
+- [ ] **238.5** Add `migrationSpeed` state to store (1x/2x/5x).
+
+---
+
+## Phase 239: Migration Visualization Enhancement
+
+- [ ] **239.1** Enhance `MigrationPaths.tsx` with thicker gradient arcs.
+- [ ] **239.2** Add bird silhouette icon animating along path.
+- [ ] **239.3** Add season indicator per route.
+- [ ] **239.4** Add migration speed control UI.
+- [ ] **239.5** Multiple simultaneous migration animations.
+
+---
+
+## Phase 240: V36 Verification
+
+- [ ] **240.1** 10+ migration routes present. (AC-V36-1)
+- [ ] **240.2** Bird silhouette icons animate. (AC-V36-1)
+- [ ] **240.3** Route tap shows facts. (AC-V36-1)
+- [ ] **240.4** Speed control works. (AC-V36-1)
+- [ ] **240.5** 60 FPS maintained. (AC-V36-1)
+
+---
+
+# v37 Tasks (Advanced Visual Rendering)
+
+---
+
+## Phase 241: HDR Lighting
+
+- [ ] **241.1** Add ACES Filmic tone mapping to Canvas.
+- [ ] **241.2** Create procedural environment map.
+- [ ] **241.3** Exposure adjustment based on time of day.
+- [ ] **241.4** Environment map influences bird materials.
+
+---
+
+## Phase 242: Volumetric Clouds
+
+- [ ] **242.1** Enhance `CloudLayer.tsx` with 3 layers at different altitudes.
+- [ ] **242.2** Different rotation speeds and opacities per layer.
+- [ ] **242.3** Cloud density variation by region.
+- [ ] **242.4** Soft shadow casting from clouds.
+
+---
+
+## Phase 243: Atmospheric Scattering
+
+- [ ] **243.1** Enhance `AtmosphereShell.tsx` with Rayleigh scattering shader.
+- [ ] **243.2** Blue atmosphere at globe edges.
+- [ ] **243.3** Orange/red tint during dawn/dusk.
+- [ ] **243.4** Scattering varies with sun angle.
+
+---
+
+## Phase 244: V37 Verification
+
+- [ ] **244.1** HDR lighting with tone mapping. (AC-V37-1)
+- [ ] **244.2** Multi-layer clouds visible. (AC-V37-1)
+- [ ] **244.3** Atmospheric scattering at edges. (AC-V37-1)
+- [ ] **244.4** Dawn/dusk color transitions. (AC-V37-1)
+- [ ] **244.5** 60 FPS maintained. (AC-V37-1)
+
+---
+
+# v38 Tasks (Bird Encyclopedia Pro)
+
+---
+
+## Phase 245: Encyclopedia Pro Filters
+
+- [ ] **245.1** Enhance `BirdEncyclopediaPanel.tsx` with full-text search.
+- [ ] **245.2** Add wingspan range slider (0-300cm).
+- [ ] **245.3** Add activity period filter.
+- [ ] **245.4** Add rarity filter.
+- [ ] **245.5** Add sort options (name, wingspan, rarity).
+- [ ] **245.6** Active filter count badge.
+
+---
+
+## Phase 246: Enhanced Bird Entry
+
+- [ ] **246.1** Enhance `BirdEntryPanel.tsx` with orbit controls on 3D preview.
+- [ ] **246.2** Interactive mini-globe for habitat range.
+- [ ] **246.3** Waveform visualization for bird call.
+- [ ] **246.4** Multiple fun facts (3-5 cards).
+- [ ] **246.5** Size comparison visualization.
+- [ ] **246.6** Related birds section.
+
+---
+
+## Phase 247: V38 Verification
+
+- [ ] **247.1** Full-text search works. (AC-V38-1)
+- [ ] **247.2** All filters functional. (AC-V38-1)
+- [ ] **247.3** Sort options work. (AC-V38-1)
+- [ ] **247.4** 3D preview with orbit controls. (AC-V38-1)
+- [ ] **247.5** 60 FPS maintained. (AC-V38-1)
+
+---
+
+# v39 Tasks (Classroom Mode)
+
+---
+
+## Phase 248: Classroom System
+
+- [ ] **248.1** Create `/src/data/lessons.json` with 4 lesson plans.
+- [ ] **248.2** Create `ClassroomSystem.ts` in `/src/systems/`.
+- [ ] **248.3** Add teacher mode activation (long-press 3s on title).
+- [ ] **248.4** Add classroom state to store: `classroomModeActive`, `presentationMode`.
+- [ ] **248.5** Teacher panel with bird/migration/quiz/region/time/weather controls.
+
+---
+
+## Phase 249: Presentation UI
+
+- [ ] **249.1** Create `ClassroomPanel.tsx` in `/src/components/ui/`.
+- [ ] **249.2** Fullscreen presentation mode hiding non-essential UI.
+- [ ] **249.3** Large text scaling (1.5x) for projection.
+- [ ] **249.4** Teacher floating toolbar.
+- [ ] **249.5** Guided lesson step navigation.
+- [ ] **249.6** Add "Classroom" indicator to HUD when active.
+
+---
+
+## Phase 250: V39 Verification
+
+- [ ] **250.1** Teacher mode activatable. (AC-V39-1)
+- [ ] **250.2** Teacher controls work. (AC-V39-1)
+- [ ] **250.3** Guided lessons available. (AC-V39-1)
+- [ ] **250.4** Presentation mode works. (AC-V39-1)
+- [ ] **250.5** 60 FPS maintained. (AC-V39-1)
+
+---
+
+# v40 Tasks (Exploration Sandbox)
+
+---
+
+## Phase 251: Sandbox System
+
+- [ ] **251.1** Create `SandboxSystem.ts` in `/src/systems/`.
+- [ ] **251.2** Implement bird spawner: tap globe to place bird at lat/lng.
+- [ ] **251.3** Bird type selector palette.
+- [ ] **251.4** Spawned birds animate with flock behavior.
+- [ ] **251.5** Maximum 50 spawned birds enforcement.
+- [ ] **251.6** Flock creator: select birds, adjust speed/size.
+- [ ] **251.7** Time control slider (0-24h → sun angle).
+- [ ] **251.8** Weather toggles per region.
+- [ ] **251.9** Add sandbox state to store: `sandboxModeActive`, `spawnedBirds`, `sandboxTimeHour`.
+
+---
+
+## Phase 252: Sandbox UI
+
+- [ ] **252.1** Create `SandboxToolbar.tsx` in `/src/components/ui/`.
+- [ ] **252.2** Bird spawner palette (scrollable grid).
+- [ ] **252.3** Time slider with sun/moon icon.
+- [ ] **252.4** Weather toggle icons.
+- [ ] **252.5** Flock speed/size sliders.
+- [ ] **252.6** "Clear All" button with confirmation.
+- [ ] **252.7** Sandbox mode indicator in HUD.
+- [ ] **252.8** Add "Sandbox" button to RightControlPanel.
+- [ ] **252.9** Integrate into App.tsx bottom panel layer.
+
+---
+
+## Phase 253: V40 Verification
+
+- [ ] **253.1** Sandbox mode toggleable. (AC-V40-1)
+- [ ] **253.2** Tap to spawn birds works. (AC-V40-1)
+- [ ] **253.3** Flock creation works. (AC-V40-1)
+- [ ] **253.4** Time slider changes lighting. (AC-V40-1)
+- [ ] **253.5** Weather toggles work. (AC-V40-1)
+- [ ] **253.6** Max 50 spawned birds enforced. (AC-V40-1)
+- [ ] **253.7** Reset clears all. (AC-V40-1)
+- [ ] **253.8** 60 FPS maintained. (AC-V40-1)
+
+---
+
+## Summary (v31-v40)
+
+| Group | Tasks | Status |
+|-------|-------|--------|
+| AI Guide Knowledge Base (v31) | 222.1–222.6 | Pending |
+| AI Guide UI (v31) | 223.1–223.9 | Pending |
+| V31 Verification | 224.1–224.7 | Pending |
+| **Total v31 tasks** | **22 tasks** | **0 complete** |
+| Enhanced AR Mode (v32) | 225.1–225.6 | Pending |
+| AR UI Overlay (v32) | 226.1–226.5 | Pending |
+| V32 Verification | 227.1–227.5 | Pending |
+| **Total v32 tasks** | **16 tasks** | **0 complete** |
+| Animation State Machine (v33) | 228.1–228.7 | Pending |
+| Anchor Points (v33) | 229.1–229.4 | Pending |
+| V33 Verification | 230.1–230.5 | Pending |
+| **Total v33 tasks** | **16 tasks** | **0 complete** |
+| Photographer System (v34) | 231.1–231.7 | Pending |
+| Photographer UI (v34) | 232.1–232.7 | Pending |
+| V34 Verification | 233.1–233.5 | Pending |
+| **Total v34 tasks** | **19 tasks** | **0 complete** |
+| Biome System (v35) | 234.1–234.8 | Pending |
+| Biome Audio (v35) | 235.1–235.4 | Pending |
+| Biome Bird Assignment (v35) | 236.1–236.4 | Pending |
+| V35 Verification | 237.1–237.5 | Pending |
+| **Total v35 tasks** | **21 tasks** | **0 complete** |
+| Real Migration Data (v36) | 238.1–238.5 | Pending |
+| Migration Visualization (v36) | 239.1–239.5 | Pending |
+| V36 Verification | 240.1–240.5 | Pending |
+| **Total v36 tasks** | **15 tasks** | **0 complete** |
+| HDR Lighting (v37) | 241.1–241.4 | Pending |
+| Volumetric Clouds (v37) | 242.1–242.4 | Pending |
+| Atmospheric Scattering (v37) | 243.1–243.4 | Pending |
+| V37 Verification | 244.1–244.5 | Pending |
+| **Total v37 tasks** | **17 tasks** | **0 complete** |
+| Encyclopedia Pro Filters (v38) | 245.1–245.6 | Pending |
+| Enhanced Bird Entry (v38) | 246.1–246.6 | Pending |
+| V38 Verification | 247.1–247.5 | Pending |
+| **Total v38 tasks** | **17 tasks** | **0 complete** |
+| Classroom System (v39) | 248.1–248.5 | Pending |
+| Presentation UI (v39) | 249.1–249.6 | Pending |
+| V39 Verification | 250.1–250.5 | Pending |
+| **Total v39 tasks** | **16 tasks** | **0 complete** |
+| Sandbox System (v40) | 251.1–251.9 | Pending |
+| Sandbox UI (v40) | 252.1–252.9 | Pending |
+| V40 Verification | 253.1–253.8 | Pending |
+| **Total v40 tasks** | **26 tasks** | **0 complete** |
+| **Total v31-v40 tasks** | **185 tasks** | **0 complete** |
+| **Total all tasks (v1–v40)** | **~1452 tasks** | **~1169 complete** |

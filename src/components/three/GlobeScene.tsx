@@ -8,6 +8,7 @@ import { Starfield } from "./Starfield";
 import { AtmosphereShell } from "./AtmosphereShell";
 import { CloudLayer } from "./CloudLayer";
 import { BirdMarker } from "./BirdMarker";
+import { InstancedBirdMarkers } from "./InstancedBirdMarkers";
 import { MigrationPaths } from "./MigrationPaths";
 import { CountryBorders } from "./CountryBorders";
 import { MapLabels } from "./MapLabels";
@@ -16,27 +17,46 @@ import { SoundRipple } from "./SoundRipple";
 import { HabitatHighlight } from "./HabitatHighlight";
 import { HeatmapLayer } from "./HeatmapLayer";
 import { BirdParticles } from "./BirdParticles";
+import { WeatherEffects } from "./WeatherEffects";
+import { RegionClusters } from "./RegionCluster";
+import { FlockRenderer } from "./FlockRenderer";
+import { BiomeEffects } from "./BiomeEffects";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 import { useAppStore } from "../../store";
 import { useEffect } from "react";
+import { useEngine } from "../../core/Engine";
+
+function EngineHost() {
+  useEngine();
+  return null;
+}
 
 const birds = birdsData as Bird[];
-
-const SUN_ROTATION_SPEED = 0.02;
 
 function SunLight() {
   const lightRef = useRef<DirectionalLight>(null);
   const angleRef = useRef(0);
+  const setTimeOfDay = useAppStore((s) => s.setTimeOfDay);
 
   useFrame((_, delta) => {
     if (!lightRef.current) return;
-    angleRef.current += delta * SUN_ROTATION_SPEED;
+    angleRef.current += delta * 0.03;
     lightRef.current.position.set(
       Math.cos(angleRef.current) * 5,
       1.5,
       Math.sin(angleRef.current) * 5,
     );
+
+    const normalized = ((angleRef.current % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+    const fraction = normalized / (Math.PI * 2);
+    let tod: "dawn" | "morning" | "afternoon" | "dusk" | "night";
+    if (fraction < 0.1) tod = "dawn";
+    else if (fraction < 0.35) tod = "morning";
+    else if (fraction < 0.55) tod = "afternoon";
+    else if (fraction < 0.65) tod = "dusk";
+    else tod = "night";
+    setTimeOfDay(tod);
   });
 
   return (
@@ -44,8 +64,16 @@ function SunLight() {
       ref={lightRef}
       position={[5, 1.5, 0]}
       intensity={1.6}
-      castShadow={false}
+      castShadow
       color="#fff5e6"
+      shadow-mapSize={[512, 512]}
+      shadow-bias={-0.001}
+      shadow-camera-near={0.5}
+      shadow-camera-far={15}
+      shadow-camera-left={-2}
+      shadow-camera-right={2}
+      shadow-camera-top={2}
+      shadow-camera-bottom={-2}
     />
   );
 }
@@ -61,6 +89,7 @@ export function GlobeScene() {
 
   return (
     <>
+      <EngineHost />
       <ambientLight intensity={0.2} />
       <hemisphereLight args={["#c8e6ff", "#0a1628", 0.3]} />
       <SunLight />
@@ -77,11 +106,16 @@ export function GlobeScene() {
             <BirdMarker key={bird.id} bird={bird} index={i} />
           ))}
         </Suspense>
+        <InstancedBirdMarkers />
         <MigrationPaths />
         <SoundRipple />
         <HabitatHighlight />
         <HeatmapLayer />
         <BirdParticles />
+        <WeatherEffects />
+        <RegionClusters />
+        <FlockRenderer />
+        <BiomeEffects />
       </group>
       <MapLabels />
       <CameraController controlsRef={controlsRef} />

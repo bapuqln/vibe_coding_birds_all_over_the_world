@@ -28,6 +28,8 @@ export function RightControlPanel() {
   const setActiveRegion = useAppStore((s) => s.setActiveRegion);
   const heatmapVisible = useAppStore((s) => s.heatmapVisible);
   const setHeatmapVisible = useAppStore((s) => s.setHeatmapVisible);
+  const weatherVisible = useAppStore((s) => s.weatherVisible);
+  const setWeatherVisible = useAppStore((s) => s.setWeatherVisible);
   const missionsPanelOpen = useAppStore((s) => s.missionsPanelOpen);
   const setMissionsPanelOpen = useAppStore((s) => s.setMissionsPanelOpen);
   const photoGalleryOpen = useAppStore((s) => s.photoGalleryOpen);
@@ -35,7 +37,24 @@ export function RightControlPanel() {
   const birdPhotos = useAppStore((s) => s.birdPhotos);
   const achievementPanelOpen = useAppStore((s) => s.achievementPanelOpen);
   const setAchievementPanelOpen = useAppStore((s) => s.setAchievementPanelOpen);
+  const expeditionPanelOpen = useAppStore((s) => s.expeditionPanelOpen);
+  const setExpeditionPanelOpen = useAppStore((s) => s.setExpeditionPanelOpen);
+  const storyModeActive = useAppStore((s) => s.storyModeActive);
+  const setStoryModeActive = useAppStore((s) => s.setStoryModeActive);
+  const setActivePanel = useAppStore((s) => s.setActivePanel);
   const dailyMissions = useAppStore((s) => s.dailyMissions);
+  const sharePanelOpen = useAppStore((s) => s.sharePanelOpen);
+  const setSharePanelOpen = useAppStore((s) => s.setSharePanelOpen);
+  const addScreenshot = useAppStore((s) => s.addScreenshot);
+  const setScreenshotFlash = useAppStore((s) => s.setScreenshotFlash);
+  const aiGuideOpen = useAppStore((s) => s.aiGuideOpen);
+  const setAiGuideOpen = useAppStore((s) => s.setAiGuideOpen);
+  const photographerActive = useAppStore((s) => s.photographerModeActive);
+  const setPhotographerActive = useAppStore((s) => s.setPhotographerModeActive);
+  const sandboxActive = useAppStore((s) => s.sandboxModeActive);
+  const setSandboxActive = useAppStore((s) => s.setSandboxModeActive);
+  const migrationSpeed = useAppStore((s) => s.migrationSpeed);
+  const setMigrationSpeed = useAppStore((s) => s.setMigrationSpeed);
 
   const handleDiscover = () => {
     const bird = pickRandomBird(selectedBirdId);
@@ -46,6 +65,20 @@ export function RightControlPanel() {
     setSelectedBird(null);
     setActiveRegion(null);
     setMigrationModeActive(false);
+  };
+
+  const handleScreenshot = () => {
+    const canvas = document.querySelector("canvas");
+    if (!canvas) return;
+    const dataUrl = canvas.toDataURL("image/png");
+    addScreenshot(dataUrl);
+    setScreenshotFlash(true);
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `bird-globe-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const incompleteMissions = dailyMissions.filter((m) => !m.completed).length;
@@ -112,6 +145,28 @@ export function RightControlPanel() {
       </ActionButton>
 
       <ActionButton
+        onClick={() => {
+          const next = !expeditionPanelOpen;
+          setExpeditionPanelOpen(next);
+          setActivePanel(next ? "expeditions" : null);
+        }}
+        active={expeditionPanelOpen}
+        icon="🎒"
+        ariaLabel={language === "zh" ? "探险" : "Expeditions"}
+      >
+        {language === "zh" ? "探险" : "Expeditions"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setStoryModeActive(!storyModeActive)}
+        active={storyModeActive}
+        icon="🎬"
+        ariaLabel={language === "zh" ? "冒险故事" : "Stories"}
+      >
+        {language === "zh" ? "冒险" : "Stories"}
+      </ActionButton>
+
+      <ActionButton
         onClick={() => setRegionFilterOpen(!regionFilterOpen)}
         active={regionFilterOpen}
         icon="🌍"
@@ -139,6 +194,32 @@ export function RightControlPanel() {
       </ActionButton>
 
       <ActionButton
+        onClick={() => setWeatherVisible(!weatherVisible)}
+        active={weatherVisible}
+        icon="🌦️"
+        ariaLabel={language === "zh" ? "天气" : "Weather"}
+      >
+        {language === "zh" ? "天气" : "Weather"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={handleScreenshot}
+        icon="📸"
+        ariaLabel={language === "zh" ? "截图" : "Screenshot"}
+      >
+        {language === "zh" ? "截图" : "Screenshot"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setSharePanelOpen(!sharePanelOpen)}
+        active={sharePanelOpen}
+        icon="📤"
+        ariaLabel={language === "zh" ? "分享" : "Share"}
+      >
+        {language === "zh" ? "分享" : "Share"}
+      </ActionButton>
+
+      <ActionButton
         onClick={() => setQuestsOpen(!questsOpen)}
         active={questsOpen}
         icon="🎯"
@@ -155,6 +236,43 @@ export function RightControlPanel() {
       >
         {language === "zh" ? "导览" : "Tour"}
       </ActionButton>
+
+      <ActionButton
+        onClick={() => setAiGuideOpen(!aiGuideOpen)}
+        active={aiGuideOpen}
+        icon="🦉"
+        ariaLabel={language === "zh" ? "鸟类向导" : "Bird Guide AI"}
+      >
+        {language === "zh" ? "向导" : "Guide"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setPhotographerActive(!photographerActive)}
+        active={photographerActive}
+        icon="📸"
+        ariaLabel={language === "zh" ? "摄影师" : "Photographer"}
+      >
+        {language === "zh" ? "摄影" : "Photo Game"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setSandboxActive(!sandboxActive)}
+        active={sandboxActive}
+        icon="🧪"
+        ariaLabel={language === "zh" ? "沙盒" : "Sandbox"}
+      >
+        {language === "zh" ? "沙盒" : "Sandbox"}
+      </ActionButton>
+
+      {migrationModeActive && (
+        <ActionButton
+          onClick={() => setMigrationSpeed(migrationSpeed >= 5 ? 1 : migrationSpeed === 1 ? 2 : 5)}
+          icon="⏩"
+          ariaLabel={language === "zh" ? "迁徙速度" : "Migration Speed"}
+        >
+          {migrationSpeed}x
+        </ActionButton>
+      )}
 
       <ActionButton
         onClick={handleReset}

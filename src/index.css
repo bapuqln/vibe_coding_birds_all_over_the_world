@@ -122,3 +122,43 @@ body,
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes scaleFade {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes expeditionConfetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-60px) rotate(360deg); opacity: 0; }
+}
+
+.expedition-confetti::before,
+.expedition-confetti::after {
+  content: "🎉";
+  position: absolute;
+  font-size: 20px;
+  animation: expeditionConfetti 2.5s ease-out forwards;
+}
+
+.expedition-confetti::before {
+  left: -20px;
+  top: -10px;
+  animation-delay: 0.1s;
+}
+
+.expedition-confetti::after {
+  right: -20px;
+  top: -10px;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes guideFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}

@@ -1,5 +1,25 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v20)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v30)
 
+> **v30 changelog**: Educational Layer — Bird Encyclopedia panel with search/filter (continent, diet, wingspan), detailed bird entries with 3D model preview/habitat map/sound/facts, performance monitoring overlay, dynamic LOD tuning based on FPS, progressive asset preloading with priority queue, texture compression pipeline with KTX2/Basis support.
+>
+> **v29 changelog**: Shareable Discoveries — screenshot capture via canvas toDataURL with flash animation and browser download, share card generator rendering bird info to off-screen canvas (600x400px), progress export as JSON with all discovery/achievement/expedition data, share UI panel with recent captures and download options.
+>
+> **v28 changelog**: Story Mode — story data structure with location sequences and narration, three predefined stories (Arctic Tern Journey, Rainforest Guardians, African Savannah Birds), camera auto-travel between story locations with cinematic zoom, Web Speech API narration per step, story panel UI with selection/progress/controls, featured bird highlighting with golden glow, story completion badges.
+>
+> **v27 changelog**: Flocking System — simplified boids algorithm (separation, alignment, cohesion) replacing static bird positions, species-specific flock parameters (flockSize, speed, altitudeRange, wanderRadius), GPU-friendly InstancedMesh rendering for flock members, spatial hashing for neighbor lookups, throttled computation for distant flocks, maximum 8 active flocks.
+>
+> **v26 changelog**: Dynamic World Simulation — enhanced day/night cycle with configurable sun rotation speed, city lights texture with smooth per-fragment fade, weather zone system with cloud clusters/rain particles/storm visuals per region, bird activity variation (diurnal/nocturnal/crepuscular) based on sun angle at bird position, nocturnal bird eye-glow shader, time-of-day HUD indicator, weather toggle button.
+>
+> **v25 changelog**: Exploration Experience — ExpeditionSystem.ts for structured mission lifecycle, MissionPanel.tsx with available/active/completed mission states, ProgressPanel.tsx for expedition completion tracking, completion celebration with confetti burst and badge reveal animation, expedition data persisted in localStorage, integrated with existing discovery and achievement systems.
+>
+> **v24 changelog**: Visual Polish — enhanced AtmosphereShell with animated two-layer Fresnel glow, CloudLayer with independent slow rotation for parallax, directional sun light with shadow casting, soft shadow projection for bird markers (512x512 shadow map), improved marker visuals with rarity-based glow colors and animated pulse rings, camera inertia via OrbitControls damping (factor 0.92) for fluid exploration.
+>
+> **v23 changelog**: Performance Optimization — model LOD system in BirdSystem (high-poly < 3 units, simplified mesh >= 3 units), lazy loading via Suspense boundaries loading models on-demand, InstancedMesh for distant bird markers reducing draw calls to O(1), render loop optimization with throttled distance calculations every 10 frames, verified 60 FPS on mid-range hardware.
+>
+> **v22 changelog**: Content Expansion — expanded birds.json to 30 fully-detailed birds across 7 regions, each with name/continent/habitat/diet/wingspan/funFact/modelPath/soundPath, added RegionCluster component showing bird count per region on globe, cluster click triggers region filter and camera zoom.
+>
+> **v21 changelog**: Architecture Refactor — created /src/core/ (Engine.ts, SceneManager.ts, CameraController.ts), /src/systems/ (BirdSystem.ts, MigrationSystem.ts, QuizSystem.ts, AudioSystem.ts, AchievementSystem.ts), refactored existing components to use system modules, barrel exports in each directory, separated data from logic, maintained all existing functionality.
+>
 > **v20 changelog**: Asset Quality & Exploration Upgrade — rebuilt build-bird-assets.mjs with improved bird geometry (better silhouettes, species-specific features, proper proportions), improved BirdMarker to render full GLB scene clones with original materials, enhanced idle animation with dual-layer wing flap + floating system, improved marker hover/click feedback, strengthened UI z-index hierarchy and spacing tokens, improved globe visuals (higher-res sphere, better clouds, refined atmosphere), improved camera fly-to (1s smoothstep + orbit), enhanced discovery notification with counter, improved BirdInfoCard layout margins, added model preloading, maintained Draco compression.
 >
 > **v19 changelog**: High-Quality Bird Models Upgrade — removed all procedurally generated bird geometry and the generate-bird-models.mjs script, established proper GLB asset pipeline, integrated 12 high-quality stylized low-poly bird models loaded via useGLTF with DRACOLoader support, added bounding-box normalization (1-unit scale), idle animation system (wing flap + floating sine wave), improved markers with glow ring and hover effects, enhanced discovery interaction with progress tracking, fixed UI z-index layering, added safe layout margins, improved camera fly-to, enabled Draco compression.
@@ -619,3 +639,439 @@ New Zustand store additions:
 ## Implementation Phases (v8+v9 — preserved)
 
 - Phase 56–75: See v8/v9 plan for data model, UI system, info card, animated markers, collection, region filter, quests, loading, globe visuals, migration, tour, guide, quiz, rarity, radar, stories, consistency, responsive, performance, verification.
+
+---
+
+## Key Technical Decisions (v21)
+
+### TD-134: Module Architecture
+**Problem**: The codebase is a flat collection of components and utilities with no clear module boundaries. Adding new birds or features requires touching many unrelated files.
+**Solution**: Create `/src/core/` for engine-level concerns (Engine.ts wrapping the render loop, SceneManager.ts for scene configuration, CameraController.ts refactored from components/three/). Create `/src/systems/` for domain logic (BirdSystem.ts consolidating bird data/markers/discovery, MigrationSystem.ts for routes, QuizSystem.ts for quiz logic, AudioSystem.ts for sound playback, AchievementSystem.ts for achievements/missions). Each system exports a React hook. Existing components import from systems instead of duplicating logic.
+
+### TD-135: Data Separation
+**Problem**: Business logic is mixed with data files and UI components.
+**Solution**: `/src/data/` contains only JSON files (birds.json, migrations.json, achievements.json). All business logic that operates on this data lives in `/src/systems/`. UI components in `/src/ui/` (renamed from components/ui/) consume system hooks. Barrel `index.ts` files in each directory for clean imports.
+
+### TD-136: Backward Compatibility
+**Problem**: Refactoring must not break any existing features.
+**Solution**: The refactor is structural only — moving files and creating re-exports. All existing component APIs remain unchanged. The store remains the single source of truth. Systems are thin wrappers that organize existing logic. Integration test: app builds and runs identically before and after refactor.
+
+## Key Technical Decisions (v22)
+
+### TD-137: Bird Database Expansion
+**Problem**: The spec requires 30 birds with complete data fields across all 7 regions.
+**Solution**: Curate 30 birds ensuring at least 3 per region. Each bird entry includes: name (zh+en), continent, habitat, diet, wingspan, funFact, modelPath, soundPath. Reuse existing model types (eagle, owl, parrot, etc.) mapped to new birds. Validate all entries have no missing required fields.
+
+### TD-138: Region Clusters
+**Problem**: With 30+ birds, the globe can feel cluttered at far zoom levels.
+**Solution**: Add RegionCluster component that renders cluster markers at region center positions when camera is zoomed out (distance > 4 units). Each cluster shows region name and bird count. Clicking a cluster triggers the existing region filter and camera zoom. At close zoom, clusters fade and individual markers appear. Uses existing `activeRegion` store state.
+
+## Key Technical Decisions (v23)
+
+### TD-139: Model LOD System
+**Problem**: Rendering high-poly 3D models for all 30+ birds simultaneously is expensive.
+**Solution**: In BirdSystem, compute camera distance to each bird marker. Birds within 3 units render full 3D model. Birds beyond 3 units render a simplified sprite or low-poly mesh. LOD transition uses opacity crossfade over 0.3s to prevent pop-in. Distance check throttled to every 10 frames.
+
+### TD-140: Lazy Model Loading
+**Problem**: Preloading all bird models at startup increases initial load time.
+**Solution**: Load bird 3D models on-demand when they first enter the camera's visible frustum. Use React Suspense with a lightweight placeholder (colored sphere) while loading. Cache loaded models in a Map for instant re-display. Maximum 15 models loaded simultaneously; evict least-recently-viewed when exceeded.
+
+### TD-141: Instanced Markers
+**Problem**: Each distant bird marker is a separate draw call, causing GPU overhead.
+**Solution**: Use `THREE.InstancedMesh` for all markers beyond LOD distance. Single geometry (small sphere or diamond), single material, instance matrix and color attributes set per-bird. Reduces distant marker rendering to 1-2 draw calls regardless of bird count.
+
+### TD-142: Render Loop Optimization
+**Problem**: Per-frame computations (distance sorting, LOD decisions, animation updates) can cause frame drops.
+**Solution**: Throttle expensive computations: LOD distance checks every 10 frames, bird sorting every 30 frames. Use `useMemo` for all geometry and material creation. Avoid object allocation in `useFrame`. Profile with Chrome DevTools to verify 60 FPS.
+
+## Key Technical Decisions (v24)
+
+### TD-143: Atmosphere Glow Enhancement
+**Problem**: The atmosphere needs to feel more alive and magical for children.
+**Solution**: Enhance AtmosphereShell with animated Fresnel shader. Inner layer: warm glow (slightly orange), outer layer: cool halo (blue-white). Animate glow intensity with subtle sine wave (amplitude 0.05, period 8s). Visible from all angles. Additive blending, BackSide rendering.
+
+### TD-144: Cloud Layer Parallax
+**Problem**: Static clouds feel unrealistic.
+**Solution**: CloudLayer rotates independently at 0.001 rad/frame, creating parallax against the globe. Opacity 0.4 for subtlety. Uses alpha-transparent cloud texture on a sphere slightly above globe radius (1.006).
+
+### TD-145: Sun Shadows
+**Problem**: Bird markers float above the globe with no grounding visual.
+**Solution**: Enable shadow casting on the directional sun light. Bird marker groups cast shadows onto the globe surface. Shadow map resolution 512x512 for performance. Shadow bias tuned to prevent artifacts. Shadows are subtle (opacity 0.3) to not distract.
+
+### TD-146: Camera Inertia
+**Problem**: Camera stops abruptly when user releases drag, feeling unnatural.
+**Solution**: Configure OrbitControls with `enableDamping: true`, `dampingFactor: 0.08`. This creates smooth deceleration after drag release. Damping is frame-rate independent. Works with existing zoom and fly-to animations.
+
+## Key Technical Decisions (v25)
+
+### TD-147: Expedition System
+**Problem**: Children need structured goals beyond free exploration to maintain engagement.
+**Solution**: Create ExpeditionSystem.ts in `/src/systems/` managing expedition lifecycle. Predefined expeditions: region exploration ("Find 3 birds in Africa"), trait discovery ("Discover a bird that migrates"), collection milestones ("Collect 5 birds"). Each expedition has: id, title, description, type, target, goal, reward badge. System tracks active expedition, progress, and completion. Persisted in localStorage.
+
+### TD-148: Mission Panel
+**Problem**: Children need a clear UI to see available missions and track progress.
+**Solution**: Create MissionPanel.tsx showing available/active/completed expeditions. Available missions show description and reward badge preview. Active mission shows progress bar and current/goal count. Completed missions show earned badge with glow. Panel accessible from HUD. Positioned right side, respects z-index hierarchy (modal layer z-80). Minimum tap size 56px.
+
+### TD-149: Progress Tracker
+**Problem**: Children need to see overall expedition progress at a glance.
+**Solution**: Create ProgressPanel.tsx showing "Expeditions Complete: X/Y" with visual progress bar. Positioned top-left below existing progress bar. Compact display that doesn't overlap other UI. Updates in real-time as expeditions complete.
+
+### TD-150: Completion Celebration
+**Problem**: Mission completion needs to feel rewarding and exciting for children.
+**Solution**: On expedition completion: trigger confetti burst (30 colored particles falling), badge reveal animation (scale from 0 to 1 with bounce easing), "Mission Complete!" message with expedition name, glow pulse behind badge. Duration 2.5s, non-blocking. Auto-dismiss after animation.
+
+## Implementation Phases (v21)
+
+- Phase 174: Core Module Setup — create /src/core/ with Engine.ts, SceneManager.ts, CameraController.ts → R-63
+- Phase 175: Systems Module Setup — create /src/systems/ with BirdSystem.ts, MigrationSystem.ts, QuizSystem.ts, AudioSystem.ts, AchievementSystem.ts → R-63
+- Phase 176: Data Separation — ensure /src/data/ contains only JSON, create barrel exports → R-63
+- Phase 177: Component Rewiring — update imports across all components to use new modules → R-63
+- Phase 178: V21 Verification — build succeeds, all features work → AC-V21-1
+
+## Implementation Phases (v22)
+
+- Phase 179: Bird Database Expansion — expand birds.json to 30 birds with complete fields → R-64
+- Phase 180: Region Clusters — RegionCluster component on globe → R-65
+- Phase 181: V22 Verification — 30 birds, all regions covered, clusters work → AC-V22-1
+
+## Implementation Phases (v23)
+
+- Phase 182: Model LOD System — distance-based model switching → R-66
+- Phase 183: Lazy Loading — on-demand model loading with Suspense → R-67
+- Phase 184: Instanced Markers — InstancedMesh for distant birds → R-68
+- Phase 185: Render Loop Optimization — throttled computations, useMemo → R-69
+- Phase 186: V23 Verification — 60 FPS, reduced draw calls → AC-V23-1
+
+## Implementation Phases (v24)
+
+- Phase 187: Atmosphere Glow — animated Fresnel shell → R-70
+- Phase 188: Cloud Layer — independent rotation, parallax → R-71
+- Phase 189: Sun Light & Shadows — directional light, shadow casting → R-72, R-73
+- Phase 190: Marker Visuals — rarity glow, animated rings → R-74
+- Phase 191: Camera Inertia — OrbitControls damping → R-75
+- Phase 192: V24 Verification — all visual improvements, 60 FPS → AC-V24-1
+
+## Implementation Phases (v25)
+
+- Phase 193: Expedition System — ExpeditionSystem.ts, data, store state → R-76, R-77
+- Phase 194: Mission Panel — MissionPanel.tsx UI → R-79
+- Phase 195: Progress Tracker — ProgressPanel.tsx UI → R-78
+- Phase 196: Completion Celebration — confetti, badge reveal → R-80
+- Phase 197: V25 Verification — all expedition features, 60 FPS → AC-V25-1
+
+
+## Key Technical Decisions (v26)
+
+### TD-151: Enhanced Day/Night Cycle
+**Problem**: The existing day/night cycle has basic sun rotation but lacks immersive detail like smooth city light transitions and time awareness.
+**Solution**: Enhance the sun rotation system with configurable speed (0.03 rad/s default). Improve the city lights shader to use smooth per-fragment fade based on dot product of surface normal and sun direction. Add a time-of-day indicator component to the HUD showing approximate time (morning/afternoon/evening/night) based on sun angle. The indicator uses simple icon + text display.
+
+### TD-152: Weather Zone System
+**Problem**: The globe feels static without atmospheric weather effects.
+**Solution**: Create WeatherSystem.ts managing weather state per region. Define weather configurations in weather data (region → weather type). Implement three weather effect components: CloudCluster (billboard sprites above region), RainParticles (vertical particle system), StormEffect (dark clouds + flash). Weather effects rendered as children of the earth group, positioned at region centers. Effects are subtle (low opacity, small scale) to not obscure bird markers. Toggle via control panel button.
+
+### TD-153: Bird Activity Variation
+**Problem**: All birds are visible all the time regardless of time of day.
+**Solution**: Add `activityPeriod` field to Bird type ("diurnal" | "nocturnal" | "crepuscular"). In BirdMarker, compute sun angle at bird's lat/lng position. Diurnal birds: full opacity during day, fade to 0.1 at night. Nocturnal birds: appear with eye-glow effect at night, fade during day. Crepuscular: visible during transitions. Sun angle computed from the rotating sun light position.
+
+## Key Technical Decisions (v27)
+
+### TD-154: Boids Flocking Algorithm
+**Problem**: Birds are static markers on the globe, lacking natural movement.
+**Solution**: Implement simplified boids with three forces: separation (avoid crowding), alignment (match neighbor heading), cohesion (move toward group center). Each species defines: flockSize (3-12), speed (0.001-0.01), altitudeRange ([0.02, 0.08] above surface), wanderRadius (0.1-0.3). Flocks orbit their home position with gentle wandering. Boids computation runs in FlockingSystem.ts, updating positions stored in a Float32Array for direct InstancedMesh matrix updates.
+
+### TD-155: GPU-Friendly Flock Rendering
+**Problem**: Rendering individual meshes for each flock member is expensive.
+**Solution**: Each flock uses a single InstancedMesh with bird geometry. Instance matrices updated per frame from boids positions. Spatial hashing grid (cell size 0.1) for O(1) neighbor lookups. Distant flocks (camera distance > 3) update every 2 frames. Maximum 8 visible flocks; others show single marker. Flock members have animation phase offsets for wing-flap variety.
+
+## Key Technical Decisions (v28)
+
+### TD-156: Story System Architecture
+**Problem**: No guided exploration experience exists.
+**Solution**: Create StorySystem.ts managing story lifecycle. Story data in stories-adventure.json: array of stories, each with steps (location, camera, narration, featuredBirdId, duration). Story state machine: idle → selecting → playing → step → complete. Camera controlled by story system during playback, overriding OrbitControls. Story progress persisted in localStorage.
+
+### TD-157: Story Camera Travel
+**Problem**: Camera needs cinematic travel between story locations.
+**Solution**: During story playback, compute spherical interpolation between current and target positions. Add subtle zoom-out-then-in effect: camera pulls back 20% at midpoint of travel, then zooms to target. Travel duration proportional to angular distance (1-3s). OrbitControls disabled during travel, re-enabled on story exit. Easing: cubic-bezier for smooth acceleration/deceleration.
+
+### TD-158: Story Panel UI
+**Problem**: Need UI for story selection and playback controls.
+**Solution**: StoryModePanel.tsx in modal layer. Selection view: story cards with title, description, cover image (generated from first location). Playback view: narration text, progress dots, play/pause/next/exit buttons. Featured bird highlighted with golden glow (emissive intensity 2.0, gold color). Story completion triggers badge award via achievement system.
+
+## Key Technical Decisions (v29)
+
+### TD-159: Screenshot Capture
+**Problem**: No way to capture and save the globe view.
+**Solution**: Add "Screenshot" button to control panel. On click: call `gl.domElement.toDataURL('image/png')`, create download link, trigger click. Flash animation: white overlay fading from 0.8 to 0 opacity over 0.3s. Filename includes timestamp. Simple and reliable approach using existing canvas API.
+
+### TD-160: Share Card Generator
+**Problem**: Need shareable bird discovery cards.
+**Solution**: Create ShareCardGenerator utility. On "Share" button click from bird info card: create off-screen canvas (600x400), draw gradient background, bird silhouette, bird name (zh+en), region badge, fun fact text, app branding. Use Canvas 2D API for text rendering. Export as PNG via toDataURL. Offer download and clipboard copy (via navigator.clipboard.write with Blob).
+
+### TD-161: Progress Export
+**Problem**: No way to save/share discovery progress.
+**Solution**: Collect all localStorage data: discoveredBirds, collectedBirds, achievements, expeditions, missions, photos (metadata only, not image data), statistics. Serialize to JSON. Create Blob and trigger download. Filename: `bird-globe-progress-{date}.json`.
+
+## Key Technical Decisions (v30)
+
+### TD-162: Enhanced Encyclopedia
+**Problem**: Current encyclopedia is a simple list without advanced filtering.
+**Solution**: Rebuild BirdEncyclopediaPanel with filter system. Filters: continent (checkbox group), diet type (checkbox group), wingspan range (three buttons: small/medium/large). Filters combine with AND logic. Search combines with OR on nameZh/nameEn. Results displayed in responsive grid. Each card shows bird photo/silhouette, name, region badge, diet icon. Click opens detailed entry.
+
+### TD-163: Detailed Bird Entry
+**Problem**: Bird info card lacks 3D preview and habitat visualization.
+**Solution**: Create BirdEntryPanel.tsx with: (1) 3D model preview using a small inline Canvas with the bird's GLB model rotating slowly, (2) habitat map using a mini SVG globe with the bird's region highlighted, (3) sound playback with simple waveform bars animation, (4) facts grid with habitat/diet/wingspan/lifespan/fun fact. Panel slides in from right on desktop, bottom sheet on mobile.
+
+### TD-164: Performance Monitoring
+**Problem**: No way to monitor scene performance during development.
+**Solution**: Create PerformanceMonitor component showing FPS, draw calls, triangles, textures. Uses useEngine hook for FPS, renderer.info for scene stats. Hidden by default, activated via triple-tap on top-right corner or URL parameter `?perf=1`. Minimal UI: small semi-transparent overlay in top-right.
+
+### TD-165: Dynamic LOD Tuning
+**Problem**: Fixed LOD distance doesn't adapt to device capability.
+**Solution**: In Engine.ts, track rolling average FPS over 60 frames. If avg FPS < 45 for 2 consecutive checks: increase LOD distance by 0.5 (fewer 3D models). If avg FPS > 55 for 2 consecutive checks: decrease LOD distance by 0.25 (more detail). Clamp LOD distance between 1.5 and 5.0. Store current LOD distance in Zustand for BirdMarker to read.
+
+## Implementation Phases (v26)
+
+- Phase 198: Enhanced Day/Night Cycle — configurable sun speed, improved city lights shader, time indicator → R-81
+- Phase 199: Weather Zone System — WeatherSystem.ts, cloud clusters, rain particles, storm effects → R-82
+- Phase 200: Bird Activity Variation — activityPeriod field, sun angle computation, nocturnal glow → R-83
+- Phase 201: V26 Verification → AC-V26-1
+
+## Implementation Phases (v27)
+
+- Phase 202: Boids Algorithm — FlockingSystem.ts, separation/alignment/cohesion, species parameters → R-84
+- Phase 203: Flock Rendering — InstancedMesh per flock, matrix updates, spatial hashing → R-85
+- Phase 204: V27 Verification → AC-V27-1
+
+## Implementation Phases (v28)
+
+- Phase 205: Story System — StorySystem.ts, story data, state machine → R-86
+- Phase 206: Story Camera — cinematic travel, zoom effects, OrbitControls override → R-87
+- Phase 207: Story Narration — Web Speech API integration, fallback text → R-88
+- Phase 208: Story Panel UI — selection, playback, progress, controls → R-89
+- Phase 209: V28 Verification → AC-V28-1
+
+## Implementation Phases (v29)
+
+- Phase 210: Screenshot Capture — canvas capture, flash animation, download → R-90
+- Phase 211: Share Card Generator — off-screen canvas, bird card rendering → R-91
+- Phase 212: Progress Export — JSON serialization, download trigger → R-92
+- Phase 213: Share Panel UI — recent captures, download/copy buttons → R-93
+- Phase 214: V29 Verification → AC-V29-1
+
+## Implementation Phases (v30)
+
+- Phase 215: Enhanced Encyclopedia — search, filters, responsive grid → R-94
+- Phase 216: Detailed Bird Entry — 3D preview, habitat map, sound, facts → R-95
+- Phase 217: Performance Monitoring — FPS overlay, scene stats → R-96
+- Phase 218: Dynamic LOD Tuning — adaptive LOD based on FPS → R-97
+- Phase 219: Asset Preloading — progressive loading, priority queue → R-98
+- Phase 220: Texture Compression — KTX2/Basis support, atlas → R-99
+- Phase 221: V30 Verification → AC-V30-1
+
+---
+
+## Key Technical Decisions (v31)
+
+### TD-166: AI Bird Guide Knowledge Base
+**Problem**: Children want to ask questions about birds but there's no interactive Q&A system.
+**Solution**: Create a local JSON knowledge base (`bird-knowledge.json`) with 100+ Q&A pairs covering common bird questions. Implement keyword-based pattern matching in `AIGuideSystem.ts` to route questions to appropriate answers. Categories: behavior, habitat, diet, appearance, migration. Each answer is 2-3 sentences, child-friendly. Fallback response for unmatched questions. Guide character rendered as a floating UI element with speech bubble and typing animation.
+
+### TD-167: Guide Speech Bubble UI
+**Problem**: Need an engaging way to display AI guide responses.
+**Solution**: Create `AIBirdGuidePanel.tsx` with glass-morphism speech bubble. Typing animation reveals text at 30ms per character. Narration button triggers Web Speech API. Guide avatar (bird icon) has gentle bobbing CSS animation. Panel positioned in card layer (z-60), bottom-left area, avoiding overlap with existing UI.
+
+## Key Technical Decisions (v32)
+
+### TD-168: Enhanced AR Mode
+**Problem**: Existing AR mode is basic camera overlay. Need proper surface detection and interaction.
+**Solution**: Enhance `ARViewerModal.tsx` with WebXR hit-test API for surface detection when available. Bird placed at hit-test result position. Touch controls: pinch-to-scale, drag-to-rotate. Bird plays idle animation in AR. Fallback: simulated AR with camera feed background and gyroscope-based rotation using DeviceOrientationEvent. AR session managed via `ARSystem.ts`.
+
+## Key Technical Decisions (v33)
+
+### TD-169: Advanced Animation State Machine
+**Problem**: Birds only have idle animation. Need takeoff, landing, perching, and inter-habitat flight.
+**Solution**: Create `AnimationSystem.ts` with state machine: idle → takeoff → flying → landing → perching → idle. Each state has enter/update/exit handlers. Takeoff: crouch + rapid flaps + lift. Landing: descend + spread wings + settle. Perching: head turns + tail flicks for 5-15s. Inter-habitat flight: curved arc between regions. Transitions use 0.3s crossfade blending. Per-bird random timing via phase offsets.
+
+### TD-170: Animation Anchor Points
+**Problem**: Birds need places to land/perch on the globe.
+**Solution**: Define 3-5 anchor points per habitat region in bird data. Anchor points are lat/lng positions at globe surface. Birds select random anchor within their habitat for perching. Anchor data stored in `biome-anchors.json`.
+
+## Key Technical Decisions (v34)
+
+### TD-171: Bird Photographer Scoring
+**Problem**: Photo mode lacks gamification. Need scoring to make photography engaging.
+**Solution**: Create `PhotographerSystem.ts` with scoring algorithm. Distance score: inverse of camera-to-bird distance (max 30pts). Pose score: check if bird is mid-animation (flying/flapping = bonus, max 30pts). Composition score: check if bird is near rule-of-thirds grid intersections (max 20pts). Rarity bonus: rare=1.5x, legendary=2x multiplier (max 20pts). Total: 0-100 mapped to 1-5 stars. Score displayed with animation after capture.
+
+## Key Technical Decisions (v35)
+
+### TD-172: Habitat Biome System
+**Problem**: Globe looks uniform. Need distinct biome environments.
+**Solution**: Create `BiomeSystem.ts` managing four biome zones with lat/lng boundaries. Each biome applies: color tint overlay (shader uniform), particle effects (leaves/dust/snow/shimmer), ambient lighting adjustment. Biome data in `biomes.json`. Transitions smooth based on camera position. Particle effects use lightweight instanced points.
+
+### TD-173: Biome Ambient Sound
+**Problem**: No audio atmosphere for different regions.
+**Solution**: Extend `AudioSystem.ts` with ambient sound management. Each biome has a looping audio source. Volume fades based on camera distance to biome center and zoom level. Uses Web Audio API GainNode for smooth crossfading. Sound files lazy-loaded on first biome entry.
+
+## Key Technical Decisions (v36)
+
+### TD-174: Real Migration Data
+**Problem**: Migration routes are simplified. Need realistic data for 10+ species.
+**Solution**: Expand `migrations.json` with detailed waypoint arrays for 10 species based on real migration patterns. Each route: waypoints (lat/lng array), total distance (km), travel duration (days), season, fun fact. Migration visualization enhanced with bird silhouette icons, gradient coloring, and speed control (1x/2x/5x). Route tap shows info popup.
+
+## Key Technical Decisions (v37)
+
+### TD-175: HDR Environment Lighting
+**Problem**: Globe lighting is flat. Need realistic HDR lighting.
+**Solution**: Add ACES Filmic tone mapping to R3F Canvas. Create environment map from procedural sky gradient. Exposure adjusts with time of day (brighter at noon, darker at night). Environment map influences bird model materials via `envMapIntensity`. Minimal performance impact as it's a renderer-level setting.
+
+### TD-176: Enhanced Atmospheric Effects
+**Problem**: Atmosphere looks basic. Need volumetric clouds and scattering.
+**Solution**: Enhance `CloudLayer.tsx` with multiple layers (3 layers at different altitudes with different rotation speeds and opacities). Add atmospheric scattering to `AtmosphereShell.tsx`: Rayleigh scattering formula in fragment shader produces blue edges and orange/red at dawn/dusk based on sun angle. Subtle god-ray effect via screen-space radial blur from sun position.
+
+## Key Technical Decisions (v38)
+
+### TD-177: Encyclopedia Pro Filtering
+**Problem**: Current encyclopedia filters are basic. Need professional-grade filtering.
+**Solution**: Enhance `BirdEncyclopediaPanel.tsx` with: full-text search across all fields, wingspan range slider (0-300cm), activity period filter, rarity filter, sort options (name/wingspan/rarity). Filters combine with AND logic. Active filter count badge. Results count display. Smooth scroll pagination.
+
+### TD-178: Enhanced Bird Entry
+**Problem**: Bird entries need more depth for educational value.
+**Solution**: Enhance `BirdEntryPanel.tsx` with: orbit controls on 3D preview, interactive mini-globe for habitat range, waveform visualization for bird call, multiple fun facts (3-5 cards), size comparison visualization (bird silhouette next to child's hand), related birds section.
+
+## Key Technical Decisions (v39)
+
+### TD-179: Classroom Mode
+**Problem**: No teacher-facing features for educational use.
+**Solution**: Create `ClassroomSystem.ts` with teacher mode state machine. Activated via long-press (3s) on app title. Teacher panel provides: bird search/highlight, migration demo trigger, quiz launcher, region focus, time/weather control. Guided lessons stored in `lessons.json` with step sequences. Presentation mode hides non-essential UI and scales text 1.5x.
+
+## Key Technical Decisions (v40)
+
+### TD-180: Sandbox Mode
+**Problem**: No free-form creative exploration mode.
+**Solution**: Create `SandboxSystem.ts` managing sandbox state. Bird spawner: tap globe to place bird at lat/lng, select type from palette. Spawned birds stored in array (max 50). Flock creator: select birds to group, adjust speed/size. Time slider: 0-24h mapped to sun angle. Weather toggles: per-region rain/clouds/storms. All sandbox state is session-only (not persisted).
+
+---
+
+## Implementation Phases (v31)
+
+- Phase 222: AI Guide Knowledge Base — bird-knowledge.json data, AIGuideSystem.ts → R-100, R-101
+- Phase 223: AI Guide UI — AIBirdGuidePanel.tsx, speech bubble, typing animation → R-102
+- Phase 224: V31 Verification → AC-V31-1
+
+## Implementation Phases (v32)
+
+- Phase 225: Enhanced AR Mode — WebXR integration, surface detection, touch controls → R-103
+- Phase 226: AR UI Overlay — enhanced AR controls, instructions, screenshot → R-104
+- Phase 227: V32 Verification → AC-V32-1
+
+## Implementation Phases (v33)
+
+- Phase 228: Animation State Machine — AnimationSystem.ts, states, transitions → R-105
+- Phase 229: Anchor Points — biome-anchors data, perching behavior → R-106
+- Phase 230: V33 Verification → AC-V33-1
+
+## Implementation Phases (v34)
+
+- Phase 231: Photographer System — PhotographerSystem.ts, scoring algorithm → R-107
+- Phase 232: Photographer UI — viewfinder overlay, score display, timer → R-108
+- Phase 233: V34 Verification → AC-V34-1
+
+## Implementation Phases (v35)
+
+- Phase 234: Biome System — BiomeSystem.ts, biome data, visual effects → R-109
+- Phase 235: Biome Audio — ambient sound management, crossfading → R-110
+- Phase 236: Biome Bird Assignment — biome field, filters → R-111
+- Phase 237: V35 Verification → AC-V35-1
+
+## Implementation Phases (v36)
+
+- Phase 238: Real Migration Data — expanded migration routes, waypoints → R-112
+- Phase 239: Migration Visualization — enhanced arcs, silhouettes, speed control → R-113
+- Phase 240: V36 Verification → AC-V36-1
+
+## Implementation Phases (v37)
+
+- Phase 241: HDR Lighting — tone mapping, environment map, exposure → R-114
+- Phase 242: Volumetric Clouds — multi-layer clouds, shadows → R-115
+- Phase 243: Atmospheric Scattering — Rayleigh shader, dawn/dusk colors → R-116
+- Phase 244: V37 Verification → AC-V37-1
+
+## Implementation Phases (v38)
+
+- Phase 245: Encyclopedia Pro Filters — full-text search, sliders, sort → R-117
+- Phase 246: Enhanced Bird Entry — orbit controls, mini-globe, waveform, facts → R-118
+- Phase 247: V38 Verification → AC-V38-1
+
+## Implementation Phases (v39)
+
+- Phase 248: Classroom System — ClassroomSystem.ts, teacher panel, lessons → R-119
+- Phase 249: Presentation UI — fullscreen mode, large text, teacher toolbar → R-120
+- Phase 250: V39 Verification → AC-V39-1
+
+## Implementation Phases (v40)
+
+- Phase 251: Sandbox System — SandboxSystem.ts, bird spawner, flock creator → R-121
+- Phase 252: Sandbox UI — toolbar, palettes, sliders, toggles → R-122
+- Phase 253: V40 Verification → AC-V40-1
+
+## Component Inventory (v31-v40)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `AIBirdGuidePanel.tsx` | AI guide speech bubble with Q&A | v31 |
+| `PhotographerMode.tsx` | Bird photographer game overlay | v34 |
+| `BiomeEffects.tsx` | Biome visual effects on globe | v35 |
+| `ClassroomPanel.tsx` | Teacher control panel | v39 |
+| `SandboxToolbar.tsx` | Sandbox mode controls | v40 |
+
+### New Systems
+| System | Purpose | Version |
+|--------|---------|---------|
+| `AIGuideSystem.ts` | Knowledge base Q&A routing | v31 |
+| `ARSystem.ts` | Enhanced AR session management | v32 |
+| `AnimationSystem.ts` | Advanced bird animation state machine | v33 |
+| `PhotographerSystem.ts` | Photo scoring algorithm | v34 |
+| `BiomeSystem.ts` | Habitat biome management | v35 |
+| `ClassroomSystem.ts` | Teacher mode and lessons | v39 |
+| `SandboxSystem.ts` | Sandbox mode state management | v40 |
+
+### New Data Files
+| File | Purpose | Version |
+|------|---------|---------|
+| `bird-knowledge.json` | AI guide Q&A knowledge base | v31 |
+| `biomes.json` | Biome zone definitions | v35 |
+| `lessons.json` | Classroom lesson plans | v39 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `ARViewerModal.tsx` | WebXR hit-test, touch controls | v32 |
+| `BirdMarker.tsx` | Animation state machine integration | v33 |
+| `BirdEncyclopediaPanel.tsx` | Pro filters, full-text search | v38 |
+| `BirdEntryPanel.tsx` | Orbit controls, waveform, facts | v38 |
+| `AtmosphereShell.tsx` | Rayleigh scattering shader | v37 |
+| `CloudLayer.tsx` | Multi-layer volumetric clouds | v37 |
+| `MigrationPaths.tsx` | Enhanced visualization, speed control | v36 |
+| `RightControlPanel.tsx` | New buttons for v31-v40 features | v31-v40 |
+| `App.tsx` | New panels integrated into layers | v31-v40 |
+| `GlobeScene.tsx` | Biome effects, tone mapping | v35, v37 |
+
+### Store Changes (v31-v40)
+| State | Purpose | Version |
+|-------|---------|---------|
+| `aiGuideOpen` | AI guide panel visibility | v31 |
+| `aiGuideQuestion` | Current question being asked | v31 |
+| `aiGuideAnswer` | Current answer being displayed | v31 |
+| `arSessionActive` | WebXR AR session state | v32 |
+| `photographerModeActive` | Photographer game state | v34 |
+| `photographerScore` | Current photo score | v34 |
+| `activeBiome` | Currently focused biome | v35 |
+| `biomeAudioEnabled` | Biome ambient sound toggle | v35 |
+| `migrationSpeed` | Migration animation speed multiplier | v36 |
+| `classroomModeActive` | Teacher mode state | v39 |
+| `presentationMode` | Fullscreen presentation state | v39 |
+| `sandboxModeActive` | Sandbox mode state | v40 |
+| `spawnedBirds` | Array of sandbox-spawned birds | v40 |
+| `sandboxTimeHour` | Sandbox time slider value | v40 |
