@@ -60,6 +60,7 @@ export interface Bird {
   migration?: boolean;
   activityPeriod?: "diurnal" | "nocturnal" | "crepuscular";
   biome?: BiomeType;
+  flightSpeed?: number;
 }
 
 export interface MigrationRoute {
@@ -354,4 +355,73 @@ export interface SpawnedBird {
   lat: number;
   lng: number;
   spawnedAt: number;
+}
+
+// V31 — Learning Tracks & Ecosystem
+export interface LearningTrack {
+  id: string;
+  name: string;
+  nameZh: string;
+  description: string;
+  descriptionZh: string;
+  birdIds: string[];
+  badgeIcon: string;
+}
+
+export interface TrackProgress {
+  trackId: string;
+  discoveredBirds: string[];
+  completed: boolean;
+  completedAt?: number;
+}
+
+export type Season = "spring" | "summer" | "autumn" | "winter";
+
+export interface WorldState {
+  season: Season;
+  temperature: number;
+  wind: number;
+  timeOfDay: TimeOfDay;
+}
+
+export type HabitatFilterType =
+  | "forest"
+  | "wetlands"
+  | "ocean"
+  | "grassland"
+  | "mountain"
+  | "urban";
+
+// V31 — Discovery Missions
+export interface DiscoveryMission {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  type: "habitat" | "trait" | "region";
+  target: string;
+  goal: number;
+  badge: string;
+}
+
+export interface DiscoveryMissionProgress {
+  missionId: string;
+  current: number;
+  completed: boolean;
+  completedAt?: number;
+}
+
+// V31 — Evolution Eras
+export interface EvolutionEraInfo {
+  id: string;
+  nameZh: string;
+  nameEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  yearsAgo: string;
+  representativeBird: string;
+  representativeBirdZh: string;
+  era: EvolutionEra;
+  color: string;
 }

@@ -7,9 +7,13 @@ export { getAllStories, getStoryById, getStoryStep, getStoryStepCount } from "./
 export { useAudio } from "./AudioSystem";
 export { getAllAchievements, getAchievementById, checkAchievementProgress } from "./AchievementSystem";
 export { findAnswer, getQuestionPrompts } from "./AIGuideSystem";
+export { askQuestion, getGuideAnswer } from "../features/BirdGuideService";
 export { checkARSupport, requestARSession, createFallbackAR } from "./ARSystem";
 export { getStateConfig, getAnimationParams, shouldTransition } from "./AnimationSystem";
 export { calculatePhotoScore } from "./PhotographerSystem";
 export { getBiomeAtPosition, getBiomeColor, getAllBiomes, getBiomeById } from "./BiomeSystem";
 export { getAllLessons, getLessonById, getLessonStep, getLessonStepCount } from "./ClassroomSystem";
 export { canSpawnBird, createSpawnedBird, removeSpawnedBird, clearAllSpawned, sunAngleFromHour } from "./SandboxSystem";
+export { getAllTracks, getTrackById, getTrackProgress, checkTrackCompletion } from "./LearningTrackSystem";
+export { getCurrentSeason, getWorldState, tickEcosystem, getSeasonalBirdDensityMultiplier } from "./EcosystemSystem";
+export { getAllDiscoverMissions, getMissionById, checkMissionProgress } from "./DiscoverMissionSystem";

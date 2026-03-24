@@ -1,0 +1,266 @@
+[
+  {
+    "id": "fact-1",
+    "question": "Why do birds migrate?",
+    "questionZh": "鸟类为什么要迁徙？",
+    "answer": "Birds migrate to find food and warmer weather. When winter comes, many birds fly to warmer places where they can find insects and seeds to eat.",
+    "answerZh": "鸟类迁徙是为了寻找食物和温暖的天气。冬天来临时，许多鸟类会飞到温暖的地方寻找昆虫和种子。",
+    "category": "migration"
+  },
+  {
+    "id": "fact-2",
+    "question": "Why are flamingos pink?",
+    "questionZh": "火烈鸟为什么是粉红色的？",
+    "answer": "Flamingos eat tiny shrimp and algae that contain natural pigments. Those pigments build up in their feathers and turn them pink or orange.",
+    "answerZh": "火烈鸟吃含有天然色素的小虾和藻类，这些色素在羽毛中积累，使它们呈现粉红或橙色。",
+    "category": "diet"
+  },
+  {
+    "id": "fact-3",
+    "question": "How fast can eagles fly?",
+    "questionZh": "鹰能飞多快？",
+    "answer": "When diving to catch prey, some eagles can reach speeds over 300 km/h (about 190 mph). In normal flapping flight they are slower but still very powerful.",
+    "answerZh": "俯冲捕猎时，一些鹰的速度可超过每小时300公里。平时拍翼飞行会慢一些，但依然很有力量。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-4",
+    "question": "Why can owls turn their heads so far?",
+    "questionZh": "猫头鹰为什么能把头转那么大角度？",
+    "answer": "Owls have extra neck bones and special blood vessels that keep blood flowing when they twist. Their eyes face forward and cannot move much in the socket, so they turn their head instead.",
+    "answerZh": "猫头鹰有多节颈椎和特殊的血管，转头时仍能供血。它们的眼睛朝前且几乎不能转动，所以用转头来看周围。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-5",
+    "question": "Why can't penguins fly?",
+    "questionZh": "企鹅为什么不能飞？",
+    "answer": "Penguins evolved for swimming. Their wings became stiff, flat flippers that work like paddles underwater. Flying would cost too much energy for their lifestyle.",
+    "answerZh": "企鹅为适应游泳而演化：翅膀变成僵硬扁平的鳍状肢，像桨一样划水。对它们的生活方式来说，飞行会消耗过多能量。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-6",
+    "question": "How do birds build nests?",
+    "questionZh": "鸟类怎样筑巢？",
+    "answer": "Different species use twigs, grass, mud, feathers, or even spider silk. Parents weave or pack materials into a cup, cavity, or platform that keeps eggs safe and warm.",
+    "answerZh": "不同种类会用树枝、草、泥、羽毛甚至蛛丝。亲鸟把材料编织或堆砌成碗状、树洞或平台，保护蛋并保持温度。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-7",
+    "question": "Why do birds sing?",
+    "questionZh": "鸟类为什么要鸣叫？",
+    "answer": "Birds sing to defend a territory, attract a mate, or stay in touch with family. Each species has its own songs and calls so others know who is speaking.",
+    "answerZh": "鸟类鸣叫是为了保卫领地、吸引配偶或与同伴联系。每种鸟有自己的歌声与叫声，让同类能辨认。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-8",
+    "question": "What do birds eat?",
+    "questionZh": "鸟类吃什么？",
+    "answer": "Birds eat many things: seeds, fruit, nectar, insects, fish, or meat. A bird's beak shape often hints at its favorite food.",
+    "answerZh": "鸟类食物多样：种子、果实、花蜜、昆虫、鱼类或肉类。鸟喙的形状常常暗示它爱吃什么。",
+    "category": "diet"
+  },
+  {
+    "id": "fact-9",
+    "question": "How do birds sleep?",
+    "questionZh": "鸟类怎么睡觉？",
+    "answer": "Most birds perch and tuck one leg up. Some can let half the brain sleep at a time while flying over the ocean. Small birds may take many short naps.",
+    "answerZh": "多数鸟会站立并把一条腿缩起。有些鸟在海上飞行时可以让半边大脑轮流休息。小鸟常会多次短睡。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-10",
+    "question": "Why are some birds so colorful?",
+    "questionZh": "为什么有些鸟颜色特别鲜艳？",
+    "answer": "Bright feathers can impress mates, warn rivals, or blend into flowers and fruit. Colors come from pigments in food or from tiny structures in feathers that bend light.",
+    "answerZh": "鲜艳羽毛可以吸引配偶、警告对手，或融入花果环境。颜色来自食物中的色素，或羽毛微结构对光线的反射。",
+    "category": "appearance"
+  },
+  {
+    "id": "fact-11",
+    "question": "How do birds know where to migrate?",
+    "questionZh": "鸟类怎么知道迁徙往哪飞？",
+    "answer": "They use the Sun, stars, Earth's magnetic field, landmarks, and even smells. Young birds often follow experienced adults the first time.",
+    "answerZh": "它们会利用太阳、星星、地磁场、地标甚至气味。幼鸟第一次迁徙常常跟随有经验的成鸟。",
+    "category": "migration"
+  },
+  {
+    "id": "fact-12",
+    "question": "Do all birds migrate?",
+    "questionZh": "所有鸟都会迁徙吗？",
+    "answer": "No. Many birds stay in the same region all year if food is available. Migration depends on climate and food supply, not on whether an animal is a bird.",
+    "answerZh": "不是。只要食物充足，许多鸟全年留在同一地区。是否迁徙取决于气候与食物，而不是“是不是鸟”。",
+    "category": "migration"
+  },
+  {
+    "id": "fact-13",
+    "question": "Why do hummingbirds visit flowers?",
+    "questionZh": "蜂鸟为什么爱访花？",
+    "answer": "They drink nectar for quick energy and also catch tiny insects for protein. While feeding, they help pollinate plants.",
+    "answerZh": "它们吸食花蜜获得快速能量，也捕食小昆虫补充蛋白质，同时在访花时帮助植物传粉。",
+    "category": "diet"
+  },
+  {
+    "id": "fact-14",
+    "question": "What is a bird's beak for?",
+    "questionZh": "鸟喙有什么用？",
+    "answer": "A beak is for eating, preening feathers, building nests, fighting, and carrying food to chicks. Shape matches the bird's lifestyle.",
+    "answerZh": "鸟喙用于取食、整理羽毛、筑巢、打斗以及把食物带回喂雏。形状与生活方式相匹配。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-15",
+    "question": "Can birds smell?",
+    "questionZh": "鸟类有嗅觉吗？",
+    "answer": "Yes, but it varies. Some seabirds and vultures have a good sense of smell; many songbirds rely more on sight and sound.",
+    "answerZh": "有，但强弱因种而异。一些海鸟和秃鹫嗅觉灵敏；许多鸣禽更依赖视觉与听觉。",
+    "category": "general"
+  },
+  {
+    "id": "fact-16",
+    "question": "Why do geese fly in a V shape?",
+    "questionZh": "大雁为什么排成V字飞？",
+    "answer": "Each bird gets a little lift from the wingtip vortices of the bird ahead, saving energy. They take turns leading the formation.",
+    "answerZh": "每只鸟能借前方鸟翼尖产生的气流获得少许升力，节省体力。它们会轮流领头。",
+    "category": "migration"
+  },
+  {
+    "id": "fact-17",
+    "question": "How do baby birds get food?",
+    "questionZh": "雏鸟怎么得到食物？",
+    "answer": "Most chicks are fed by parents until they can fly and find food alone. Some species hatch ready to walk and feed themselves quickly.",
+    "answerZh": "多数雏鸟由亲鸟喂食，直到能飞并自己觅食。有些种类孵化后不久就能走动并很快自己进食。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-18",
+    "question": "Why do peacocks show their tails?",
+    "questionZh": "孔雀为什么要开屏？",
+    "answer": "Male peafowl fan their trains to impress females and to look bigger to rivals. The eye spots and colors signal health and strength.",
+    "answerZh": "雄孔雀展开尾屏以吸引雌性，并在对手面前显得更大。眼斑与色彩传递健康与强壮的信号。",
+    "category": "appearance"
+  },
+  {
+    "id": "fact-19",
+    "question": "Are all birds active during the day?",
+    "questionZh": "鸟都在白天活动吗？",
+    "answer": "No. Owls and nightjars are mostly nocturnal. Many others are diurnal, and some prefer dawn and dusk.",
+    "answerZh": "不是。猫头鹰与夜鹰多在夜间活动。许多鸟在白天活动，有些偏爱黎明与黄昏。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-20",
+    "question": "How do seabirds drink water?",
+    "questionZh": "海鸟怎么喝水？",
+    "answer": "They drink seawater and have special glands near the eye that squeeze out extra salt, so their bodies stay balanced.",
+    "answerZh": "它们会喝海水，并通过眼部附近的盐腺排出多余盐分，保持体内平衡。",
+    "category": "diet"
+  },
+  {
+    "id": "fact-21",
+    "question": "What makes woodpeckers peck wood?",
+    "questionZh": "啄木鸟为什么要啄木头？",
+    "answer": "They hunt insects inside bark, store food, or carve nest holes. Their skull and tongue are adapted to absorb shocks.",
+    "answerZh": "它们在树皮里找虫、储食或凿洞筑巢。头骨与舌头结构能缓冲撞击。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-22",
+    "question": "Do birds have teeth?",
+    "questionZh": "鸟有牙齿吗？",
+    "answer": "Modern birds do not have teeth. They swallow food whole or tear it with the beak; some have a muscular stomach called a gizzard to grind tough food.",
+    "answerZh": "现生鸟类没有牙齿。它们整吞或用喙撕食；有些鸟有肌胃（砂囊）来磨碎坚硬食物。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-23",
+    "question": "Why are albatross wings so long?",
+    "questionZh": "信天翁的翅膀为什么特别长？",
+    "answer": "Long narrow wings let them glide for hours over the ocean without flapping much, saving energy on long trips.",
+    "answerZh": "又长又窄的翅膀让它们能在海上长时间滑翔而少拍翼，在长距离飞行中节省能量。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-24",
+    "question": "Can birds swim?",
+    "questionZh": "鸟会游泳吗？",
+    "answer": "Many can. Ducks, penguins, and cormorants use feet or wings to move underwater. Not all birds are good swimmers.",
+    "answerZh": "许多鸟会。鸭、企鹅、鸬鹚等用脚或翼在水中移动。并不是所有鸟都擅长游泳。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-25",
+    "question": "What is molting?",
+    "questionZh": "什么是换羽？",
+    "answer": "Molting is when old feathers fall out and new ones grow in. It keeps plumage strong for flight and insulation.",
+    "answerZh": "换羽是旧羽毛脱落、新羽毛长出的过程，能保持羽毛强健，利于飞行与保温。",
+    "category": "appearance"
+  },
+  {
+    "id": "fact-26",
+    "question": "Why do birds take dust baths?",
+    "questionZh": "鸟为什么要洗沙浴？",
+    "answer": "Dust or sand helps absorb extra oil and may discourage parasites. Chickens and many songbirds enjoy dust bathing.",
+    "answerZh": "沙土有助于吸走多余油脂并可能减少寄生虫。鸡和许多鸣禽喜欢沙浴。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-27",
+    "question": "How do birds stay warm in winter?",
+    "questionZh": "鸟类冬天怎么保暖？",
+    "answer": "Fluffy down traps air, they may shiver to make heat, flock together, or migrate south. Some grow thicker feathers before cold weather.",
+    "answerZh": "蓬松的绒羽留住空气，它们会颤抖产热、集群取暖或南迁。有些鸟在寒冬前长出更厚的羽毛。",
+    "category": "general"
+  },
+  {
+    "id": "fact-28",
+    "question": "What do raptors eat?",
+    "questionZh": "猛禽吃什么？",
+    "answer": "Eagles, hawks, and falcons mainly eat meat: fish, rodents, other birds, or carrion, depending on the species.",
+    "answerZh": "鹰、隼等猛禽主要吃肉：鱼、啮齿类、其他鸟类或腐肉，因种类而异。",
+    "category": "diet"
+  },
+  {
+    "id": "fact-29",
+    "question": "Why do some birds mimic sounds?",
+    "questionZh": "为什么有些鸟会模仿声音？",
+    "answer": "Parrots and lyrebirds may copy calls to communicate, attract attention, or practice social learning in their flock.",
+    "answerZh": "鹦鹉和琴鸟等可能模仿叫声来交流、引起注意或在群体中社会性学习。",
+    "category": "behavior"
+  },
+  {
+    "id": "fact-30",
+    "question": "How long can birds live?",
+    "questionZh": "鸟能活多久？",
+    "answer": "Small birds may live a few years; large parrots and albatrosses can live many decades with good conditions.",
+    "answerZh": "小鸟可能只活几年；大型鹦鹉和信天翁在良好条件下可以活几十年。",
+    "category": "general"
+  },
+  {
+    "id": "fact-31",
+    "question": "Why do storks nest on buildings in Europe?",
+    "questionZh": "为什么白鹳在欧洲常在屋顶筑巢？",
+    "answer": "Tall roofs and chimneys replace lost wetland trees. Storks return to the same nest year after year if it feels safe.",
+    "answerZh": "高屋顶和烟囱代替了消失的湿地树木。若巢址安全，白鹳会年复一年回到同一巢。",
+    "category": "habitat"
+  },
+  {
+    "id": "fact-32",
+    "question": "What is a crop in birds?",
+    "questionZh": "鸟的“嗉囊”是什么？",
+    "answer": "A crop is a pouch in the throat where food can be stored softening before digestion. Parents sometimes regurgitate crop food to feed chicks.",
+    "answerZh": "嗉囊是食道上的储食袋，食物可暂存并软化后再消化。亲鸟有时会把嗉囊里的食糜吐喂给雏鸟。",
+    "category": "anatomy"
+  },
+  {
+    "id": "fact-33",
+    "question": "Why are kingfishers often bright blue or green?",
+    "questionZh": "翠鸟为什么常是鲜蓝或鲜绿色？",
+    "answer": "Those colors often come from feather structure that splits light, not from blue pigment. It helps them shine along rivers and coasts.",
+    "answerZh": "这些颜色常来自羽毛结构对光线的分解，而非蓝色色素。在河流与海岸边显得格外闪亮。",
+    "category": "appearance"
+  }
+]

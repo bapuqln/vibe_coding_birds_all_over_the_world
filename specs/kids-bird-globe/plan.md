@@ -1,5 +1,7 @@
-# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v30)
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v31)
 
+> **v31 changelog**: Structured Learning Experience — LearningTrackSystem with themed bird discovery journeys and badge rewards, upgraded BirdGuideService with RAG-like architecture (PromptBuilder + ResponseRenderer) and bird_facts.json fallback, EcosystemSystem with seasonal world state (season/temperature/wind/timeOfDay) influencing bird density and migration, HabitatFilter sidebar toggle for 6 habitat types, SeasonController managing season transitions, MigrationVisualizer with glowing arcs and directional particles tied to ecosystem seasons, BirdDataLoader with lazy regional JSON loading.
+>
 > **v30 changelog**: Educational Layer — Bird Encyclopedia panel with search/filter (continent, diet, wingspan), detailed bird entries with 3D model preview/habitat map/sound/facts, performance monitoring overlay, dynamic LOD tuning based on FPS, progressive asset preloading with priority queue, texture compression pipeline with KTX2/Basis support.
 >
 > **v29 changelog**: Shareable Discoveries — screenshot capture via canvas toDataURL with flash animation and browser download, share card generator rendering bird info to off-screen canvas (600x400px), progress export as JSON with all discovery/achievement/expedition data, share UI panel with recent captures and download options.
@@ -881,6 +883,79 @@ New Zustand store additions:
 **Problem**: Need an engaging way to display AI guide responses.
 **Solution**: Create `AIBirdGuidePanel.tsx` with glass-morphism speech bubble. Typing animation reveals text at 30ms per character. Narration button triggers Web Speech API. Guide avatar (bird icon) has gentle bobbing CSS animation. Panel positioned in card layer (z-60), bottom-left area, avoiding overlap with existing UI.
 
+### TD-168b: BirdGuideService Architecture
+**Problem**: The AI guide needs a structured service layer for question routing and answer generation.
+**Solution**: Create `BirdGuideService.ts` with RAG-like architecture. `PromptBuilder` constructs context from the bird encyclopedia database (bird data, knowledge base). `ResponseRenderer` formats answers with typing animation and child-friendly language. Service checks for API key; if absent, falls back to prewritten answers from `bird_facts.json`. Service is stateless and can be called from any component.
+
+### TD-169b: Learning Track System
+**Problem**: Children lack structured learning paths through the bird content.
+**Solution**: Create `LearningTrackSystem.ts` managing themed bird discovery journeys. Five predefined tracks stored in `learning-tracks.json`. Each track maps to 5-10 bird IDs from the existing database. `TrackProgress` stored in localStorage. When all birds in a track are discovered (cross-referenced with `discoveredBirds` store state), the track is marked complete and a badge is awarded. Track panel in sidebar shows progress bars per track. Celebration animation reuses existing confetti + badge reveal pattern from expedition system.
+
+### TD-170b: Ecosystem Simulation
+**Problem**: The world feels static — no seasonal variation in bird behavior or density.
+**Solution**: Create `EcosystemSystem.ts` managing world state: season (spring/summer/autumn/winter), temperature, wind, timeOfDay. Season cycles at configurable speed (default 60s per year). `SeasonController.ts` manages smooth transitions between seasons using linear interpolation. Season influences bird density via latitude-based weighting: winter pushes birds toward equator, summer spreads them to higher latitudes. Ecosystem state stored in Zustand. Simulation ticks every 500ms (not per-frame) for performance. HUD season indicator shows current season with icon.
+
+### TD-171b: Habitat Filter
+**Problem**: No way to focus exploration on specific habitat types.
+**Solution**: Create `HabitatFilter.ts` module with filter logic. Six habitat types: forest, wetlands, ocean, grassland, mountain, urban. Each bird's `habitatType` field is mapped to these categories. Filter state stored in Zustand (array of active habitat strings). When filters active, non-matching birds render at 0.1 opacity via BirdMarker. Filter toggles in sidebar with badge showing active count. Uses memoized filtered bird list for performance.
+
+### TD-172b: Seasonal Migration Visualization
+**Problem**: Migration paths are always visible regardless of season.
+**Solution**: Upgrade `MigrationVisualizer.ts` to integrate with `EcosystemSystem`. Migration arcs only render during autumn (southward) and spring (northward) seasons. Add directional particle flow along arcs using instanced points with velocity. Particles move along the arc path with configurable speed. Glowing arc lines use emissive shader with season-based intensity (brighter during peak migration). `MigrationSystem` reads season from ecosystem state before rendering.
+
+### TD-173b: Data Expansion with Lazy Loading
+**Problem**: The monolithic `birds.json` doesn't scale to hundreds of birds.
+**Solution**: Create `BirdDataLoader.ts` supporting lazy regional loading. New directory `src/data/birds/` with `index.json` (master index with bird IDs and region references) and `regions/` subdirectory (asia.json, europe.json, americas.json). Loader reads index at startup, then loads regional files on demand when user navigates to a region. Loaded data cached in a Map. Backward compatible: if regional files don't exist, falls back to existing `birds.json`. Loader exports async functions consumed by BirdSystem.
+
+## V31 Architecture Diagram
+
+```
+src/
+├── core/
+│   ├── Engine.ts
+│   ├── SceneManager.ts
+│   └── CameraController.ts
+├── systems/
+│   ├── BirdSystem.ts
+│   ├── MigrationSystem.ts
+│   ├── EcosystemSystem.ts          ← NEW v31
+│   ├── LearningTrackSystem.ts      ← NEW v31
+│   ├── AudioSystem.ts
+│   ├── LODSystem (in Engine.ts)
+│   ├── AIGuideSystem.ts            ← UPGRADED v31
+│   ├── FlockingSystem.ts
+│   ├── WeatherSystem.ts
+│   ├── AchievementSystem.ts
+│   ├── StorySystem.ts
+│   ├── QuizSystem.ts
+│   └── index.ts
+├── features/
+│   ├── BirdGuideService.ts         ← NEW v31
+│   ├── PromptBuilder.ts            ← NEW v31
+│   ├── ResponseRenderer.ts         ← NEW v31
+│   ├── HabitatFilter.ts            ← NEW v31
+│   ├── SeasonController.ts         ← NEW v31
+│   ├── MigrationVisualizer.ts      ← NEW v31
+│   └── BirdDataLoader.ts           ← NEW v31
+├── ui/
+│   ├── components/three/
+│   └── components/ui/
+│       ├── TrackPanel.tsx           ← NEW v31
+│       ├── AIBirdGuidePanel.tsx     ← UPGRADED v31
+│       └── ... (existing panels)
+└── data/
+    ├── birds.json
+    ├── bird-knowledge.json
+    ├── bird_facts.json              ← NEW v31
+    ├── learning-tracks.json         ← NEW v31
+    └── birds/                       ← NEW v31
+        ├── index.json
+        └── regions/
+            ├── asia.json
+            ├── europe.json
+            └── americas.json
+```
+
 ## Key Technical Decisions (v32)
 
 ### TD-168: Enhanced AR Mode
@@ -955,9 +1030,16 @@ New Zustand store additions:
 
 ## Implementation Phases (v31)
 
-- Phase 222: AI Guide Knowledge Base — bird-knowledge.json data, AIGuideSystem.ts → R-100, R-101
-- Phase 223: AI Guide UI — AIBirdGuidePanel.tsx, speech bubble, typing animation → R-102
-- Phase 224: V31 Verification → AC-V31-1
+- Phase 222: AI Guide Knowledge Base — bird-knowledge.json data, bird_facts.json fallback, AIGuideSystem.ts upgrade → R-100, R-101
+- Phase 223: AI Guide Service Layer — BirdGuideService.ts, PromptBuilder.ts, ResponseRenderer.ts → R-100
+- Phase 224: AI Guide UI — AIBirdGuidePanel.tsx upgrade, speech bubble, typing animation → R-102
+- Phase 225b: Learning Track Data — learning-tracks.json, LearningTrackSystem.ts → R-103b
+- Phase 226b: Learning Track UI — TrackPanel.tsx, progress bars, badge rewards → R-103b
+- Phase 227b: Ecosystem Simulation — EcosystemSystem.ts, SeasonController.ts, world state → R-104b
+- Phase 228b: Habitat Filter — HabitatFilter.ts, sidebar toggles, filter logic → R-105b
+- Phase 229b: Seasonal Migration — MigrationVisualizer.ts, glowing arcs, directional particles → R-106b
+- Phase 230b: Data Expansion — BirdDataLoader.ts, regional JSON files, lazy loading → R-107b
+- Phase 231b: V31 Verification → AC-V31-1 through AC-V31-6
 
 ## Implementation Phases (v32)
 
@@ -1020,7 +1102,8 @@ New Zustand store additions:
 ### New Components
 | Component | Purpose | Version |
 |-----------|---------|---------|
-| `AIBirdGuidePanel.tsx` | AI guide speech bubble with Q&A | v31 |
+| `AIBirdGuidePanel.tsx` | AI guide speech bubble with Q&A (upgraded) | v31 |
+| `TrackPanel.tsx` | Learning track selection and progress | v31 |
 | `PhotographerMode.tsx` | Bird photographer game overlay | v34 |
 | `BiomeEffects.tsx` | Biome visual effects on globe | v35 |
 | `ClassroomPanel.tsx` | Teacher control panel | v39 |
@@ -1029,7 +1112,9 @@ New Zustand store additions:
 ### New Systems
 | System | Purpose | Version |
 |--------|---------|---------|
-| `AIGuideSystem.ts` | Knowledge base Q&A routing | v31 |
+| `AIGuideSystem.ts` | Knowledge base Q&A routing (upgraded) | v31 |
+| `LearningTrackSystem.ts` | Themed learning journey management | v31 |
+| `EcosystemSystem.ts` | Seasonal world state simulation | v31 |
 | `ARSystem.ts` | Enhanced AR session management | v32 |
 | `AnimationSystem.ts` | Advanced bird animation state machine | v33 |
 | `PhotographerSystem.ts` | Photo scoring algorithm | v34 |
@@ -1041,14 +1126,24 @@ New Zustand store additions:
 | File | Purpose | Version |
 |------|---------|---------|
 | `bird-knowledge.json` | AI guide Q&A knowledge base | v31 |
+| `bird_facts.json` | Prewritten fallback answers | v31 |
+| `learning-tracks.json` | Learning track definitions | v31 |
+| `birds/index.json` | Master bird index for lazy loading | v31 |
+| `birds/regions/asia.json` | Asian bird data | v31 |
+| `birds/regions/europe.json` | European bird data | v31 |
+| `birds/regions/americas.json` | Americas bird data | v31 |
 | `biomes.json` | Biome zone definitions | v35 |
 | `lessons.json` | Classroom lesson plans | v39 |
 
 ### Modified Components
 | Component | Changes | Version |
 |-----------|---------|---------|
+| `MigrationPaths.tsx` | Season-aware rendering, directional particles | v31 |
+| `BirdMarker.tsx` | Habitat filter opacity, ecosystem density | v31 |
+| `RightControlPanel.tsx` | Learning Tracks, Habitat Filter buttons | v31 |
+| `App.tsx` | TrackPanel, ecosystem HUD integrated | v31 |
+| `GlobeScene.tsx` | Season indicator, ecosystem integration | v31 |
 | `ARViewerModal.tsx` | WebXR hit-test, touch controls | v32 |
-| `BirdMarker.tsx` | Animation state machine integration | v33 |
 | `BirdEncyclopediaPanel.tsx` | Pro filters, full-text search | v38 |
 | `BirdEntryPanel.tsx` | Orbit controls, waveform, facts | v38 |
 | `AtmosphereShell.tsx` | Rayleigh scattering shader | v37 |
@@ -1064,6 +1159,12 @@ New Zustand store additions:
 | `aiGuideOpen` | AI guide panel visibility | v31 |
 | `aiGuideQuestion` | Current question being asked | v31 |
 | `aiGuideAnswer` | Current answer being displayed | v31 |
+| `learningTracksOpen` | Learning tracks panel visibility | v31 |
+| `trackProgress` | Array of TrackProgress objects | v31 |
+| `trackNotification` | Recently completed track ID | v31 |
+| `currentSeason` | Current ecosystem season | v31 |
+| `ecosystemState` | Full world state object | v31 |
+| `activeHabitatFilters` | Array of active habitat filter strings | v31 |
 | `arSessionActive` | WebXR AR session state | v32 |
 | `photographerModeActive` | Photographer game state | v34 |
 | `photographerScore` | Current photo score | v34 |
@@ -1075,3 +1176,75 @@ New Zustand store additions:
 | `sandboxModeActive` | Sandbox mode state | v40 |
 | `spawnedBirds` | Array of sandbox-spawned birds | v40 |
 | `sandboxTimeHour` | Sandbox time slider value | v40 |
+| `compareBirdA` | First bird ID for compare mode | v31 |
+| `compareBirdB` | Second bird ID for compare mode | v31 |
+| `compareMode` | Compare panel visibility | v31 |
+| `discoveryMissions` | Array of DiscoveryMission objects | v31 |
+| `discoveryMissionsPanelOpen` | Discovery missions panel visibility | v31 |
+| `discoveryBadges` | Array of earned badge strings | v31 |
+| `evolutionTimelineValue` | Current era slider value (0-3) | v31 |
+
+---
+
+# Implementation Plan — V31 (Discovery & Comparison Learning Layer)
+
+> **v31 changelog addendum**: Bird Compare Mode with side-by-side stat comparison and green highlight for larger values, Discover Missions system with gamified exploration challenges and badge rewards, Bird Evolution Timeline slider with era-based bird filtering and info cards, new data fields (era, nocturnal, flightSpeed) on bird entries, right panel layout fix for vertical stack with equal-width buttons.
+
+## Key Technical Decisions (v31 addendum)
+
+### TD-174b: Bird Compare Mode
+**Problem**: Children cannot visually compare two bird species to understand biological differences.
+**Solution**: Create `BirdComparePanel.tsx` in modal layer. Long-press a bird marker triggers compare mode — first bird is set as Bird A, then user taps a second bird to set Bird B. Panel renders two columns with stat rows. Each stat row compares values; the larger value gets a green highlight (`#22c55e`). Stats: wingspan, weight (derived from sizeCategory), habitat, diet, flight speed. Close button exits compare mode and clears both bird selections.
+
+### TD-175b: Discover Missions System
+**Problem**: Children need structured exploration goals beyond daily missions and expeditions.
+**Solution**: Create `DiscoverMissionSystem.ts` in `/src/systems/` with predefined discovery missions. Missions stored in `discover-missions.json`: find rainforest birds, find birds with wingspan > 2m, find nocturnal birds, find Antarctic birds. Each mission has: id, titleZh, titleEn, descriptionZh, descriptionEn, type (habitat/trait/region), target, goal, badge. Progress tracked reactively when birds are discovered. Completion triggers celebration + badge award. Badges persisted in localStorage under `kids-bird-globe-discovery-badges`.
+
+### TD-176b: Bird Evolution Timeline
+**Problem**: No way to explore bird evolution history on the globe.
+**Solution**: Enhance existing `EvolutionTimeline.tsx` with a slider control. Four era stops: Mesozoic (150M years ago — Archaeopteryx), Paleogene (60M — early seabirds), Neogene (5M — modern bird groups), Quaternary (today — current species). Slider position filters birds on globe by `evolutionEra` field. Non-matching birds fade to 0.1 opacity. Info panel shows era name, description, and representative bird. Era data stored in `evolution-eras.json`.
+
+### TD-177b: Data Schema Extension
+**Problem**: Bird data lacks flightSpeed field needed for compare mode.
+**Solution**: Add `flightSpeed` (number, km/h) to Bird interface in types.ts. The `era` field already exists as `evolutionEra`. The `nocturnal` boolean is derived from existing `activityPeriod === "nocturnal"`. Update birds.json with flightSpeed values for all 53 birds.
+
+### TD-178b: Right Panel Layout Fix
+**Problem**: Right control panel buttons can overlap on smaller viewports.
+**Solution**: Add `max-height: calc(100vh - 40px)` and `overflow-y: auto` to the right panel container. All buttons use consistent width via `min-width: 100px`. Panel remains fixed-position at bottom-right.
+
+## Implementation Phases (v31 addendum)
+
+- Phase 232b: Discover Mission System — DiscoverMissionSystem.ts, discover-missions.json, store state → R-124
+- Phase 233b: Bird Compare Panel — BirdComparePanel.tsx, compare logic, stat highlighting → R-123
+- Phase 234b: Evolution Timeline Enhancement — slider control, era filtering, info cards → R-125
+- Phase 235b: Data Schema Update — flightSpeed field on all birds → R-126
+- Phase 236b: Right Panel Layout Fix — scrollable vertical stack, equal-width buttons → R-127
+- Phase 237b: V31 Addendum Verification → AC-V31-2
+
+## Component Inventory (v31 addendum)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `BirdComparePanel.tsx` | Side-by-side bird stat comparison | v31 |
+| `DiscoverMissionsPanel.tsx` | Discovery mission list and progress | v31 |
+
+### New Systems
+| System | Purpose | Version |
+|--------|---------|---------|
+| `DiscoverMissionSystem.ts` | Discovery mission tracking and completion | v31 |
+
+### New Data Files
+| File | Purpose | Version |
+|------|---------|---------|
+| `discover-missions.json` | Discovery mission definitions | v31 |
+| `evolution-eras.json` | Evolution era definitions and descriptions | v31 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `EvolutionTimeline.tsx` | Added slider control, era filtering | v31 |
+| `RightControlPanel.tsx` | Added Compare, Discover Missions buttons; scrollable layout | v31 |
+| `App.tsx` | BirdComparePanel, DiscoverMissionsPanel integrated | v31 |
+| `store.ts` | Compare mode state, discovery missions state | v31 |
+| `types.ts` | DiscoveryMission, DiscoveryBadge types; flightSpeed on Bird | v31 |

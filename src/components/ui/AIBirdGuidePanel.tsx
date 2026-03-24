@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAppStore } from "../../store";
-import { findAnswer, getQuestionPrompts } from "../../systems/AIGuideSystem";
+import { getGuideAnswer, getQuestionPrompts } from "../../features/BirdGuideService";
+import { ResponseRenderer } from "./ResponseRenderer";
 
 export function AIBirdGuidePanel() {
   const open = useAppStore((s) => s.aiGuideOpen);
@@ -11,41 +12,16 @@ export function AIBirdGuidePanel() {
   const selectedBirdId = useAppStore((s) => s.selectedBirdId);
   const language = useAppStore((s) => s.language);
 
-  const [displayedText, setDisplayedText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const timerRef = useRef<number | null>(null);
+  const [ctaPressed, setCtaPressed] = useState(false);
 
   const prompts = getQuestionPrompts(selectedBirdId, language);
 
-  useEffect(() => {
-    if (!answer) {
-      setDisplayedText("");
-      setIsTyping(false);
-      return;
-    }
-    setIsTyping(true);
-    setDisplayedText("");
-    let idx = 0;
-    const tick = () => {
-      if (idx < answer.length) {
-        setDisplayedText(answer.slice(0, idx + 1));
-        idx++;
-        timerRef.current = window.setTimeout(tick, 30);
-      } else {
-        setIsTyping(false);
-      }
-    };
-    timerRef.current = window.setTimeout(tick, 30);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [answer]);
-
   const handleAsk = (q: string) => {
     setQuestion(q);
-    const result = findAnswer(q, selectedBirdId ?? undefined, language);
+    const result = getGuideAnswer(q, selectedBirdId ?? undefined, language);
     setAnswer(result);
+    setCtaPressed(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,16 +32,26 @@ export function AIBirdGuidePanel() {
     }
   };
 
-  const handleNarrate = () => {
-    if (!answer || !("speechSynthesis" in window)) return;
+  const handleNarrate = (text: string) => {
+    if (!text || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(answer);
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9;
     utterance.lang = language === "zh" ? "zh-CN" : "en-US";
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    setAnswer(null);
+    setQuestion(null);
+    setCtaPressed(false);
+  };
+
   if (!open) return null;
+
+  const askLabel =
+    language === "zh" ? "向鸟类向导提问" : "Ask the Bird Guide";
 
   return (
     <div
@@ -91,34 +77,54 @@ export function AIBirdGuidePanel() {
             </span>
           </div>
           <button
-            onClick={() => { setOpen(false); setAnswer(null); setQuestion(null); }}
+            type="button"
+            onClick={handleClose}
             className="text-white/60 hover:text-white"
+            aria-label={language === "zh" ? "关闭" : "Close"}
           >
             ✕
           </button>
         </div>
 
-        {displayedText && (
-          <div className="mb-3 rounded-xl bg-white/10 p-3 text-sm leading-relaxed">
-            {displayedText}
-            {isTyping && <span className="animate-pulse">▌</span>}
-            {!isTyping && answer && (
-              <button
-                onClick={handleNarrate}
-                className="ml-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-xs hover:bg-white/20"
-              >
-                🔊 {language === "zh" ? "朗读" : "Listen"}
-              </button>
-            )}
-          </div>
+        <button
+          type="button"
+          onClick={() => setCtaPressed(true)}
+          className="mb-3 w-full rounded-2xl border border-amber-400/40 bg-linear-to-r from-amber-500/30 to-orange-500/25 py-3 text-sm font-bold text-white shadow-lg transition hover:from-amber-500/40 hover:to-orange-500/35"
+          style={{ minHeight: 56 }}
+        >
+          ✨ {askLabel}
+        </button>
+
+        {(answer || ctaPressed) && (
+          <ResponseRenderer text={answer ?? ""}>
+            {(displayedText, isTyping) =>
+              displayedText ? (
+                <div className="mb-3 rounded-xl bg-white/10 p-3 text-sm leading-relaxed">
+                  {displayedText}
+                  {isTyping && <span className="animate-pulse">▌</span>}
+                  {!isTyping && answer && (
+                    <button
+                      type="button"
+                      onClick={() => handleNarrate(answer)}
+                      className="ml-2 inline-flex min-h-[44px] items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs hover:bg-white/20"
+                    >
+                      🔊 {language === "zh" ? "朗读" : "Listen"}
+                    </button>
+                  )}
+                </div>
+              ) : null
+            }
+          </ResponseRenderer>
         )}
 
         <div className="mb-2 flex flex-wrap gap-1.5">
           {prompts.map((p, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => handleAsk(p)}
               className="rounded-full bg-white/10 px-3 py-1 text-xs transition hover:bg-white/20"
+              style={{ minHeight: 36 }}
             >
               {p}
             </button>
@@ -130,12 +136,14 @@ export function AIBirdGuidePanel() {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={language === "zh" ? "问我关于鸟类的问题..." : "Ask me about birds..."}
-            className="flex-1 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white placeholder-white/40 outline-none focus:bg-white/15"
+            placeholder={
+              language === "zh" ? "问我关于鸟类的问题..." : "Ask me about birds..."
+            }
+            className="min-h-[44px] flex-1 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white placeholder-white/40 outline-none focus:bg-white/15"
           />
           <button
             type="submit"
-            className="rounded-full bg-white/20 px-3 py-1.5 text-xs transition hover:bg-white/30"
+            className="min-h-[44px] shrink-0 rounded-full bg-white/20 px-4 text-xs font-semibold transition hover:bg-white/30"
           >
             {language === "zh" ? "问" : "Ask"}
           </button>

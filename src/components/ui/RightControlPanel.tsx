@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { useAppStore } from "../../store";
 import { ActionButton } from "./ActionButton";
 import birdsData from "../../data/birds.json";
-import type { Bird } from "../../types";
+import type { Bird, HabitatFilterType } from "../../types";
+
+const HABITAT_FILTERS: { id: HabitatFilterType; zh: string; en: string }[] = [
+  { id: "forest", zh: "森林", en: "Forest" },
+  { id: "wetlands", zh: "湿地", en: "Wetlands" },
+  { id: "ocean", zh: "海洋", en: "Ocean" },
+  { id: "grassland", zh: "草原", en: "Grassland" },
+  { id: "mountain", zh: "山地", en: "Mountain" },
+  { id: "urban", zh: "城市", en: "Urban" },
+];
 
 const birds = birdsData as Bird[];
 
@@ -55,6 +65,26 @@ export function RightControlPanel() {
   const setSandboxActive = useAppStore((s) => s.setSandboxModeActive);
   const migrationSpeed = useAppStore((s) => s.migrationSpeed);
   const setMigrationSpeed = useAppStore((s) => s.setMigrationSpeed);
+  const learningTracksOpen = useAppStore((s) => s.learningTracksOpen);
+  const setLearningTracksOpen = useAppStore((s) => s.setLearningTracksOpen);
+  const activeHabitatFilters = useAppStore((s) => s.activeHabitatFilters);
+  const toggleHabitatFilter = useAppStore((s) => s.toggleHabitatFilter);
+  const clearHabitatFilters = useAppStore((s) => s.clearHabitatFilters);
+
+  const compareMode = useAppStore(
+    (s) => (s as typeof s & { compareMode: boolean }).compareMode ?? false,
+  );
+  const setCompareMode = useAppStore(
+    (s) => (s as typeof s & { setCompareMode: (m: boolean) => void }).setCompareMode,
+  );
+  const discoveryMissionsPanelOpen = useAppStore(
+    (s) => (s as typeof s & { discoveryMissionsPanelOpen: boolean }).discoveryMissionsPanelOpen ?? false,
+  );
+  const setDiscoveryMissionsPanelOpen = useAppStore(
+    (s) => (s as typeof s & { setDiscoveryMissionsPanelOpen: (o: boolean) => void }).setDiscoveryMissionsPanelOpen,
+  );
+
+  const [habitatSectionOpen, setHabitatSectionOpen] = useState(false);
 
   const handleDiscover = () => {
     const bird = pickRandomBird(selectedBirdId);
@@ -93,6 +123,8 @@ export function RightControlPanel() {
         flexDirection: "column",
         alignItems: "flex-end",
         gap: 8,
+        maxHeight: "calc(100vh - 40px)",
+        overflowY: "auto",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
         paddingRight: "env(safe-area-inset-right, 0px)",
       }}
@@ -156,6 +188,95 @@ export function RightControlPanel() {
       >
         {language === "zh" ? "探险" : "Expeditions"}
       </ActionButton>
+
+      <ActionButton
+        onClick={() => {
+          const next = !learningTracksOpen;
+          setLearningTracksOpen(next);
+          setActivePanel(next ? "learningTracks" : null);
+        }}
+        active={learningTracksOpen}
+        icon="📚"
+        ariaLabel={language === "zh" ? "学习路线" : "Learning Tracks"}
+      >
+        {language === "zh" ? "路线" : "Tracks"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => {
+          const next = !compareMode;
+          setCompareMode(next);
+        }}
+        active={compareMode}
+        icon="⚖️"
+        ariaLabel={language === "zh" ? "鸟类对比" : "Compare Birds"}
+      >
+        {language === "zh" ? "对比" : "Compare"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => {
+          const next = !discoveryMissionsPanelOpen;
+          setDiscoveryMissionsPanelOpen(next);
+          setActivePanel(next ? "discoverMissions" : null);
+        }}
+        active={discoveryMissionsPanelOpen}
+        icon="🎯"
+        ariaLabel={language === "zh" ? "发现任务" : "Discover Missions"}
+      >
+        {language === "zh" ? "发现" : "Discover"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => setHabitatSectionOpen(!habitatSectionOpen)}
+        active={habitatSectionOpen || activeHabitatFilters.length > 0}
+        icon="🌿"
+        badge={activeHabitatFilters.length || undefined}
+        ariaLabel={language === "zh" ? "栖息地筛选" : "Habitat filter"}
+      >
+        {language === "zh" ? "栖息地" : "Habitat"}
+      </ActionButton>
+
+      {habitatSectionOpen && (
+        <div
+          className="glass-button flex flex-col gap-2 p-2"
+          style={{
+            width: 120,
+            borderRadius: 16,
+            background: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(16px)",
+          }}
+        >
+          {HABITAT_FILTERS.map((h) => {
+            const on = activeHabitatFilters.includes(h.id);
+            return (
+              <button
+                key={h.id}
+                type="button"
+                onClick={() => toggleHabitatFilter(h.id)}
+                className="rounded-xl px-2 text-left text-xs font-semibold transition"
+                style={{
+                  minHeight: 44,
+                  background: on ? "rgba(245, 158, 11, 0.35)" : "rgba(0,0,0,0.15)",
+                  color: "white",
+                }}
+              >
+                {language === "zh" ? h.zh : h.en}
+              </button>
+            );
+          })}
+          {activeHabitatFilters.length > 0 && (
+            <button
+              type="button"
+              onClick={() => clearHabitatFilters()}
+              className="rounded-xl px-2 py-2 text-center text-[10px] font-bold text-white/80 underline"
+              style={{ minHeight: 40 }}
+            >
+              {language === "zh" ? "清除全部" : "Clear all"}
+            </button>
+          )}
+        </div>
+      )}
 
       <ActionButton
         onClick={() => setStoryModeActive(!storyModeActive)}

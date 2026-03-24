@@ -1,0 +1,50 @@
+[
+  {
+    "id": "mesozoic",
+    "nameZh": "中生代",
+    "nameEn": "Mesozoic Era",
+    "descriptionZh": "1.5亿年前 — 始祖鸟时代，最早的鸟类出现在恐龙时代",
+    "descriptionEn": "150M years ago — Age of Archaeopteryx, the earliest birds appeared alongside dinosaurs",
+    "yearsAgo": "150M",
+    "representativeBird": "Archaeopteryx",
+    "representativeBirdZh": "始祖鸟",
+    "era": "mesozoic",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "paleogene",
+    "nameZh": "古近纪",
+    "nameEn": "Paleogene Period",
+    "descriptionZh": "6000万年前 — 早期海鸟出现，鸟类开始多样化",
+    "descriptionEn": "60M years ago — Early seabirds appeared, birds began to diversify",
+    "yearsAgo": "60M",
+    "representativeBird": "Early Seabirds",
+    "representativeBirdZh": "早期海鸟",
+    "era": "paleogene",
+    "color": "#3b82f6"
+  },
+  {
+    "id": "neogene",
+    "nameZh": "新近纪",
+    "nameEn": "Neogene Period",
+    "descriptionZh": "500万年前 — 现代鸟类群体形成",
+    "descriptionEn": "5M years ago — Modern bird groups formed",
+    "yearsAgo": "5M",
+    "representativeBird": "Modern Bird Groups",
+    "representativeBirdZh": "现代鸟类群体",
+    "era": "neogene",
+    "color": "#22c55e"
+  },
+  {
+    "id": "quaternary",
+    "nameZh": "第四纪",
+    "nameEn": "Quaternary Period",
+    "descriptionZh": "至今 — 当代物种，我们今天看到的鸟类",
+    "descriptionEn": "Today — Current species, the birds we see today",
+    "yearsAgo": "Today",
+    "representativeBird": "Current Species",
+    "representativeBirdZh": "当代物种",
+    "era": "quaternary",
+    "color": "#f59e0b"
+  }
+]

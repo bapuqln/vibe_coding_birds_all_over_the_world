@@ -38,6 +38,9 @@ import { ScreenshotFlash } from "./components/ui/ScreenshotFlash";
 import { PerformanceMonitor } from "./components/ui/PerformanceMonitor";
 import { BirdEntryPanel } from "./components/ui/BirdEntryPanel";
 import { AIBirdGuidePanel } from "./components/ui/AIBirdGuidePanel";
+import { TrackPanel, TrackNotification } from "./components/ui/TrackPanel";
+import { BirdComparePanel } from "./components/ui/BirdComparePanel";
+import { DiscoverMissionsPanel } from "./components/ui/DiscoverMissionsPanel";
 import { PhotographerMode } from "./components/ui/PhotographerMode";
 import { ClassroomPanel } from "./components/ui/ClassroomPanel";
 import { SandboxToolbar } from "./components/ui/SandboxToolbar";
@@ -106,6 +109,7 @@ export default function App() {
         <DiscoveryNotification />
         <ExpeditionNotification />
         <AchievementNotification />
+        <TrackNotification />
         <BirdEntryPanel />
         <AIBirdGuidePanel />
       </div>
@@ -127,6 +131,9 @@ export default function App() {
         <StoryModePanel />
         <SharePanel />
         <ClassroomPanel />
+        <TrackPanel />
+        <BirdComparePanel />
+        <DiscoverMissionsPanel />
       </div>
 
       {/* Layer 6 — Full Screen Overlays */}

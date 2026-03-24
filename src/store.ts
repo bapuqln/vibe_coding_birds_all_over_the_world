@@ -5,25 +5,32 @@ import type {
   BirdPhoto,
   CollectedBird,
   DailyMission,
+  DiscoveryMissionProgress,
   ExpeditionProgress,
+  HabitatFilterType,
   Language,
   MissionTemplate,
   PhotoScore,
   QuestProgress,
   QuizQuestion,
   QuizState,
+  Season,
   SoundGuessOption,
   SoundGuessState,
   SpawnedBird,
   StoryPlayState,
   TimeOfDay,
   TourState,
+  TrackProgress,
+  WorldState,
 } from "./types";
 import birdsData from "./data/birds.json";
 import missionTemplates from "./data/missions.json";
 import achievementDefs from "./data/achievements.json";
 import expeditionsData from "./data/expeditions.json";
 import type { AchievementDef, Bird, Expedition } from "./types";
+import { getAllTracks } from "./systems/LearningTrackSystem";
+import { checkMissionProgress, getAllDiscoverMissions } from "./systems/DiscoverMissionSystem";
 
 export type PanelType =
   | "birdCard"
@@ -46,7 +53,9 @@ export type PanelType =
   | "aiGuide"
   | "photographer"
   | "classroom"
-  | "sandbox";
+  | "sandbox"
+  | "learningTracks"
+  | "discoverMissions";
 
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
@@ -60,6 +69,9 @@ const ACHIEVEMENTS_KEY = "kids-bird-globe-achievements";
 const LISTEN_COUNT_KEY = "kids-bird-globe-listen-count";
 const COMPLETED_MISSIONS_KEY = "kids-bird-globe-completed-missions";
 const EXPEDITIONS_KEY = "kids-bird-globe-expeditions";
+const TRACKS_KEY = "kids-bird-globe-learning-tracks";
+const DISCOVERY_BADGES_KEY = "kids-bird-globe-discovery-badges";
+const DISCOVERY_MISSIONS_KEY = "kids-bird-globe-discovery-missions-progress";
 
 const allBirds = birdsData as Bird[];
 const templates = missionTemplates as MissionTemplate[];
@@ -242,6 +254,32 @@ interface AppStore {
   spawnedBirds: SpawnedBird[];
   sandboxTimeHour: number;
 
+  // V31 — Learning Tracks
+  learningTracksOpen: boolean;
+  trackProgress: TrackProgress[];
+  trackNotification: string | null;
+
+  // V31 — Ecosystem
+  currentSeason: Season;
+  ecosystemState: WorldState;
+
+  // V31 — Habitat Filter
+  activeHabitatFilters: HabitatFilterType[];
+
+  // V31 — Bird Compare Mode
+  compareBirdA: string | null;
+  compareBirdB: string | null;
+  compareMode: boolean;
+
+  // V31 — Discovery Missions
+  discoveryMissions: DiscoveryMissionProgress[];
+  discoveryMissionsPanelOpen: boolean;
+  discoveryBadges: string[];
+  discoveryMissionNotification: string | null;
+
+  // V31 — Evolution Timeline
+  evolutionTimelineValue: number;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -366,6 +404,28 @@ interface AppStore {
   removeSpawnedBird: (id: string) => void;
   clearSpawnedBirds: () => void;
   setSandboxTimeHour: (hour: number) => void;
+
+  // V31 — Learning Tracks & ecosystem
+  setLearningTracksOpen: (open: boolean) => void;
+  updateTrackProgress: () => void;
+  dismissTrackNotification: () => void;
+  setCurrentSeason: (season: Season) => void;
+  setEcosystemState: (state: WorldState) => void;
+  toggleHabitatFilter: (filter: HabitatFilterType) => void;
+  clearHabitatFilters: () => void;
+
+  // V31 — Compare
+  setCompareMode: (mode: boolean) => void;
+  setCompareBirdA: (id: string | null) => void;
+  setCompareBirdB: (id: string | null) => void;
+
+  // V31 — Discovery Missions
+  setDiscoveryMissionsPanelOpen: (open: boolean) => void;
+  updateDiscoveryMissions: () => void;
+  dismissDiscoveryMissionNotification: () => void;
+
+  // V31 — Evolution Timeline
+  setEvolutionTimelineValue: (value: number) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -483,6 +543,31 @@ export const useAppStore = create<AppStore>((set, get) => ({
   sandboxModeActive: false,
   spawnedBirds: [],
   sandboxTimeHour: 12,
+
+  learningTracksOpen: false,
+  trackProgress: loadFromStorage<TrackProgress[]>(TRACKS_KEY, []),
+  trackNotification: null,
+
+  currentSeason: "spring",
+  ecosystemState: {
+    season: "spring",
+    temperature: 20,
+    wind: 5,
+    timeOfDay: "morning",
+  },
+
+  activeHabitatFilters: [],
+
+  compareBirdA: null,
+  compareBirdB: null,
+  compareMode: false,
+
+  discoveryMissions: loadFromStorage<DiscoveryMissionProgress[]>(DISCOVERY_MISSIONS_KEY, []),
+  discoveryMissionsPanelOpen: false,
+  discoveryBadges: loadFromStorage<string[]>(DISCOVERY_BADGES_KEY, []),
+  discoveryMissionNotification: null,
+
+  evolutionTimelineValue: 3,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -639,6 +724,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
     saveToStorage(DISCOVERY_KEY, updated);
     set({ discoveredBirds: updated, discoveryNotification: birdId });
     setTimeout(() => get().updateExpeditionProgress(), 100);
+    setTimeout(() => get().updateTrackProgress(), 100);
+    setTimeout(() => get().updateDiscoveryMissions(), 150);
   },
   dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
 
@@ -699,6 +786,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
     if (activePanel !== null && activePanel !== "sandbox") {
       reset.sandboxModeActive = false;
+    }
+    if (activePanel !== null && activePanel !== "learningTracks") {
+      reset.learningTracksOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "discoverMissions") {
+      reset.discoveryMissionsPanelOpen = false;
     }
     set(reset);
   },
@@ -975,4 +1068,105 @@ export const useAppStore = create<AppStore>((set, get) => ({
     })),
   clearSpawnedBirds: () => set({ spawnedBirds: [] }),
   setSandboxTimeHour: (sandboxTimeHour) => set({ sandboxTimeHour }),
+
+  setLearningTracksOpen: (learningTracksOpen) => set({ learningTracksOpen }),
+
+  updateTrackProgress: () => {
+    const state = get();
+    const tracks = getAllTracks();
+    const globalDiscovered = new Set(state.discoveredBirds);
+    const prevById = new Map<string, TrackProgress>(
+      state.trackProgress.map((p) => [p.trackId, p]),
+    );
+
+    let newCompletion: string | null = null;
+    const updated: TrackProgress[] = tracks.map((t) => {
+      const discoveredInTrack = t.birdIds.filter((id) => globalDiscovered.has(id));
+      const completed = discoveredInTrack.length >= t.birdIds.length;
+      const was: TrackProgress | undefined = prevById.get(t.id);
+      if (completed && !was?.completed) {
+        newCompletion = t.id;
+      }
+      return {
+        trackId: t.id,
+        discoveredBirds: discoveredInTrack,
+        completed,
+        completedAt: completed ? (was?.completedAt ?? Date.now()) : undefined,
+      };
+    });
+
+    saveToStorage(TRACKS_KEY, updated);
+    set({
+      trackProgress: updated,
+      ...(newCompletion ? { trackNotification: newCompletion } : {}),
+    });
+  },
+
+  dismissTrackNotification: () => set({ trackNotification: null }),
+
+  setCurrentSeason: (season) =>
+    set((s) => ({
+      currentSeason: season,
+      ecosystemState: { ...s.ecosystemState, season },
+    })),
+
+  setEcosystemState: (ecosystemState) => set({ ecosystemState }),
+
+  toggleHabitatFilter: (filter) =>
+    set((s) => {
+      const has = s.activeHabitatFilters.includes(filter);
+      return {
+        activeHabitatFilters: has
+          ? s.activeHabitatFilters.filter((f) => f !== filter)
+          : [...s.activeHabitatFilters, filter],
+      };
+    }),
+
+  clearHabitatFilters: () => set({ activeHabitatFilters: [] }),
+
+  setCompareMode: (compareMode) => set({ compareMode }),
+  setCompareBirdA: (compareBirdA) => set({ compareBirdA }),
+  setCompareBirdB: (compareBirdB) => set({ compareBirdB }),
+
+  setDiscoveryMissionsPanelOpen: (discoveryMissionsPanelOpen) => set({ discoveryMissionsPanelOpen }),
+
+  updateDiscoveryMissions: () => {
+    const state = get();
+    const discovered = state.discoveredBirds;
+    const allMissions = getAllDiscoverMissions();
+    let newCompletion: string | null = null;
+    const newBadges = [...state.discoveryBadges];
+
+    const updated: DiscoveryMissionProgress[] = allMissions.map((m) => {
+      const existing = state.discoveryMissions.find((p) => p.missionId === m.id);
+      if (existing?.completed) return existing;
+
+      const current = checkMissionProgress(m.id, discovered);
+      const completed = current >= m.goal;
+      if (completed && !existing?.completed) {
+        newCompletion = m.id;
+        if (!newBadges.includes(m.badge)) {
+          newBadges.push(m.badge);
+        }
+      }
+      return {
+        missionId: m.id,
+        current: Math.min(current, m.goal),
+        completed,
+        completedAt: completed ? (existing?.completedAt ?? Date.now()) : undefined,
+      };
+    });
+
+    saveToStorage(DISCOVERY_MISSIONS_KEY, updated);
+    saveToStorage(DISCOVERY_BADGES_KEY, newBadges);
+    set({
+      discoveryMissions: updated,
+      discoveryBadges: newBadges,
+      discoveryMissionNotification: newCompletion,
+    });
+  },
+
+  dismissDiscoveryMissionNotification: () => set({ discoveryMissionNotification: null }),
+
+  setEvolutionTimelineValue: (evolutionTimelineValue) => set({ evolutionTimelineValue }),
 }));

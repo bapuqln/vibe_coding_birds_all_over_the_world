@@ -27,7 +27,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 95
   },
   {
     "id": "collared-kingfisher",
@@ -57,7 +58,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/duck.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 44
   },
   {
     "id": "red-crowned-crane",
@@ -87,7 +89,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 72
   },
   {
     "id": "mandarin-duck",
@@ -117,7 +120,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/duck.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 70
   },
   {
     "id": "great-hornbill",
@@ -147,7 +151,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/toucan.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 56
   },
   {
     "id": "himalayan-monal",
@@ -177,7 +182,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 48
   },
   {
     "id": "indian-peafowl",
@@ -207,7 +213,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 35
   },
   {
     "id": "european-robin",
@@ -237,7 +244,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 40
   },
   {
     "id": "atlantic-puffin",
@@ -267,7 +275,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/seagull.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 76
   },
   {
     "id": "lilac-breasted-roller",
@@ -297,7 +306,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 46
   },
   {
     "id": "secretary-bird",
@@ -327,7 +337,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 52
   },
   {
     "id": "african-grey-parrot",
@@ -357,7 +368,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 62
   },
   {
     "id": "shoebill",
@@ -387,7 +399,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 42
   },
   {
     "id": "marabou-stork",
@@ -417,7 +430,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 70
   },
   {
     "id": "bald-eagle",
@@ -447,7 +461,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 115
   },
   {
     "id": "snowy-owl",
@@ -477,7 +492,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 50
   },
   {
     "id": "peregrine-falcon",
@@ -507,7 +523,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 390
   },
   {
     "id": "canada-goose",
@@ -537,7 +554,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/duck.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 90
   },
   {
     "id": "california-condor",
@@ -567,7 +585,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 88
   },
   {
     "id": "northern-cardinal",
@@ -597,7 +616,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 42
   },
   {
     "id": "andean-condor",
@@ -628,7 +648,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 90
   },
   {
     "id": "harpy-eagle",
@@ -658,7 +679,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 55
   },
   {
     "id": "scarlet-macaw",
@@ -688,7 +710,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 60
   },
   {
     "id": "hoatzin",
@@ -718,7 +741,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 36
   },
   {
     "id": "toco-toucan",
@@ -748,7 +772,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/toucan.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 60
   },
   {
     "id": "kookaburra",
@@ -778,7 +803,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/duck.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 46
   },
   {
     "id": "cassowary",
@@ -808,7 +834,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "kiwi",
@@ -838,7 +865,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "sulphur-crested-cockatoo",
@@ -868,7 +896,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 65
   },
   {
     "id": "superb-fairywren",
@@ -898,7 +927,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 38
   },
   {
     "id": "emperor-penguin",
@@ -928,7 +958,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "wandering-albatross",
@@ -958,7 +989,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 100
   },
   {
     "id": "arctic-tern",
@@ -989,7 +1021,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 48
   },
   {
     "id": "resplendent-quetzal",
@@ -1019,7 +1052,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 44
   },
   {
     "id": "blue-footed-booby",
@@ -1049,7 +1083,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/seagull.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 72
   },
   {
     "id": "greater-flamingo",
@@ -1079,7 +1114,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 54
   },
   {
     "id": "golden-eagle",
@@ -1109,7 +1145,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 120
   },
   {
     "id": "barn-owl",
@@ -1139,7 +1176,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 44
   },
   {
     "id": "ostrich",
@@ -1169,7 +1207,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "emu",
@@ -1199,7 +1238,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "kakapo",
@@ -1229,7 +1269,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "magnificent-frigatebird",
@@ -1259,7 +1300,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 48
   },
   {
     "id": "king-penguin",
@@ -1289,7 +1331,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "barn-swallow",
@@ -1319,7 +1362,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 52
   },
   {
     "id": "bar-tailed-godwit",
@@ -1349,7 +1393,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 75
   },
   {
     "id": "snowy-egret",
@@ -1379,7 +1424,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 44
   },
   {
     "id": "ruby-throated-hummingbird",
@@ -1409,7 +1455,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 50
   },
   {
     "id": "galapagos-penguin",
@@ -1439,7 +1486,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/penguin.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 0
   },
   {
     "id": "superb-lyrebird",
@@ -1469,7 +1517,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/sparrow.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 38
   },
   {
     "id": "white-stork",
@@ -1499,7 +1548,8 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 72
   },
   {
     "id": "toucan-barbet",
@@ -1529,7 +1579,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/toucan.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 57
   },
   {
     "id": "african-fish-eagle",
@@ -1559,7 +1610,8 @@
     "migration": false,
     "model": "",
     "modelPath": "/models/birds/eagle.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 95
   },
   {
     "id": "whooping-crane",
@@ -1589,6 +1641,7 @@
     "migration": true,
     "model": "",
     "modelPath": "/models/birds/flamingo.glb",
-    "soundPath": ""
+    "soundPath": "",
+    "flightSpeed": 74
   }
 ]

@@ -1,8 +1,12 @@
 import { useAppStore } from "../../store";
 import birdsData from "../../data/birds.json";
-import type { Bird, EvolutionEra } from "../../types";
+import erasData from "../../data/evolution-eras.json";
+import type { Bird, EvolutionEra, EvolutionEraInfo } from "../../types";
 
 const birds = birdsData as Bird[];
+const eras = erasData as EvolutionEraInfo[];
+
+const ERA_ORDER: EvolutionEra[] = ["mesozoic", "paleogene", "neogene", "quaternary"];
 
 const ERA_CONFIG: Record<
   EvolutionEra,
@@ -27,8 +31,17 @@ export function EvolutionTimeline() {
   const setEvolutionTimelineOpen = useAppStore((s) => s.setEvolutionTimelineOpen);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const language = useAppStore((s) => s.language);
+  const sliderValue = useAppStore(
+    (s) => (s as typeof s & { evolutionTimelineValue: number }).evolutionTimelineValue ?? 3,
+  );
+  const setSliderValue = useAppStore(
+    (s) => (s as typeof s & { setEvolutionTimelineValue: (v: number) => void }).setEvolutionTimelineValue,
+  );
 
   const birdsWithEra = birds.filter((b) => b.evolutionEra);
+  const selectedEra = ERA_ORDER[sliderValue] ?? "quaternary";
+  const selectedEraInfo = eras.find((e) => e.era === selectedEra);
+  const isFiltering = sliderValue < 3;
 
   return (
     <>
@@ -36,7 +49,7 @@ export function EvolutionTimeline() {
         onClick={() => setEvolutionTimelineOpen(!evolutionTimelineOpen)}
         className={`
           fixed
-          flex h-[44px] min-w-[120px] items-center justify-center gap-2
+          flex h-11 min-w-30 items-center justify-center gap-2
           rounded-xl px-4 text-sm font-semibold
           shadow-lg backdrop-blur-lg
           transition-all duration-200
@@ -76,21 +89,65 @@ export function EvolutionTimeline() {
             </button>
           </div>
 
+          <div className="mb-4 px-1">
+            <label className="mb-2 block text-xs font-semibold text-gray-500">
+              {language === "zh" ? "拖动滑块探索不同时代" : "Drag slider to explore different eras"}
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={3}
+              step={1}
+              value={sliderValue}
+              onChange={(e) => setSliderValue(Number(e.target.value))}
+              className="w-full accent-amber-500"
+              aria-label={language === "zh" ? "演化时代滑块" : "Evolution era slider"}
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+              <span>150M</span>
+              <span>60M</span>
+              <span>5M</span>
+              <span>{language === "zh" ? "今天" : "Today"}</span>
+            </div>
+          </div>
+
+          {selectedEraInfo && (
+            <div
+              className="mb-4 rounded-xl p-3"
+              style={{ backgroundColor: `${selectedEraInfo.color}20`, borderLeft: `4px solid ${selectedEraInfo.color}` }}
+            >
+              <h4 className="text-sm font-bold text-gray-800">
+                {language === "zh" ? selectedEraInfo.nameZh : selectedEraInfo.nameEn}
+                <span className="ml-2 text-xs font-normal text-gray-500">{selectedEraInfo.yearsAgo}</span>
+              </h4>
+              <p className="mt-1 text-xs text-gray-600">
+                {language === "zh" ? selectedEraInfo.descriptionZh : selectedEraInfo.descriptionEn}
+              </p>
+              <p className="mt-1 text-xs font-medium text-gray-500">
+                {language === "zh" ? selectedEraInfo.representativeBirdZh : selectedEraInfo.representativeBird}
+              </p>
+            </div>
+          )}
+
           <div className="overflow-x-auto pb-2">
-            <div className="relative min-w-[600px]">
+            <div className="relative min-w-150">
               <div className="flex h-8">
                 {(Object.entries(ERA_CONFIG) as [EvolutionEra, (typeof ERA_CONFIG)[EvolutionEra]][]).map(
                   ([era, config]) => {
                     const widthPct = ((config.startMya - config.endMya) / TOTAL_MYA) * 100;
+                    const isSelected = era === selectedEra;
                     return (
                       <div
                         key={era}
-                        className="flex items-center justify-center text-xs font-semibold text-white"
+                        className="flex items-center justify-center text-xs font-semibold text-white transition-opacity"
                         style={{
                           width: `${widthPct}%`,
                           backgroundColor: config.color,
                           borderRadius: "6px",
                           margin: "0 1px",
+                          opacity: isFiltering && !isSelected ? 0.3 : 1,
+                          outline: isSelected ? `2px solid ${config.color}` : "none",
+                          outlineOffset: "2px",
                         }}
                       >
                         {language === "zh" ? config.labelZh : config.labelEn}
@@ -111,6 +168,7 @@ export function EvolutionTimeline() {
                 {birdsWithEra.map((bird) => {
                   const leftPct = eraPosition(bird.evolutionEra!);
                   const jitter = (bird.id.charCodeAt(0) % 5) * 12;
+                  const matchesEra = !isFiltering || bird.evolutionEra === selectedEra;
                   return (
                     <button
                       key={bird.id}
@@ -118,8 +176,14 @@ export function EvolutionTimeline() {
                         setSelectedBird(bird.id);
                         setEvolutionTimelineOpen(false);
                       }}
-                      className="absolute flex flex-col items-center gap-0.5 transition-transform hover:scale-110"
-                      style={{ left: `${leftPct}%`, top: `${jitter}px`, transform: "translateX(-50%)" }}
+                      className="absolute flex flex-col items-center gap-0.5 transition-all hover:scale-110"
+                      style={{
+                        left: `${leftPct}%`,
+                        top: `${jitter}px`,
+                        transform: "translateX(-50%)",
+                        opacity: matchesEra ? 1 : 0.15,
+                        filter: matchesEra ? "none" : "grayscale(1)",
+                      }}
                       title={language === "zh" ? bird.nameZh : bird.nameEn}
                     >
                       <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-white shadow-md">
@@ -129,7 +193,7 @@ export function EvolutionTimeline() {
                           className="h-full w-full object-cover"
                         />
                       </div>
-                      <span className="max-w-[60px] truncate text-[9px] font-medium text-gray-600">
+                      <span className="max-w-15 truncate text-[9px] font-medium text-gray-600">
                         {language === "zh" ? bird.nameZh : bird.nameEn}
                       </span>
                     </button>

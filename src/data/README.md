@@ -33,7 +33,45 @@ Each migration route connects two birds with an animated arc on the globe:
 | `nameZh` | string? | Optional Chinese label for the route |
 | `nameEn` | string? | Optional English label for the route |
 
-The dataset currently contains **15 birds** (5 Singapore + 10 global) and **4 migration routes**.
+The dataset currently contains **53 birds** across 7 regions and **15+ migration routes**.
+
+## Learning Tracks (`learning-tracks.json`)
+
+Five themed learning journeys:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique kebab-case identifier |
+| `name` | string | English track name |
+| `nameZh` | string | Chinese track name |
+| `description` | string | English description |
+| `descriptionZh` | string | Chinese description |
+| `birdIds` | string[] | Array of bird IDs in this track (5-10) |
+| `badgeIcon` | string | Emoji badge icon |
+
+## Bird Facts (`bird_facts.json`)
+
+Prewritten Q&A pairs for the AI Bird Guide fallback:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique identifier |
+| `question` | string | English question |
+| `questionZh` | string | Chinese question |
+| `answer` | string | English answer (2-3 sentences) |
+| `answerZh` | string | Chinese answer |
+| `category` | string | One of: migration, diet, behavior, anatomy, appearance, habitat, general |
+
+## Regional Data (`birds/`)
+
+For lazy loading support:
+
+| File | Description |
+|------|-------------|
+| `birds/index.json` | Master index with bird IDs and region references |
+| `birds/regions/asia.json` | Asian bird data |
+| `birds/regions/europe.json` | European bird data |
+| `birds/regions/americas.json` | Americas bird data (North + South America) |
 
 ## How to Add a New Bird
 

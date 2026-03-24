@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v30)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v31)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
 > v8 phases (56–64) and v9 phases (65–75) are complete.
@@ -23,6 +23,7 @@
 > v28 phases (205–209) are complete.
 > v29 phases (210–214) are complete.
 > v30 phases (215–221) are complete.
+> v31 phases (222–231b) in progress.
 
 ---
 
@@ -1524,44 +1525,136 @@
 
 ---
 
-# v31 Tasks (AI Bird Guide)
+# v31 Tasks (Structured Learning Experience)
 
 ---
 
-## Phase 222: AI Guide Knowledge Base
+## Phase 222: AI Guide Knowledge Base & Fallback
 
 - [ ] **222.1** Create `/src/data/bird-knowledge.json` with 100+ Q&A pairs covering behavior, habitat, diet, appearance, migration.
-- [ ] **222.2** Create `AIGuideSystem.ts` in `/src/systems/` with keyword-based question routing.
-- [ ] **222.3** Add question categories: "why", "how", "what", "where" with pattern matching.
-- [ ] **222.4** Add fallback responses for unmatched questions.
-- [ ] **222.5** Add AI guide types to `types.ts`: GuideQuestion, GuideAnswer.
-- [ ] **222.6** Add AI guide state to store: `aiGuideOpen`, `aiGuideQuestion`, `aiGuideAnswer`.
+- [ ] **222.2** Create `/src/data/bird_facts.json` with prewritten fallback answers for common questions.
+- [ ] **222.3** Upgrade `AIGuideSystem.ts` in `/src/systems/` with enhanced keyword-based question routing.
+- [ ] **222.4** Add question categories: "why", "how", "what", "where" with pattern matching.
+- [ ] **222.5** Add fallback responses for unmatched questions using bird_facts.json.
+- [ ] **222.6** Add AI guide types to `types.ts`: LearningTrack, TrackProgress, WorldState, HabitatFilterType.
 
 ---
 
-## Phase 223: AI Guide UI
+## Phase 223: AI Guide Service Layer
 
-- [ ] **223.1** Create `AIBirdGuidePanel.tsx` in `/src/components/ui/`.
-- [ ] **223.2** Implement speech bubble with glass-morphism styling.
-- [ ] **223.3** Add typing animation (30ms per character reveal).
-- [ ] **223.4** Add narration button triggering Web Speech API.
-- [ ] **223.5** Add guide character avatar with bobbing CSS animation.
-- [ ] **223.6** Position in card layer (z-60), bottom-left area.
-- [ ] **223.7** Add predefined question prompts when bird is selected.
-- [ ] **223.8** Add "Ask Guide" button to RightControlPanel.
-- [ ] **223.9** Integrate into App.tsx card layer.
+- [ ] **223.1** Create `/src/features/` directory for v31 feature modules.
+- [ ] **223.2** Create `BirdGuideService.ts` — orchestrates question routing and answer retrieval.
+- [ ] **223.3** Create `PromptBuilder.ts` — constructs context from bird encyclopedia database.
+- [ ] **223.4** Create `ResponseRenderer.ts` — formats answers with typing animation support.
+- [ ] **223.5** BirdGuideService checks for API key; if absent, uses bird_facts.json fallback.
 
 ---
 
-## Phase 224: V31 Verification
+## Phase 224: AI Guide UI Upgrade
 
-- [ ] **224.1** AI Bird Guide character visible with idle animation. (AC-V31-1)
-- [ ] **224.2** Clicking a bird shows question prompts. (AC-V31-1)
-- [ ] **224.3** Guide responds with child-friendly answers. (AC-V31-1)
-- [ ] **224.4** Knowledge base contains 100+ Q&A pairs. (AC-V31-1)
-- [ ] **224.5** Speech bubble with typing animation works. (AC-V31-1)
-- [ ] **224.6** Narration button reads answer aloud. (AC-V31-1)
-- [ ] **224.7** 60 FPS maintained. (AC-V31-1)
+- [ ] **224.1** Upgrade `AIBirdGuidePanel.tsx` with BirdGuideService integration.
+- [ ] **224.2** Implement speech bubble with glass-morphism styling.
+- [ ] **224.3** Add typing animation (30ms per character reveal) via ResponseRenderer.
+- [ ] **224.4** Add narration button triggering Web Speech API.
+- [ ] **224.5** Add guide character avatar with bobbing CSS animation.
+- [ ] **224.6** Position in card layer (z-60), bottom-left area.
+- [ ] **224.7** Add predefined question prompts when bird is selected.
+- [ ] **224.8** Add floating "Ask the Bird Guide" button in sidebar.
+- [ ] **224.9** Integrate into App.tsx card layer.
+
+---
+
+## Phase 225b: Learning Track Data Model
+
+- [ ] **225b.1** Create `/src/data/learning-tracks.json` with 5 tracks: Birds of Prey, Ocean Birds, Rainforest Birds, Migratory Birds, Colorful Birds.
+- [ ] **225b.2** Each track contains: id, name, nameZh, description, descriptionZh, birdIds (5-10), badgeIcon.
+- [ ] **225b.3** Create `LearningTrackSystem.ts` in `/src/systems/` with track management.
+- [ ] **225b.4** Add TrackProgress type and localStorage persistence.
+- [ ] **225b.5** Track completion detection: cross-reference discoveredBirds with track birdIds.
+- [ ] **225b.6** Add track state to store: `learningTracksOpen`, `trackProgress`, `trackNotification`.
+- [ ] **225b.7** Export track functions from systems/index.ts barrel.
+
+---
+
+## Phase 226b: Learning Track UI
+
+- [ ] **226b.1** Create `TrackPanel.tsx` in `/src/components/ui/`.
+- [ ] **226b.2** Show list of 5 learning tracks with progress bars.
+- [ ] **226b.3** Each track card shows: name, description, discovered/total birds, progress bar.
+- [ ] **226b.4** Completed tracks show earned badge with glow effect.
+- [ ] **226b.5** Track completion triggers celebration animation (confetti + badge reveal).
+- [ ] **226b.6** Add "Learning Tracks" button to RightControlPanel.
+- [ ] **226b.7** Integrate TrackPanel into App.tsx modal layer.
+- [ ] **226b.8** Add `learningTracks` to PanelType and panel collision avoidance.
+
+---
+
+## Phase 227b: Ecosystem Simulation
+
+- [ ] **227b.1** Create `EcosystemSystem.ts` in `/src/systems/` managing world state.
+- [ ] **227b.2** Implement season cycle: spring → summer → autumn → winter (configurable speed, default 60s/year).
+- [ ] **227b.3** Create `SeasonController.ts` in `/src/features/` for smooth season transitions.
+- [ ] **227b.4** Add world state to store: `currentSeason`, `ecosystemState` (temperature, wind, timeOfDay).
+- [ ] **227b.5** Season influences bird density: winter → more equatorial, summer → more northern.
+- [ ] **227b.6** Add season indicator to HUD (icon + season name).
+- [ ] **227b.7** Ecosystem simulation ticks every 500ms (not per-frame).
+- [ ] **227b.8** Export ecosystem functions from systems/index.ts barrel.
+
+---
+
+## Phase 228b: Habitat Filter
+
+- [ ] **228b.1** Create `HabitatFilter.ts` in `/src/features/` with filter logic.
+- [ ] **228b.2** Define 6 habitat types: forest, wetlands, ocean, grassland, mountain, urban.
+- [ ] **228b.3** Map existing bird habitatType fields to filter categories.
+- [ ] **228b.4** Add filter state to store: `activeHabitatFilters` (string array).
+- [ ] **228b.5** Add habitat filter toggle buttons in sidebar (RightControlPanel).
+- [ ] **228b.6** Non-matching birds render at 0.1 opacity when filter active.
+- [ ] **228b.7** Filter badge shows count of active filters.
+- [ ] **228b.8** Memoized filtered bird list for performance.
+
+---
+
+## Phase 229b: Seasonal Migration Visualization
+
+- [ ] **229b.1** Create `MigrationVisualizer.ts` in `/src/features/` integrating with EcosystemSystem.
+- [ ] **229b.2** Migration arcs only render during autumn and spring seasons.
+- [ ] **229b.3** Add glowing arc lines with emissive shader.
+- [ ] **229b.4** Add directional particle flow along migration paths.
+- [ ] **229b.5** Particles move in migration direction with configurable speed.
+- [ ] **229b.6** Paths hidden during summer and winter (non-migration seasons).
+- [ ] **229b.7** Update MigrationPaths.tsx to read season state from ecosystem.
+
+---
+
+## Phase 230b: Data Expansion
+
+- [ ] **230b.1** Create `/src/data/birds/` directory structure.
+- [ ] **230b.2** Create `index.json` — master index with bird IDs and region references.
+- [ ] **230b.3** Create `regions/asia.json` with Asian bird data.
+- [ ] **230b.4** Create `regions/europe.json` with European bird data.
+- [ ] **230b.5** Create `regions/americas.json` with Americas bird data.
+- [ ] **230b.6** Create `BirdDataLoader.ts` in `/src/features/` with lazy loading support.
+- [ ] **230b.7** Loader reads index at startup, loads regional files on demand.
+- [ ] **230b.8** Cache loaded regions in memory Map.
+- [ ] **230b.9** Backward compatible fallback to monolithic birds.json.
+
+---
+
+## Phase 231b: V31 Verification
+
+- [ ] **231b.1** AI Bird Guide character visible with idle animation. (AC-V31-1)
+- [ ] **231b.2** Guide responds with child-friendly answers via BirdGuideService. (AC-V31-1)
+- [ ] **231b.3** Fallback to prewritten answers when no API key. (AC-V31-1)
+- [ ] **231b.4** 5 learning tracks available in sidebar. (AC-V31-2)
+- [ ] **231b.5** Track progress bars update as birds discovered. (AC-V31-2)
+- [ ] **231b.6** Completing a track unlocks badge with celebration. (AC-V31-2)
+- [ ] **231b.7** Season cycle runs with HUD indicator. (AC-V31-3)
+- [ ] **231b.8** Bird density shifts with seasons. (AC-V31-3)
+- [ ] **231b.9** Habitat filter toggles work in sidebar. (AC-V31-4)
+- [ ] **231b.10** Migration arcs appear only during migration seasons. (AC-V31-5)
+- [ ] **231b.11** Regional JSON files loadable with lazy loading. (AC-V31-6)
+- [ ] **231b.12** 60 FPS maintained with all V31 features. (AC-V31-6)
 
 ---
 
@@ -1914,9 +2007,16 @@
 | Group | Tasks | Status |
 |-------|-------|--------|
 | AI Guide Knowledge Base (v31) | 222.1–222.6 | Pending |
-| AI Guide UI (v31) | 223.1–223.9 | Pending |
-| V31 Verification | 224.1–224.7 | Pending |
-| **Total v31 tasks** | **22 tasks** | **0 complete** |
+| AI Guide Service Layer (v31) | 223.1–223.5 | Pending |
+| AI Guide UI Upgrade (v31) | 224.1–224.9 | Pending |
+| Learning Track Data (v31) | 225b.1–225b.7 | Pending |
+| Learning Track UI (v31) | 226b.1–226b.8 | Pending |
+| Ecosystem Simulation (v31) | 227b.1–227b.8 | Pending |
+| Habitat Filter (v31) | 228b.1–228b.8 | Pending |
+| Seasonal Migration (v31) | 229b.1–229b.7 | Pending |
+| Data Expansion (v31) | 230b.1–230b.9 | Pending |
+| V31 Verification | 231b.1–231b.12 | Pending |
+| **Total v31 tasks** | **79 tasks** | **0 complete** |
 | Enhanced AR Mode (v32) | 225.1–225.6 | Pending |
 | AR UI Overlay (v32) | 226.1–226.5 | Pending |
 | V32 Verification | 227.1–227.5 | Pending |
@@ -1955,5 +2055,66 @@
 | Sandbox UI (v40) | 252.1–252.9 | Pending |
 | V40 Verification | 253.1–253.8 | Pending |
 | **Total v40 tasks** | **26 tasks** | **0 complete** |
-| **Total v31-v40 tasks** | **185 tasks** | **0 complete** |
-| **Total all tasks (v1–v40)** | **~1452 tasks** | **~1169 complete** |
+| **Total v31-v40 tasks** | **242 tasks** | **0 complete** |
+| **Total all tasks (v1–v40)** | **~1509 tasks** | **~1169 complete** |
+
+---
+
+# v31 Addendum Tasks (Discovery & Comparison Learning Layer)
+
+---
+
+## Phase 232b: Discover Mission System
+
+- [x] **232b.1** Create `/src/data/discover-missions.json` with predefined discovery missions.
+- [x] **232b.2** Create `DiscoverMissionSystem.ts` in `/src/systems/` with mission tracking.
+- [x] **232b.3** Add `DiscoveryMission` and `DiscoveryBadge` types to `types.ts`.
+- [x] **232b.4** Add discovery mission state to store.
+- [x] **232b.5** Add localStorage persistence for discovery badges.
+- [x] **232b.6** Wire mission progress to bird discovery events.
+- [x] **232b.7** Create `DiscoverMissionsPanel.tsx`.
+- [x] **232b.8** Add "Discover Missions" button to `RightControlPanel.tsx`.
+
+---
+
+## Phase 233b: Bird Compare Panel
+
+- [x] **233b.1** Add compare mode state to store.
+- [x] **233b.2** Create `BirdComparePanel.tsx` with side-by-side layout.
+- [x] **233b.3** Render stat rows: wingspan, weight, habitat, diet, flight speed.
+- [x] **233b.4** Highlight larger numeric values in green.
+- [x] **233b.5** Add "Compare" button to `RightControlPanel.tsx`.
+- [x] **233b.6** Integrate `BirdComparePanel` into `App.tsx` modal layer.
+
+---
+
+## Phase 234b: Evolution Timeline Enhancement
+
+- [x] **234b.1** Create `/src/data/evolution-eras.json` with era definitions.
+- [x] **234b.2** Add `evolutionTimelineValue` state to store.
+- [x] **234b.3** Enhance `EvolutionTimeline.tsx` with slider control and era info cards.
+- [x] **234b.4** Era filtering: non-matching birds fade when slider active.
+
+---
+
+## Phase 235b: Data Schema Update
+
+- [x] **235b.1** Add `flightSpeed` field to Bird interface.
+- [x] **235b.2** Update `birds.json` with flightSpeed values.
+
+---
+
+## Phase 236b: Right Panel Layout Fix
+
+- [x] **236b.1** Add scrollable container to RightControlPanel.
+- [x] **236b.2** Ensure all buttons have equal width.
+
+---
+
+## Phase 237b: V31 Addendum Verification
+
+- [x] **237b.1** Bird Compare Mode works. (AC-V31-2)
+- [x] **237b.2** Discovery missions work. (AC-V31-2)
+- [x] **237b.3** Evolution timeline slider works. (AC-V31-2)
+- [x] **237b.4** Right panel layout fixed. (AC-V31-2)
+- [x] **237b.5** Build passes. (AC-V31-2)
