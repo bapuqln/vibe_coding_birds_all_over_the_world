@@ -55,7 +55,8 @@ export type PanelType =
   | "classroom"
   | "sandbox"
   | "learningTracks"
-  | "discoverMissions";
+  | "discoverMissions"
+  | "ecosystemPanel";
 
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
@@ -280,6 +281,15 @@ interface AppStore {
   // V31 — Evolution Timeline
   evolutionTimelineValue: number;
 
+  // V32 — Ecosystem Panel
+  ecosystemPanelOpen: boolean;
+  ecosystemManualOverride: boolean;
+
+  // V32 — Sound Recognition
+  soundRecognitionActive: boolean;
+  soundRecognitionResult: string | null;
+  soundRecognitionConfidence: number;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -426,6 +436,15 @@ interface AppStore {
 
   // V31 — Evolution Timeline
   setEvolutionTimelineValue: (value: number) => void;
+
+  // V32 — Ecosystem Panel
+  setEcosystemPanelOpen: (open: boolean) => void;
+  setEcosystemManualOverride: (override: boolean) => void;
+
+  // V32 — Sound Recognition
+  setSoundRecognitionActive: (active: boolean) => void;
+  setSoundRecognitionResult: (birdId: string | null) => void;
+  setSoundRecognitionConfidence: (confidence: number) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -568,6 +587,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
   discoveryMissionNotification: null,
 
   evolutionTimelineValue: 3,
+
+  ecosystemPanelOpen: false,
+  ecosystemManualOverride: false,
+
+  soundRecognitionActive: false,
+  soundRecognitionResult: null,
+  soundRecognitionConfidence: 0,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -792,6 +818,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
     if (activePanel !== null && activePanel !== "discoverMissions") {
       reset.discoveryMissionsPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "ecosystemPanel") {
+      reset.ecosystemPanelOpen = false;
     }
     set(reset);
   },
@@ -1169,4 +1198,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
   dismissDiscoveryMissionNotification: () => set({ discoveryMissionNotification: null }),
 
   setEvolutionTimelineValue: (evolutionTimelineValue) => set({ evolutionTimelineValue }),
+
+  setEcosystemPanelOpen: (ecosystemPanelOpen) => set({ ecosystemPanelOpen }),
+  setEcosystemManualOverride: (ecosystemManualOverride) => set({ ecosystemManualOverride }),
+
+  setSoundRecognitionActive: (soundRecognitionActive) => set({ soundRecognitionActive }),
+  setSoundRecognitionResult: (soundRecognitionResult) => set({ soundRecognitionResult }),
+  setSoundRecognitionConfidence: (soundRecognitionConfidence) => set({ soundRecognitionConfidence }),
 }));

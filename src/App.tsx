@@ -44,6 +44,7 @@ import { DiscoverMissionsPanel } from "./components/ui/DiscoverMissionsPanel";
 import { PhotographerMode } from "./components/ui/PhotographerMode";
 import { ClassroomPanel } from "./components/ui/ClassroomPanel";
 import { SandboxToolbar } from "./components/ui/SandboxToolbar";
+import { EcosystemPanel } from "./components/ui/EcosystemPanel";
 import { useAppStore } from "./store";
 
 export default function App() {
@@ -134,6 +135,7 @@ export default function App() {
         <TrackPanel />
         <BirdComparePanel />
         <DiscoverMissionsPanel />
+        <EcosystemPanel />
       </div>
 
       {/* Layer 6 — Full Screen Overlays */}

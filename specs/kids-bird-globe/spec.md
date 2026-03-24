@@ -2907,3 +2907,253 @@ As a child, I can drag the evolution timeline slider to see which birds existed 
 - [ ] 60 FPS maintained.
 - [ ] <150MB memory usage.
 - [ ] <2s initial load time.
+
+---
+
+# Version 32 — Intelligent Discovery Systems
+
+Major features introduced:
+
+1. AI Bird Guide 2.0 (RAG-based answer system)
+2. Bird Sound Recognition
+3. Global Migration Simulation
+4. Habitat Ecosystem Interaction
+5. Bird Size Comparison Mode
+6. Data Expansion to 100 birds
+
+## AI Bird Guide 2.0
+
+Upgrade the existing Bird Guide to support intelligent question answering.
+
+Children can ask questions such as:
+
+- "Why do birds migrate?"
+- "Which bird flies the farthest?"
+- "Why are flamingos pink?"
+
+### System Design
+
+**BirdGuideService** enhanced with multi-source RAG pipeline.
+
+Data sources:
+
+- Bird encyclopedia data (`birds.json`)
+- Prewritten knowledge snippets (`bird-knowledge.json`, `bird_facts.json`)
+- Migration data (`migrations.json`)
+- Habitat data (bird `habitatType` fields)
+
+Architecture:
+
+```
+Question → semantic match → knowledge answer → spoken response
+```
+
+Example flow:
+
+- Child asks: "Why do birds migrate?"
+- AI guide response: "Some birds migrate to find food and warmer weather. For example, the Arctic Tern travels from the Arctic to Antarctica every year."
+
+### UI
+
+- Floating guide bubble (existing `AIBirdGuidePanel.tsx` enhanced).
+- Guide avatar: owl character.
+- Voice narration using Web Speech API.
+
+### R-128: AI Bird Guide 2.0 (v32)
+
+- BirdGuideService upgraded with multi-source semantic matching.
+- Knowledge base expanded with migration and habitat context.
+- Voice narration via Web Speech API on answers.
+- Owl avatar with floating animation.
+- Suggested question prompts context-aware per bird.
+
+## Bird Sound Recognition
+
+Allow children to identify birds by sound.
+
+### UI
+
+Button: "Identify Bird Sound" in right control panel.
+
+### Workflow
+
+1. Record short audio via MediaRecorder API.
+2. Extract basic audio fingerprint (frequency analysis via Web Audio API).
+3. Compare with stored bird sound frequency profiles.
+4. Return likely bird match.
+
+### Fallback
+
+If recognition fails, show: "That sound is similar to a sparrow or finch."
+
+### Educational Goal
+
+Teach kids to recognize birds by their calls.
+
+### R-129: Bird Sound Recognition (v32)
+
+- SoundRecognitionSystem created at `/src/systems/SoundRecognitionSystem.ts`.
+- Records audio via MediaRecorder API.
+- Extracts frequency fingerprint via Web Audio API AnalyserNode.
+- Matches against stored bird sound frequency profiles.
+- Returns top match with confidence score.
+- Fallback message when confidence is low.
+- UI button in right control panel.
+- Result panel shows matched bird with "Listen to this bird" action.
+
+## Global Migration Simulation
+
+Replace static migration lines with animated seasonal migration behavior.
+
+### Simulation Features
+
+Seasonal cycles:
+
+- Spring: migration north
+- Autumn: migration south
+- Summer/Winter: birds at destination
+
+Bird flocks travel along routes gradually based on current season.
+
+### Migration Routes
+
+- Arctic Tern (Arctic ↔ Antarctic)
+- Bar-tailed Godwit (Alaska ↔ New Zealand)
+- Barn Swallow (Europe ↔ Africa)
+- Whooping Crane (Canada ↔ Texas)
+
+### Visualization
+
+- Glowing curved path with seasonal direction.
+- Moving bird icons along path with progress tied to season.
+- Particle trails behind moving birds.
+- Season indicator on migration panel.
+
+### R-130: Global Migration Simulation (v32)
+
+- MigrationSystem upgraded with seasonal state.
+- Migration progress computed from current ecosystem season.
+- Spring: birds travel north (progress 0→1 on northbound leg).
+- Autumn: birds travel south (progress 0→1 on southbound leg).
+- Summer/Winter: birds stationary at destination.
+- MigrationPaths.tsx updated with season-aware animation.
+- Bird icons position interpolated by seasonal progress.
+- Particle trail effect behind moving birds.
+
+## Habitat Ecosystem Interaction
+
+Bird behavior reacts to ecosystem state.
+
+### Global Environment Parameters
+
+- Temperature
+- Season
+- Time of Day
+- Wind
+
+### Behavior Rules
+
+- Rainforest birds more active during day.
+- Owls appear only at night.
+- Migratory birds appear during migration seasons.
+- Activity density varies with temperature.
+
+### UI Panel
+
+"Ecosystem Simulation" panel with sliders:
+
+- Season (Spring / Summer / Autumn / Winter)
+- Temperature (-10°C to 40°C)
+- Time of Day (Dawn / Morning / Afternoon / Dusk / Night)
+
+Changing environment updates bird activity on the globe.
+
+### R-131: Habitat Ecosystem Interaction (v32)
+
+- EcosystemSystem upgraded with manual override sliders.
+- New `EcosystemPanel.tsx` component with Season, Temperature, Time of Day controls.
+- Bird visibility filtered by ecosystem state:
+  - Nocturnal birds visible only at night/dusk.
+  - Migratory birds visible only during spring/autumn.
+  - Activity density scaled by temperature.
+- Store state: `ecosystemPanelOpen`, `ecosystemManualOverride`.
+
+## Bird Size Comparison Mode
+
+Children can compare two birds visually with accurate size scaling.
+
+### Display
+
+- Two bird images side-by-side.
+- Scaled proportionally by wingspan.
+- Stats panel: wingspan, weight, flight speed.
+- Differences highlighted in green.
+
+### R-132: Bird Size Comparison Mode (v32)
+
+- BirdComparePanel upgraded with proportional size visualization.
+- Bird images scaled relative to each other by wingspanCm.
+- Lifespan stat row added.
+- Visual size bar showing relative wingspan proportion.
+
+## Data Expansion
+
+Expand bird dataset from 53 → 100 birds.
+
+### New Birds From
+
+- South America (15 new)
+- Africa (12 new)
+- Oceania (10 new)
+- Arctic/Antarctic regions (5 new)
+- Additional Asia/Europe/Americas (5 new)
+
+### Each Entry Includes
+
+- name (nameZh, nameEn)
+- scientificName
+- habitat (habitatType)
+- diet
+- wingspan (wingspanCm)
+- lifespan
+- sound (soundUrl/soundPath)
+- model (modelPath)
+- migration flag
+- rarity
+- All existing required fields (lat, lng, region, photoUrl, etc.)
+
+### R-133: Data Expansion to 100 Birds (v32)
+
+- birds.json expanded from 53 to 100 entries.
+- New birds span South America, Africa, Oceania, Arctic regions.
+- All entries include complete field set matching Bird interface.
+- Knowledge base entries added for new birds.
+
+## Performance Targets
+
+### R-134: Performance Maintenance (v32)
+
+- 60 FPS target maintained.
+- Max 20 active 3D birds rendered simultaneously.
+- Lazy loading for bird models.
+- Audio files loaded on demand.
+- Bird data filtered before rendering based on ecosystem state.
+
+### AC-V32: Intelligent Discovery Systems
+
+- [ ] AI Bird Guide answers simple bird questions with multi-source matching.
+- [ ] Voice narration plays answer text via Web Speech API.
+- [ ] Sound recognition records audio and returns likely bird match.
+- [ ] Sound recognition fallback message displays on low confidence.
+- [ ] Migration routes animate seasonally (spring north, autumn south).
+- [ ] Migration bird icons move along routes based on season.
+- [ ] Ecosystem sliders change bird activity on globe.
+- [ ] Nocturnal birds hidden during day, visible at night.
+- [ ] Bird comparison mode displays two birds with proportional sizing.
+- [ ] Comparison stats highlight larger values in green.
+- [ ] Dataset expanded to 100 birds.
+- [ ] New birds include all required fields.
+- [ ] Build succeeds without errors.
+- [ ] 60 FPS maintained.
+- [ ] <150MB memory usage.
+- [ ] <2s initial load time.

@@ -184,6 +184,7 @@ export function BirdComparePanel() {
     habitat: language === "zh" ? "栖息地" : "Habitat",
     diet: language === "zh" ? "食物" : "Diet",
     speed: language === "zh" ? "飞行速度" : "Flight speed",
+    lifespan: language === "zh" ? "寿命" : "Lifespan",
   };
 
   return (
@@ -214,23 +215,63 @@ export function BirdComparePanel() {
             <h3 className="line-clamp-2 min-h-10 text-sm font-semibold leading-tight sm:text-base">
               {nameA}
             </h3>
-            <img
-              src={birdA.photoUrl}
-              alt=""
-              className="h-28 w-full max-w-35 rounded-2xl border border-white/20 object-cover shadow-md sm:h-32"
-            />
+            <div
+              className="flex items-end justify-center"
+              style={{
+                height: 140,
+                width: "100%",
+              }}
+            >
+              <img
+                src={birdA.photoUrl}
+                alt=""
+                className="rounded-2xl border border-white/20 object-cover shadow-md"
+                style={{
+                  maxHeight: 140,
+                  width: `${wA && wB ? Math.round((wA / Math.max(wA, wB)) * 100) : 100}%`,
+                  maxWidth: 140,
+                  transition: "width 0.3s ease",
+                }}
+              />
+            </div>
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
             <h3 className="line-clamp-2 min-h-10 text-sm font-semibold leading-tight sm:text-base">
               {nameB}
             </h3>
-            <img
-              src={birdB.photoUrl}
-              alt=""
-              className="h-28 w-full max-w-35 rounded-2xl border border-white/20 object-cover shadow-md sm:h-32"
-            />
+            <div
+              className="flex items-end justify-center"
+              style={{
+                height: 140,
+                width: "100%",
+              }}
+            >
+              <img
+                src={birdB.photoUrl}
+                alt=""
+                className="rounded-2xl border border-white/20 object-cover shadow-md"
+                style={{
+                  maxHeight: 140,
+                  width: `${wA && wB ? Math.round((wB / Math.max(wA, wB)) * 100) : 100}%`,
+                  maxWidth: 140,
+                  transition: "width 0.3s ease",
+                }}
+              />
+            </div>
           </div>
         </div>
+
+        {wA != null && wB != null && (
+          <div className="px-4 pb-2">
+            <div className="mb-1 text-center text-[10px] font-semibold tracking-wide text-white/50">
+              {language === "zh" ? "翼展比例" : "Wingspan Ratio"}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-3 rounded-full bg-amber-400/60" style={{ width: `${(wA / Math.max(wA, wB)) * 100}%`, transition: "width 0.3s ease" }} />
+              <div className="h-3 rounded-full bg-cyan-400/60" style={{ width: `${(wB / Math.max(wA, wB)) * 100}%`, transition: "width 0.3s ease" }} />
+            </div>
+          </div>
+        )}
 
         <div className="space-y-3 border-t border-white/10 px-4 pb-5 pt-2">
           <StatRow
@@ -267,6 +308,11 @@ export function BirdComparePanel() {
             right={spdB != null ? `${spdB} km/h` : "—"}
             leftStyle={highlightWinner(spdA, spdB, "a")}
             rightStyle={highlightWinner(spdA, spdB, "b")}
+          />
+          <StatRow
+            label={lbl.lifespan}
+            left={birdA.lifespan ?? "—"}
+            right={birdB.lifespan ?? "—"}
           />
         </div>
       </div>

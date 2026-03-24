@@ -958,5 +958,381 @@
     "category": "general",
     "answerZh": "你可以把看到的鸟种和数量记录下来交给观鸟项目，帮助科学家了解鸟类分布变化。每个人都能当小小鸟类探险家！",
     "answerEn": "You can log bird sightings in community science apps to help researchers track populations. Anyone can be a junior bird explorer!"
+  },
+  {
+    "id": "kb-121",
+    "pattern": ["hyacinth macaw", "紫蓝金刚鹦鹉", "蓝色", "鹦鹉", "巴西"],
+    "birdId": "hyacinth-macaw",
+    "category": "appearance",
+    "answerZh": "紫蓝金刚鹦鹉是世界上最大的飞行鹦鹉之一，羽毛像亮晶晶的蓝宝石。它们用大喙咬开坚硬的棕榈果，是雨林里会飞的“大力士”！",
+    "answerEn": "Hyacinth macaws are among the largest flying parrots, with feathers like shiny sapphires. They use huge beaks to crack tough palm nuts—flying rainforest strongbirds!"
+  },
+  {
+    "id": "kb-122",
+    "pattern": ["jabiru", "jabiru鹳", "巨鹳", "湿地", "南美"],
+    "birdId": "jabiru",
+    "category": "habitat",
+    "answerZh": "大秃鹳（jabiru）个子很高，常在沼泽和河边踱步找鱼、蛙和小爬行动物。长腿让它在浅水里走路像踩高跷一样稳！",
+    "answerEn": "Jabirus are very tall storks that stride through swamps and riversides hunting fish, frogs, and small reptiles. Long legs let them wade steadily like nature’s stilts!"
+  },
+  {
+    "id": "kb-123",
+    "pattern": ["potoo", "林鸱", "伪装", "夜行", "南美"],
+    "birdId": "potoo",
+    "category": "behavior",
+    "answerZh": "林鸱白天紧紧贴在枯枝上装成一段木头，闭上一只眼偷偷观察。到了晚上它才飞出去捉昆虫，是森林里的“隐身大师”！",
+    "answerEn": "Potoos press against branches by day and look just like broken wood, peeking with one eye. At night they fly out to catch insects—forest camouflage champs!"
+  },
+  {
+    "id": "kb-124",
+    "pattern": ["cock of the rock", "动冠伞鸟", "求偶", "红色", "安第斯"],
+    "birdId": "cock-of-the-rock",
+    "category": "behavior",
+    "answerZh": "雄动冠伞鸟会聚在一起又跳又叫，展示火红的冠羽吸引雌鸟，像在森林里开舞会。雌鸟则悄悄挑选最会表演的“舞王”！",
+    "answerEn": "Male cock-of-the-rock gather to hop, call, and flash fiery crests—like a forest dance party. Females quietly pick the best performer!"
+  },
+  {
+    "id": "kb-125",
+    "pattern": ["rufous bellied thrush", "棕腹鸫", "歌鸟", "巴西", "国鸟"],
+    "birdId": "rufous-bellied-thrush",
+    "category": "general",
+    "answerZh": "棕腹鸫歌声悦耳，常在花园和林边觅食昆虫和果实。在巴西它深受人们喜爱，就像会唱歌的邻家小鸟明星！",
+    "answerEn": "Rufous-bellied thrushes sing sweetly and hunt insects and fruit in gardens and woodland edges. In Brazil they are beloved neighborhood song stars!"
+  },
+  {
+    "id": "kb-126",
+    "pattern": ["Magellanic penguin", "麦哲伦企鹅", "企鹅", "南美", "海峡"],
+    "birdId": "magellanic-penguin",
+    "category": "habitat",
+    "answerZh": "麦哲伦企鹅住在南美海岸和岛屿上，会挖洞或躲在灌木下筑巢。它们成群结队出海捕鱼，黑白礼服让它们在水里游得又快又灵活！",
+    "answerEn": "Magellanic penguins nest in burrows or shrubs along South American coasts and islands. They swim in crowds to catch fish—tuxedo suits built for speedy water zooms!"
+  },
+  {
+    "id": "kb-127",
+    "pattern": ["Chilean flamingo", "智利火烈鸟", "盐湖", "滤食", "粉色"],
+    "birdId": "chilean-flamingo",
+    "category": "diet",
+    "answerZh": "智利火烈鸟把头倒过来，用弯嘴滤出盐水里的小虾和藻类。食物中的色素让羽毛慢慢变粉，就像吃出了天然腮红！",
+    "answerEn": "Chilean flamingos dip their heads and filter tiny shrimp and algae from salty water. Pigments in the food tint their feathers pink—nature’s snack-time blush!"
+  },
+  {
+    "id": "kb-128",
+    "pattern": ["oilbird", "油鸱", "洞穴", "回声定位", "果实"],
+    "birdId": "oilbird",
+    "category": "behavior",
+    "answerZh": "油鸱住在黑暗的洞穴里，会像蝙蝠一样发出咔嗒声听回声找路。它们主要吃油棕榈等果实，是唯一会用回声定位的日行性鸟类之一，超酷！",
+    "answerEn": "Oilbirds roost in dark caves and click like bats to echolocate. They feast on oily fruits—among the few birds that navigate dark spaces with sound clicks!"
+  },
+  {
+    "id": "kb-129",
+    "pattern": ["sunbittern", "日鳽", "翅膀", "眼斑", "溪流"],
+    "birdId": "sunbittern",
+    "category": "appearance",
+    "answerZh": "日鳽平时羽毛低调，一展开翅膀就像露出两只大大的“假眼睛”吓唬敌人。它爱在溪边悄悄走动捉小鱼和昆虫，是低调的变脸高手！",
+    "answerEn": "Sunbitterns look modest until they flash wing patterns like big fake eyes to startle foes. They stalk streams for fish and insects—quiet birds with a surprise show!"
+  },
+  {
+    "id": "kb-130",
+    "pattern": ["seriema", "红腿叫鹤", "奔跑", "草原", "南美"],
+    "birdId": "red-legged-seriema",
+    "category": "diet",
+    "answerZh": "红腿叫鹤腿长跑得快，会用脚踩或摔打猎物，连小蛇也不放过。它的叫声又尖又响，在草原上老远就能听见！",
+    "answerEn": "Red-legged seriemas run fast on long legs and stomp or bash prey—even small snakes. Their sharp calls carry far across open grasslands!"
+  },
+  {
+    "id": "kb-131",
+    "pattern": ["king vulture", "王鹫", "秃鹫", "雨林", "清道夫"],
+    "birdId": "king-vulture",
+    "category": "diet",
+    "answerZh": "王鹫彩色的大脑袋很显眼，它是雨林里的“清洁工”，吃动物尸体帮助防止疾病传播。强喙能撕开厚皮，别的秃鹫有时要等它先开口！",
+    "answerEn": "King vultures have colorful heads and clean the forest by eating carrion, which helps limit disease. Their strong beaks tear tough hides—other vultures may wait for the royal opener!"
+  },
+  {
+    "id": "kb-132",
+    "pattern": ["wire tailed manakin", "线尾娇鹟", "求偶舞", "丛林", "南美"],
+    "birdId": "wire-tailed-manakin",
+    "category": "behavior",
+    "answerZh": "雄线尾娇鹟会在树枝上跳快速的“太空步”，两根细长的尾羽跟着甩动。雌鸟在旁边挑选舞技最好的舞伴，就像小鸟界的街舞比赛！",
+    "answerEn": "Male wire-tailed manakins perform rapid moonwalk-like dances on branches with thread-like tail wires whipping along. Females pick the best dancer—tiny jungle dance-offs!"
+  },
+  {
+    "id": "kb-133",
+    "pattern": ["boat billed heron", "船嘴鹭", "大嘴", "夜间", "红树林"],
+    "birdId": "boat-billed-heron",
+    "category": "appearance",
+    "answerZh": "船嘴鹭有一张又宽又扁像小船的大嘴，适合在昏暗的红树林浅水里捞鱼、虾和昆虫。它常在黄昏和夜里活动，是湿地里的“夜猫子渔夫”！",
+    "answerEn": "Boat-billed herons have huge spoon-shaped bills perfect for scooping fish, shrimp, and insects in dim mangrove shallows. They often feed at dusk and night—wetland night anglers!"
+  },
+  {
+    "id": "kb-134",
+    "pattern": ["torrent duck", "湍鸭", "急流", "潜水", "安第斯"],
+    "birdId": "torrent-duck",
+    "category": "habitat",
+    "answerZh": "湍鸭能在冰冷湍急的山溪里游泳和潜水，脚上有粗糙的凸起抓石头特别牢。它们就像穿着防滑鞋的小探险家，专挑别的鸭不敢去的激流玩！",
+    "answerEn": "Torrent ducks swim and dive in icy rushing streams, with rough bumps on their feet for grip on stones. They are slip-proof adventurers in wild white water!"
+  },
+  {
+    "id": "kb-135",
+    "pattern": ["long tailed sylph", "长尾蜂鸟", "蜂鸟", "安第斯", "尾羽"],
+    "birdId": "long-tailed-sylph",
+    "category": "appearance",
+    "answerZh": "雄长尾蜂鸟拖着极长的闪亮尾羽，飞起来像拖着一道绿色小彩虹。它用细长的嘴吸食花蜜，还会帮花朵传粉，是空中迷你园丁！",
+    "answerEn": "Male long-tailed sylphs trail extra-long shimmering tail feathers like a green rainbow streak. They sip nectar with slender bills and pollinate flowers—tiny sky gardeners!"
+  },
+  {
+    "id": "kb-136",
+    "pattern": ["grey crowned crane", "灰冠鹤", "冠羽", "非洲", "湿地"],
+    "birdId": "grey-crowned-crane",
+    "category": "appearance",
+    "answerZh": "灰冠鹤头顶有金色的草冠，脸上一红一白像化了舞会妆。它在草原和沼泽边跳舞求偶，是非洲草原上优雅的“戴冠舞者”！",
+    "answerEn": "Grey crowned cranes wear golden grass crowns and bold red-and-white face paint. They dance on savannas and wetlands—elegant crowned dancers of Africa!"
+  },
+  {
+    "id": "kb-137",
+    "pattern": ["ground hornbill", "地犀鸟", "非洲", "走路", "大鸟"],
+    "birdId": "southern-ground-hornbill",
+    "category": "behavior",
+    "answerZh": "地犀鸟大部分时间在地上大步走，用弯嘴找昆虫、小动物和果实。家族会一起照顾幼鸟，低沉的叫声像在敲远方的小鼓！",
+    "answerEn": "Southern ground-hornbills stride across the ground hunting insects, small animals, and fruit. Families team up to raise chicks, and their deep calls boom like distant drums!"
+  },
+  {
+    "id": "kb-138",
+    "pattern": ["African penguin", "非洲企鹅", "企鹅", "沙滩", "冷水"],
+    "birdId": "african-penguin",
+    "category": "habitat",
+    "answerZh": "非洲企鹅住在南非海岸的岛屿和沙滩上，不怕晒也会跳进凉快的海里捉鱼。它们叫起来像小驴叫，所以有个可爱的外号叫“驴企鹅”！",
+    "answerEn": "African penguins live on rocky islands and beaches along South Africa, diving into cool seas for fish. Their brays sound a bit like donkeys—earning the nickname jackass penguins!"
+  },
+  {
+    "id": "kb-139",
+    "pattern": ["hamerkop", "锤头鹳", "鸟巢", "非洲", "泥巢"],
+    "birdId": "hamerkop",
+    "category": "behavior",
+    "answerZh": "锤头鹳会用树枝、泥草搭一个超大的圆顶巢，有时比小桌子还大！夫妻还会一起用嘴敲敲敲庆祝，像在举行鸟巢落成派对。",
+    "answerEn": "Hamerkops weave huge domed stick-and-mud nests that can be bigger than a small table. Pairs celebrate with bill-clattering—like a housewarming party for birds!"
+  },
+  {
+    "id": "kb-140",
+    "pattern": ["oxpecker", "牛椋鸟", "共生", "犀牛", "昆虫"],
+    "birdId": "oxpecker",
+    "category": "diet",
+    "answerZh": "牛椋鸟常站在犀牛、斑马背上啄食蜱虫和死皮，像移动的“小兽医”。它还会发出叫声提醒大家伙有危险，是草原上的迷你警报员！",
+    "answerEn": "Oxpeckers ride rhinos and zebras to eat ticks and dead skin—tiny mobile vets. They also call to warn big friends about danger—mini savanna alarm birds!"
+  },
+  {
+    "id": "kb-141",
+    "pattern": ["turaco", "蕉鹃", "绿色", "非洲", "冠羽"],
+    "birdId": "turaco",
+    "category": "appearance",
+    "answerZh": "蕉鹃羽毛里有特殊的绿色色素，在阳光下特别鲜艳，还有俏皮的冠羽。它们爱在树林里跳来跳去找果实，像穿着亮片衣的森林小丑！",
+    "answerEn": "Turacos shine with special green pigments and sporty crests in sun-dappled forests. They hop branch to branch for fruit—glittery forest acrobats!"
+  },
+  {
+    "id": "kb-142",
+    "pattern": ["weaver", "织布鸟", "筑巢", "非洲", "悬挂巢"],
+    "birdId": "weaver-bird",
+    "category": "behavior",
+    "answerZh": "雄织布鸟会用草叶编出悬挂的球形小房子，还会用力拉线测试牢不牢。如果雌鸟不满意，它可能拆掉重来，像认真的小小建筑师！",
+    "answerEn": "Male weaverbirds weave hanging grass spheres and tug-test each knot. If a female dislikes the design, he may rebuild—determined tiny architects!"
+  },
+  {
+    "id": "kb-143",
+    "pattern": ["bee eater", "蜂虎", "吃蜂", "非洲", "彩色"],
+    "birdId": "bee-eater",
+    "category": "diet",
+    "answerZh": "蜂虎会在空中叼住蜜蜂，在树枝上蹭掉毒刺再吃，技术超稳。它们羽毛彩虹般亮丽，还喜欢在沙崖上挖洞做巢，是又美又勇敢的昆虫猎手！",
+    "answerEn": "Bee-eaters snatch bees midair, then rub off stingers on a perch before eating—neat trick! Their rainbow feathers and sandy cliff burrows make them flashy insect hunters!"
+  },
+  {
+    "id": "kb-144",
+    "pattern": ["Cape vulture", "南非兀鹫", "清道夫", "悬崖", "翱翔"],
+    "birdId": "cape-vulture",
+    "category": "general",
+    "answerZh": "南非兀鹫乘着热气流在高空盘旋，一眼能望见很远的地方。它们清理动物尸体，是生态系统里重要的“空中清洁工”，少了它们环境会生病哦！",
+    "answerEn": "Cape vultures soar on thermals with huge views of the land below. They recycle carcasses as sky janitors—ecosystems get sick without these cleanup crews!"
+  },
+  {
+    "id": "kb-145",
+    "pattern": ["palm nut vulture", "棕榈鹫", "棕榈果", "非洲", "杂食"],
+    "birdId": "palm-nut-vulture",
+    "category": "diet",
+    "answerZh": "棕榈鹫爱吃油棕榈的果核，也会吃鱼和小动物，是秃鹫家族里的“水果爱好者”。强喙能咬开硬壳，像带着开罐器的猛禽！",
+    "answerEn": "Palm-nut vultures love oily palm nuts but also eat fish and small animals—the fruit fans of the vulture world. Strong beaks crack tough shells like built-in nutcrackers!"
+  },
+  {
+    "id": "kb-146",
+    "pattern": ["African jacana", "非洲水雉", "长腿", "睡莲", "漂浮叶"],
+    "birdId": "african-jacana",
+    "category": "habitat",
+    "answerZh": "非洲水雉脚趾特别长，能稳稳走在睡莲叶上，外号叫“百合叶漫步者”。爸爸常常负责孵蛋和带小鸟，是湿地里的超级奶爸！",
+    "answerEn": "African jacanas have super-long toes for walking on lily pads—lily-trotters of the marsh! Dads often incubate eggs and guard chicks—super wetland dads!"
+  },
+  {
+    "id": "kb-147",
+    "pattern": ["crowned eagle", "非洲冠鹰", "雨林", "猛禽", "猴子"],
+    "birdId": "crowned-eagle",
+    "category": "diet",
+    "answerZh": "非洲冠鹰是雨林里的大力猛禽，能从树冠间突袭抓树栖的哺乳动物。强有力的爪子和短宽的翅膀适合在密林里转弯，像会飞的隐形猎手！",
+    "answerEn": "Crowned eagles are rainforest power raptors that ambush mammals from the canopy. Strong talons and broad short wings help them twist through trees—stealth hunters of the leaves!"
+  },
+  {
+    "id": "kb-148",
+    "pattern": ["fantail", "扇尾鹟", "新西兰", "翘尾巴", "昆虫"],
+    "birdId": "new-zealand-fantail",
+    "category": "behavior",
+    "answerZh": "新西兰扇尾鹟总爱张开尾巴像一把小扇子，还会追着飞虫忽上忽下。它不怕人，有时会跟着你在林中小路上“当导游”！",
+    "answerEn": "New Zealand fantails flick wide tails like little fans while chasing insects in zigzag hops. They are curious and may follow hikers—cheery trail buddies!"
+  },
+  {
+    "id": "kb-149",
+    "pattern": ["tui", "图伊鸟", "新西兰", "白领", "花蜜"],
+    "birdId": "tui",
+    "category": "appearance",
+    "answerZh": "图伊鸟喉下有卷曲的白色羽毛领，叫声像铃铛、咔嗒和哨音大拼盘。它吸食花蜜也吃昆虫和果实，是新西兰森林里会唱歌的“白领绅士”！",
+    "answerEn": "Tuis wear curly white throat tufts and mix bell-like clicks and whistles in wild songs. They sip nectar and snap up insects and fruit—dapper singers of New Zealand bush!"
+  },
+  {
+    "id": "kb-150",
+    "pattern": ["rainbow lorikeet", "彩虹吸蜜鹦鹉", "花蜜", "澳洲", "彩色"],
+    "birdId": "rainbow-lorikeet",
+    "category": "diet",
+    "answerZh": "彩虹吸蜜鹦鹉有刷子状的舌头，专爱舔食花朵里的甜汁。它们羽毛像把彩虹穿在身上，成群在树上吵吵闹闹，像开果汁派对！",
+    "answerEn": "Rainbow lorikeets have brush-tipped tongues perfect for flower nectar. Flocks shimmer in every color and chatter in treetops—loud fruity rainbow parties!"
+  },
+  {
+    "id": "kb-151",
+    "pattern": ["bowerbird", "园丁鸟", "求偶亭", "蓝色", "澳洲"],
+    "birdId": "satin-bowerbird",
+    "category": "behavior",
+    "answerZh": "雄缎蓝园丁鸟会用树枝搭小亭子，再搜集蓝色瓶盖、羽毛装饰“展厅”。雌鸟来参观挑选最会布置的男生，就像鸟类里的室内设计师比赛！",
+    "answerEn": "Male satin bowerbirds build stick bowers and decorate with blue treasures like feathers or caps. Females tour the galleries—an avian interior-design contest!"
+  },
+  {
+    "id": "kb-152",
+    "pattern": ["wedge tailed eagle", "楔尾雕", "澳洲", "猛禽", "热气流"],
+    "birdId": "wedge-tailed-eagle",
+    "category": "general",
+    "answerZh": "楔尾雕是澳洲最大的猛禽之一，尾巴像楔形帮助高空滑翔。它能吃腐肉也抓活猎物，在开阔地上空盘旋时就像天空的王者巡逻！",
+    "answerEn": "Wedge-tailed eagles are among Australia’s largest raptors, with wedge-shaped tails for soaring. They hunt live prey or scavenge—sky kings patrolling wide open spaces!"
+  },
+  {
+    "id": "kb-153",
+    "pattern": ["kookaburra", "笑翠鸟", "澳洲", "笑声", "蓝翅"],
+    "birdId": "laughing-kookaburra-blue-winged",
+    "category": "behavior",
+    "answerZh": "笑翠鸟的叫声像人在哈哈大笑，清晨常常“集体配音”叫醒森林。蓝翅笑翠鸟会用大嘴捉蛇、蜥蜴和昆虫，是湿地边爱笑的捕猎高手！",
+    "answerEn": "Kookaburras laugh like chuckling people and dawn choruses wake the bush. Blue-winged kookaburras snap up snakes, lizards, and insects—giggling hunters by wetlands!"
+  },
+  {
+    "id": "kb-154",
+    "pattern": ["New Caledonian crow", "新喀鸦", "工具", "聪明", "岛屿"],
+    "birdId": "new-caledonian-crow",
+    "category": "general",
+    "answerZh": "新喀鸦会用树枝做成小钩钩把树缝里的虫子勾出来，还会把工具随身带着。科学家说它是鸟类里的“发明家”，脑子超灵活！",
+    "answerEn": "New Caledonian crows craft hooked sticks to fish grubs from bark and even carry tools along. Scientists call them feathered inventors—super flexible problem solvers!"
+  },
+  {
+    "id": "kb-155",
+    "pattern": ["orange fronted parakeet", "橙额鹦鹉", "新西兰", "濒危", "鹦鹉"],
+    "birdId": "orange-fronted-parakeet",
+    "category": "habitat",
+    "answerZh": "橙额鹦鹉住在新西兰的山毛榉林里，吃种子、嫩芽和昆虫。因为栖息地减少和天敌威胁，它需要人类保护，每只小鹦鹉都是珍贵的绿色小宝石！",
+    "answerEn": "Orange-fronted parakeets live in New Zealand beech forests eating seeds, shoots, and insects. Habitat loss and predators make them rare—each tiny parakeet is a precious green jewel to protect!"
+  },
+  {
+    "id": "kb-156",
+    "pattern": ["rifleman", "刺鹩", "新西兰", "最小", "昆虫"],
+    "birdId": "rifleman",
+    "category": "general",
+    "answerZh": "刺鹩是新西兰最小的鸟之一，动作快得像小子弹，在树皮上找虫子。雄鸟和雌鸟颜色略有不同，像一对迷你森林忍者！",
+    "answerEn": "Riflemen are among New Zealand’s tiniest birds, zipping like little bullets up trunks for insects. Males and females wear slightly different colors—mini forest ninjas!"
+  },
+  {
+    "id": "kb-157",
+    "pattern": ["palm cockatoo", "棕榈凤头鹦鹉", "澳洲", "黑羽", "鼓槌"],
+    "birdId": "palm-cockatoo",
+    "category": "behavior",
+    "answerZh": "棕榈凤头鹦鹉会用树枝当鼓槌敲打空心树干，再配上叫声向别的鸟炫耀。它脸颊能变红，冠羽竖起时像摇滚明星在台上表演！",
+    "answerEn": "Palm cockatoos drum hollow trees with stick drumsticks and call to show off. Blushing cheeks and tall crests make them look like feathered rock stars on stage!"
+  },
+  {
+    "id": "kb-158",
+    "pattern": ["ivory gull", "象牙鸥", "北极", "白色", "冰面"],
+    "birdId": "ivory-gull",
+    "category": "habitat",
+    "answerZh": "象牙鸥几乎全身雪白，在浮冰和极地海岸边找鱼、腐食和小动物。它像冰雪世界里飘动的小白帆，专门适应寒冷的北方生活！",
+    "answerEn": "Ivory gulls are ghostly white birds of pack ice and polar shores, finding fish, scraps, and small prey. They drift over the ice like little white sails built for the cold north!"
+  },
+  {
+    "id": "kb-159",
+    "pattern": ["Ross gull", "罗斯鸥", "北极", "粉红", "繁殖羽"],
+    "birdId": "ross-gull",
+    "category": "appearance",
+    "answerZh": "繁殖期的罗斯鸥会戴上淡淡的玫瑰色“围巾”，在北极苔原和水边筑巢。它很稀少，看到它就像收到来自极地的一封粉色明信片！",
+    "answerEn": "Breeding Ross gulls wear soft rose blush around the neck and nest on Arctic tundra near water. They are rare—spotting one is like a rosy postcard from the pole!"
+  },
+  {
+    "id": "kb-160",
+    "pattern": ["thick billed murre", "厚嘴海鸦", "悬崖", "潜水", "北极海"],
+    "birdId": "thick-billed-murre",
+    "category": "behavior",
+    "answerZh": "厚嘴海鸦像企鹅一样会潜水捕鱼，却还能飞！它把单蛋产在陡峭崖壁上，爸爸妈妈轮流孵化和喂食，是勇敢的海崖攀岩家庭！",
+    "answerEn": "Thick-billed murres dive deep like penguins but still fly! They lay one egg on sheer cliffs and parents take turns—brave seaside climbers raising a chick!"
+  },
+  {
+    "id": "kb-161",
+    "pattern": ["gyrfalcon", "矛隼", "北极", "最大隼", "白色型"],
+    "birdId": "gyrfalcon",
+    "category": "general",
+    "answerZh": "矛隼是世界上最大的隼类之一，能在苔原和海岸上空高速追击松鸡等猎物。有的个体几乎全白，像冰雪里冲出来的小战斗机！",
+    "answerEn": "Gyrfalcons are among the largest falcons, streaking over tundra and coasts after grouse and more. Some are almost all white—ice-colored sky fighters!"
+  },
+  {
+    "id": "kb-162",
+    "pattern": ["ptarmigan", "雷鸟", "换羽", "雪地", "北极"],
+    "birdId": "ptarmigan",
+    "category": "appearance",
+    "answerZh": "雷鸟夏天羽毛棕褐像泥土和石头，冬天换成雪白外套躲敌人。脚上冬天还长出小羽毛“雪靴”，在雪地里走路更暖和也不易陷下去！",
+    "answerEn": "Ptarmigans wear brown summer camouflage and switch to snowy white in winter. Feathered snow boots on their feet add warmth and help them walk on soft drifts!"
+  },
+  {
+    "id": "kb-163",
+    "pattern": ["Japanese white eye", "绣眼鸟", "白眼圈", "日本", "花蜜"],
+    "birdId": "japanese-white-eye",
+    "category": "diet",
+    "answerZh": "绣眼鸟眼睛周围有一圈白边，像戴了迷你眼镜。它爱吸食花蜜也吃小虫和果实，在树林和花园里跳来跳去，活泼又可爱！",
+    "answerEn": "Japanese white-eyes wear tidy white spectacles around bright eyes. They sip nectar and snap up insects and fruit—bouncy garden acrobats in the trees!"
+  },
+  {
+    "id": "kb-164",
+    "pattern": ["hoopoe", "戴胜", "冠羽", "欧亚", "昆虫"],
+    "birdId": "eurasian-hoopoe",
+    "category": "behavior",
+    "answerZh": "戴胜受惊时会竖起像扇子一样的冠羽，还会在土里找虫子吃。它飞起来翅膀黑白相间像大蝴蝶，叫声像柔和的“呼呼”声！",
+    "answerEn": "Hoopoes flash a fan-shaped crest when surprised and probe soil for insects. In flight their bold black-and-white wings look like giant butterflies with soft hoo-hoo calls!"
+  },
+  {
+    "id": "kb-165",
+    "pattern": ["bearded vulture", "胡兀鹫", "骨头", "高山", "羽色"],
+    "birdId": "bearded-vulture",
+    "category": "diet",
+    "answerZh": "胡兀鹫会把大骨头叼到高空扔下去摔碎，再吃掉里面的骨髓，像天空里的骨头料理师。成鸟胸腹常被含铁泥土染成锈橙色，像穿了染色围裙！",
+    "answerEn": "Bearded vultures drop big bones from heights to shatter them and eat the marrow—sky chefs of skeleton soup! Iron-rich soils stain adults rusty orange like dyed aprons!"
+  },
+  {
+    "id": "kb-166",
+    "pattern": ["Siberian crane", "白鹤", "迁徙", "湿地", "亚洲"],
+    "birdId": "siberian-crane",
+    "category": "migration",
+    "answerZh": "白鹤长途迁徙到湿地过冬或繁殖，脖子长腿长适合在浅水里觅食。保护湿地就等于给这些白色大舞者保留舞台，让它们年年还能回家跳舞！",
+    "answerEn": "Siberian cranes migrate long distances between wetlands for wintering and nesting, wading tall on long legs. Saving marshes keeps stages open for these white dancers to return!"
+  },
+  {
+    "id": "kb-167",
+    "pattern": ["hornbill", "冠斑犀鸟", "东南亚", "果实", "森林"],
+    "birdId": "oriental-pied-hornbill",
+    "category": "habitat",
+    "answerZh": "冠斑犀鸟有大大的嘴盔，常在森林里找果实和小动物。雌鸟孵蛋时雄鸟会送食物，夫妻俩分工合作超默契，是热带雨林的快递搭档！",
+    "answerEn": "Oriental pied hornbills sport big casques and hunt fruit and small prey in the forest. Males deliver food while females nest—tropical teamwork delivery duo!"
   }
 ]

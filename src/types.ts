@@ -392,6 +392,9 @@ export type HabitatFilterType =
   | "mountain"
   | "urban";
 
+// V32 — Sound Recognition
+export type SoundRecognitionState = "idle" | "recording" | "analyzing" | "result";
+
 // V31 — Discovery Missions
 export interface DiscoveryMission {
   id: string;

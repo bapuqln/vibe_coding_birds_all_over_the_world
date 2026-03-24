@@ -84,6 +84,13 @@ export function RightControlPanel() {
     (s) => (s as typeof s & { setDiscoveryMissionsPanelOpen: (o: boolean) => void }).setDiscoveryMissionsPanelOpen,
   );
 
+  const ecosystemPanelOpen = useAppStore((s) => s.ecosystemPanelOpen);
+  const setEcosystemPanelOpen = useAppStore((s) => s.setEcosystemPanelOpen);
+  const soundRecognitionActive = useAppStore((s) => s.soundRecognitionActive);
+  const setSoundRecognitionActive = useAppStore((s) => s.setSoundRecognitionActive);
+  const setSoundRecognitionResult = useAppStore((s) => s.setSoundRecognitionResult);
+  const setSoundRecognitionConfidence = useAppStore((s) => s.setSoundRecognitionConfidence);
+
   const [habitatSectionOpen, setHabitatSectionOpen] = useState(false);
 
   const handleDiscover = () => {
@@ -383,6 +390,49 @@ export function RightControlPanel() {
         ariaLabel={language === "zh" ? "沙盒" : "Sandbox"}
       >
         {language === "zh" ? "沙盒" : "Sandbox"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={() => {
+          const next = !ecosystemPanelOpen;
+          setEcosystemPanelOpen(next);
+          setActivePanel(next ? "ecosystemPanel" : null);
+        }}
+        active={ecosystemPanelOpen}
+        icon="🌍"
+        ariaLabel={language === "zh" ? "生态模拟" : "Ecosystem"}
+      >
+        {language === "zh" ? "生态" : "Ecosystem"}
+      </ActionButton>
+
+      <ActionButton
+        onClick={async () => {
+          if (soundRecognitionActive) return;
+          const { isRecordingSupported, startRecording, stopAndAnalyze } = await import("../../systems/SoundRecognitionSystem");
+          if (!isRecordingSupported()) return;
+          setSoundRecognitionActive(true);
+          try {
+            await startRecording();
+            setTimeout(async () => {
+              const result = await stopAndAnalyze();
+              setSoundRecognitionResult(result.birdId);
+              setSoundRecognitionConfidence(result.confidence);
+              setSoundRecognitionActive(false);
+              if (result.confidence > 0.3) {
+                setSelectedBird(result.birdId);
+              }
+            }, 3000);
+          } catch {
+            setSoundRecognitionActive(false);
+          }
+        }}
+        active={soundRecognitionActive}
+        icon="🎤"
+        ariaLabel={language === "zh" ? "识别鸟声" : "Identify Bird Sound"}
+      >
+        {soundRecognitionActive
+          ? (language === "zh" ? "录音中..." : "Listening...")
+          : (language === "zh" ? "识音" : "Sound ID")}
       </ActionButton>
 
       {migrationModeActive && (

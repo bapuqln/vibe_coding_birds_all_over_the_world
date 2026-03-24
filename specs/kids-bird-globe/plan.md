@@ -1248,3 +1248,82 @@ src/
 | `App.tsx` | BirdComparePanel, DiscoverMissionsPanel integrated | v31 |
 | `store.ts` | Compare mode state, discovery missions state | v31 |
 | `types.ts` | DiscoveryMission, DiscoveryBadge types; flightSpeed on Bird | v31 |
+
+---
+
+# Implementation Plan — V32 (Intelligent Discovery Systems)
+
+> **v32 changelog addendum**: AI Bird Guide 2.0 with multi-source RAG semantic matching and voice narration, Bird Sound Recognition system with Web Audio API frequency analysis, Global Migration Simulation with seasonal animated routes, Habitat Ecosystem Interaction panel with manual override sliders, Bird Size Comparison Mode with proportional wingspan visualization, Data Expansion from 53 to 100 birds.
+
+## Key Technical Decisions (v32 addendum)
+
+### TD-179: AI Bird Guide 2.0
+**Problem**: The existing guide only does simple keyword matching; children need richer, context-aware answers.
+**Solution**: Upgrade `BirdGuideService.ts` with multi-source RAG pipeline. The `getGuideAnswer` function now searches across `bird-knowledge.json`, `bird_facts.json`, migration data, and habitat data. Scoring weights: exact phrase match (+4), pattern match (+2), token overlap (+1), bird-specific context (+3). Voice narration via Web Speech API already exists in `AIBirdGuidePanel.tsx` — enhance with auto-narrate option. Add migration and habitat context to answers by cross-referencing `migrations.json` and bird `habitatType` fields.
+
+### TD-180: Bird Sound Recognition
+**Problem**: Children cannot identify birds by sound in an interactive way.
+**Solution**: Create `SoundRecognitionSystem.ts` in `/src/systems/`. Uses MediaRecorder API to capture short audio clips, Web Audio API AnalyserNode to extract frequency spectrum, and compares against stored bird sound frequency profiles. Each bird entry has a `soundFrequencyProfile` (peak frequency range in Hz). Matching uses Euclidean distance on frequency bins. Returns top match with confidence 0–1. Below 0.3 confidence triggers fallback message. UI: button in `RightControlPanel.tsx`, result shown in a toast-style notification.
+
+### TD-181: Global Migration Simulation
+**Problem**: Migration paths are static — no seasonal behavior.
+**Solution**: Upgrade `MigrationSystem.ts` with seasonal state from `EcosystemSystem`. Add `getMigrationProgress(season)` function: spring returns 0→1 (northbound), autumn returns 0→1 (southbound), summer/winter returns 1.0 (at destination). `MigrationPaths.tsx` reads season from store and positions bird icons at `progress * pathLength`. Particle trails use three trailing spheres with decreasing opacity. Season label shown on migration distance badge.
+
+### TD-182: Ecosystem Interaction Panel
+**Problem**: Ecosystem runs automatically — children cannot experiment with environment changes.
+**Solution**: Create `EcosystemPanel.tsx` with three sliders: Season (discrete: spring/summer/autumn/winter), Temperature (continuous: -10 to 40°C), Time of Day (discrete: dawn/morning/afternoon/dusk/night). When panel is open, ecosystem auto-tick pauses and manual values override. Store fields: `ecosystemPanelOpen: boolean`, `ecosystemManualOverride: boolean`. Bird visibility in `GlobeScene` filters: nocturnal birds hidden unless timeOfDay is night/dusk, migratory birds hidden unless season is spring/autumn, density scaled by temperature proximity to bird's preferred range.
+
+### TD-183: Bird Size Comparison Enhancement
+**Problem**: Compare panel shows stats but no visual size difference.
+**Solution**: Upgrade `BirdComparePanel.tsx`. Add a proportional size bar: each bird image container width is scaled by `wingspanCm / max(wingspanA, wingspanB)`. Add lifespan stat row. Keep existing stat highlighting logic.
+
+### TD-184: Data Expansion to 100 Birds
+**Problem**: Dataset has 53 birds — need broader global coverage.
+**Solution**: Add 47 new bird entries to `birds.json`. Focus on underrepresented regions: South America (15), Africa (12), Oceania (10), Arctic (5), mixed (5). Each entry must have all required `Bird` interface fields. Add corresponding knowledge entries to `bird-knowledge.json` for new species.
+
+## Implementation Phases (v32 addendum)
+
+- Phase 238: Data Expansion — Add 47 birds to birds.json, knowledge entries → R-133
+- Phase 239: BirdGuideService 2.0 — Multi-source RAG, migration/habitat context → R-128
+- Phase 240: SoundRecognitionSystem — Audio recording, frequency analysis, matching → R-129
+- Phase 241: Migration Simulation — Seasonal state, animated progress, particle trails → R-130
+- Phase 242: Ecosystem Panel — Manual override sliders, bird visibility filtering → R-131
+- Phase 243: Bird Size Comparison — Proportional visualization, lifespan stat → R-132
+- Phase 244: V32 Integration & Verification → AC-V32
+
+## Store State Additions (v32 addendum)
+
+| Field | Purpose | Version |
+|-------|---------|---------|
+| `ecosystemPanelOpen` | Ecosystem panel visibility | v32 |
+| `ecosystemManualOverride` | Manual ecosystem override active | v32 |
+| `soundRecognitionActive` | Sound recognition recording state | v32 |
+| `soundRecognitionResult` | Matched bird ID from sound recognition | v32 |
+| `soundRecognitionConfidence` | Match confidence 0–1 | v32 |
+
+## Component Inventory (v32 addendum)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `EcosystemPanel.tsx` | Ecosystem simulation sliders | v32 |
+
+### New Systems
+| System | Purpose | Version |
+|--------|---------|---------|
+| `SoundRecognitionSystem.ts` | Audio recording and bird sound matching | v32 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `BirdGuideService.ts` | Multi-source RAG with migration/habitat context | v32 |
+| `MigrationSystem.ts` | Seasonal migration progress computation | v32 |
+| `MigrationPaths.tsx` | Season-aware bird icon positioning | v32 |
+| `EcosystemSystem.ts` | Manual override support | v32 |
+| `BirdComparePanel.tsx` | Proportional size visualization, lifespan stat | v32 |
+| `RightControlPanel.tsx` | Sound recognition button, ecosystem panel button | v32 |
+| `App.tsx` | EcosystemPanel integrated | v32 |
+| `store.ts` | V32 state fields and actions | v32 |
+| `types.ts` | SoundRecognitionState type | v32 |
+| `birds.json` | Expanded to 100 birds | v32 |
+| `bird-knowledge.json` | Knowledge entries for new birds | v32 |

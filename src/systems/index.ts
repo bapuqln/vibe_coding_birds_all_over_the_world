@@ -1,7 +1,7 @@
 export { createFlock, updateFlock, DEFAULT_FLOCK_PARAMS } from "./FlockingSystem";
 export { getAllBirds, getBirdById, getBirdsByRegion, getRegions, getBirdCount, getRegionBirdCounts } from "./BirdSystem";
 export { getAllWeather, getRegionWeather, getWeatherType, getWeatherIntensity } from "./WeatherSystem";
-export { getAllMigrationRoutes, getMigrationRouteById } from "./MigrationSystem";
+export { getAllMigrationRoutes, getMigrationRouteById, getMigrationProgress, isMigrationActive } from "./MigrationSystem";
 export { generateQuizRound } from "./QuizSystem";
 export { getAllStories, getStoryById, getStoryStep, getStoryStepCount } from "./StorySystem";
 export { useAudio } from "./AudioSystem";
@@ -15,5 +15,7 @@ export { getBiomeAtPosition, getBiomeColor, getAllBiomes, getBiomeById } from ".
 export { getAllLessons, getLessonById, getLessonStep, getLessonStepCount } from "./ClassroomSystem";
 export { canSpawnBird, createSpawnedBird, removeSpawnedBird, clearAllSpawned, sunAngleFromHour } from "./SandboxSystem";
 export { getAllTracks, getTrackById, getTrackProgress, checkTrackCompletion } from "./LearningTrackSystem";
-export { getCurrentSeason, getWorldState, tickEcosystem, getSeasonalBirdDensityMultiplier } from "./EcosystemSystem";
+export { getCurrentSeason, getWorldState, tickEcosystem, getSeasonalBirdDensityMultiplier, setManualOverride, setManualState, isManualOverrideActive, getSeasonElapsedFraction, isBirdVisibleInEcosystem } from "./EcosystemSystem";
+export { isRecordingSupported, startRecording, stopAndAnalyze, cancelRecording, getFallbackMessage } from "./SoundRecognitionSystem";
+export type { SoundMatchResult } from "./SoundRecognitionSystem";
 export { getAllDiscoverMissions, getMissionById, checkMissionProgress } from "./DiscoverMissionSystem";

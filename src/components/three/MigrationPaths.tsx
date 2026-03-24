@@ -13,6 +13,7 @@ import { buildMigrationCurve } from "../../utils/migration";
 import migrationsData from "../../data/migrations.json";
 import birdsData from "../../data/birds.json";
 import { useAppStore } from "../../store";
+import { getMigrationProgress, isMigrationActive } from "../../systems/MigrationSystem";
 import type { Bird, MigrationRoute } from "../../types";
 
 const migrations = migrationsData as MigrationRoute[];
@@ -120,6 +121,7 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
   const mainRef = useRef<Mesh>(null);
   const trail1Ref = useRef<Mesh>(null);
   const trail2Ref = useRef<Mesh>(null);
+  const season = useAppStore((s) => s.ecosystemState.season);
 
   const points = useMemo(() => {
     const fromBird = birdMap.get(route.from);
@@ -136,11 +138,14 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
 
   useFrame(({ clock }) => {
     if (points.length === 0) return;
-    const t = (clock.elapsedTime % 3) / 3;
 
-    const mainPos = getPointAtProgress(points, t);
-    const trail1Pos = getPointAtProgress(points, t - 0.05);
-    const trail2Pos = getPointAtProgress(points, t - 0.1);
+    const migrating = isMigrationActive(season);
+    const cycleFraction = migrating ? (clock.elapsedTime % 8) / 8 : 0;
+    const progress = getMigrationProgress(season, cycleFraction);
+
+    const mainPos = getPointAtProgress(points, progress);
+    const trail1Pos = getPointAtProgress(points, Math.max(0, progress - 0.05));
+    const trail2Pos = getPointAtProgress(points, Math.max(0, progress - 0.1));
 
     if (mainRef.current) mainRef.current.position.copy(mainPos);
     if (trail1Ref.current) trail1Ref.current.position.copy(trail1Pos);
@@ -149,27 +154,30 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
 
   if (points.length === 0) return null;
 
+  const migrating = isMigrationActive(season);
+  const routeColor = route.color || "#fbbf24";
+
   return (
     <>
       <mesh ref={trail2Ref}>
         <sphereGeometry args={[0.005, 8, 6]} />
         <meshBasicMaterial
-          color="#fbbf24"
+          color={routeColor}
           transparent
-          opacity={0.2}
+          opacity={migrating ? 0.3 : 0.1}
         />
       </mesh>
       <mesh ref={trail1Ref}>
         <sphereGeometry args={[0.006, 8, 6]} />
         <meshBasicMaterial
-          color="#fbbf24"
+          color={routeColor}
           transparent
-          opacity={0.4}
+          opacity={migrating ? 0.5 : 0.15}
         />
       </mesh>
       <mesh ref={mainRef}>
         <sphereGeometry args={[0.008, 8, 6]} />
-        <meshBasicMaterial color="#fbbf24" />
+        <meshBasicMaterial color={routeColor} transparent opacity={migrating ? 1.0 : 0.3} />
       </mesh>
     </>
   );
@@ -182,6 +190,7 @@ interface MigrationLabelProps {
 function MigrationLabel({ route }: MigrationLabelProps) {
   const { camera } = useThree();
   const language = useAppStore((s) => s.language);
+  const season = useAppStore((s) => s.ecosystemState.season);
   const [showLabel, setShowLabel] = useState(
     () => camera.position.length() < 2.5,
   );
@@ -214,7 +223,8 @@ function MigrationLabel({ route }: MigrationLabelProps) {
   if (route.migrationDistanceKm == null || midpoint == null) return null;
 
   const dist = route.migrationDistanceKm;
-  const distText = language === "zh" ? `${dist}千米` : `${dist}km`;
+  const seasonIcon = season === "spring" ? "🌸" : season === "autumn" ? "🍂" : season === "summer" ? "☀️" : "❄️";
+  const distText = language === "zh" ? `${seasonIcon} ${dist}千米` : `${seasonIcon} ${dist}km`;
 
   return (
     <Html position={midpoint} center>
