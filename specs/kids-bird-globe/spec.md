@@ -3157,3 +3157,117 @@ Expand bird dataset from 53 → 100 birds.
 - [ ] 60 FPS maintained.
 - [ ] <150MB memory usage.
 - [ ] <2s initial load time.
+
+---
+
+# Version 33 — UI Architecture Upgrade
+
+This version introduces a redesigned interface to improve usability for children while preserving scientific clarity.
+
+Major improvements:
+
+1. Simplified Control System
+2. Collapsible Information Cards
+3. Migration Route Visualization
+4. Contextual Tool Panels
+5. Scientific HUD Design
+6. Interactive Habitat Highlight
+
+## 1. Simplified Control System
+
+### R-135: Three-Mode Control Panel (v33)
+
+The current right-side control bar contains too many buttons. Replace the long button list with three primary modes:
+
+- **Explore** — Discover birds, Migration routes, Habitat map
+- **Learn** — Encyclopedia, Bird comparison, Evolution timeline
+- **Play** — Missions, Sound recognition, Quiz
+
+UI Layout:
+
+- RightPanel contains a Mode Selector (3 buttons) and a Context Panel (dynamic tools).
+- When mode = Explore: show Migration, Habitats, Regions tools.
+- When mode = Learn: show Compare, Encyclopedia, Timeline tools.
+- When mode = Play: show Missions, Sound ID, Quiz tools.
+- Additional utility actions (Screenshot, Share, Reset) remain accessible in all modes.
+
+## 2. Collapsible Bird Info Card
+
+### R-136: Compact/Expanded Bird Card (v33)
+
+Current information panel blocks too much screen space. Introduce two states:
+
+- **Compact Mode**: Small card with bird name, image, quick stats. Max height 160px.
+- **Expanded Mode**: Full encyclopedia card with habitat, diet, lifespan, wingspan, facts.
+- Interaction: tap arrow icon to expand/collapse.
+
+## 3. Migration Route Visualization
+
+### R-137: Animated Migration Arcs (v33)
+
+Current migration path uses translucent shapes. Replace with animated migration arcs:
+
+- Curved arc above the globe.
+- Animated bird icons moving along route.
+- Particle trails.
+- Distance labels.
+
+Example: Arctic Tern — Arctic to Antarctica — 40,000 km.
+
+## 4. Scientific HUD Design
+
+### R-138: Science HUD Overlay (v33)
+
+Introduce a minimal science HUD. Top-left overlay showing globe information:
+
+- Latitude
+- Longitude
+- Biome
+- Temperature
+- Season
+
+Example: Latitude: 48°N, Biome: Boreal Forest, Season: Spring.
+
+## 5. Interactive Habitat Highlight
+
+### R-139: Bird Habitat Region Highlight (v33)
+
+Allow children to highlight bird habitats. When selecting a bird, highlight its natural habitat region on globe.
+
+Example: Flamingo — highlight wetlands, lakes, salt flats.
+
+Visualization: soft glowing region overlay.
+
+## 6. UI Visual Consistency
+
+### R-140: Space Science Interface Design (v33)
+
+Unify UI style with globe visuals. Design language: space science interface.
+
+Elements:
+
+- Dark translucent panels
+- Soft glowing borders
+- Thin line icons
+- NASA-style typography
+
+## 7. Performance Constraints
+
+### R-141: Performance Maintenance (v33)
+
+- 60 FPS rendering target maintained.
+- <150MB memory usage.
+- Max 25 active birds on globe.
+
+### AC-V33: UI Architecture Upgrade
+
+- [ ] Right side panel shows only 3 modes (Explore, Learn, Play).
+- [ ] Mode switching updates tool panel dynamically.
+- [ ] Bird card supports compact and expanded modes.
+- [ ] Migration routes display animated arcs with particle trails.
+- [ ] Habitat regions highlight correctly when bird selected.
+- [ ] HUD shows latitude, biome, season, temperature.
+- [ ] UI uses consistent dark translucent space-science design.
+- [ ] Build succeeds without errors.
+- [ ] 60 FPS maintained.
+- [ ] <150MB memory usage.

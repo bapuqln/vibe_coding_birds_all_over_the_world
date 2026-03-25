@@ -2118,3 +2118,57 @@
 - [x] **237b.3** Evolution timeline slider works. (AC-V31-2)
 - [x] **237b.4** Right panel layout fixed. (AC-V31-2)
 - [x] **237b.5** Build passes. (AC-V31-2)
+
+---
+
+## Phase 238b: V33 — UI Mode Store Setup
+
+- [ ] **238b.1** Add `UIMode` type to `types.ts`.
+- [ ] **238b.2** Add `uiMode` and `birdCardExpanded` state to store.
+- [ ] **238b.3** Add `setUIMode` and `setBirdCardExpanded` actions to store.
+
+---
+
+## Phase 239b: V33 — MainModePanel
+
+- [ ] **239b.1** Create `MainModePanel.tsx` in `/src/components/ui/`.
+- [ ] **239b.2** Implement mode selector (Explore / Learn / Play) with space-science styling.
+- [ ] **239b.3** Implement context tool panel per mode.
+- [ ] **239b.4** Add utility actions (Screenshot, Share, Reset) always visible.
+- [ ] **239b.5** Replace `RightControlPanel` with `MainModePanel` in `App.tsx`.
+
+---
+
+## Phase 240b: V33 — BirdInfoCard Compact/Expanded
+
+- [ ] **240b.1** Add compact mode to `BirdInfoCard.tsx` (name, image, quick stats, max 160px).
+- [ ] **240b.2** Add expand/collapse toggle arrow icon.
+- [ ] **240b.3** Wire `birdCardExpanded` store state.
+
+---
+
+## Phase 241b: V33 — Migration Arc Enhancement
+
+- [ ] **241b.1** Enhance `MigrationPaths.tsx` arc glow shader.
+- [ ] **241b.2** Add particle trail meshes to `FlyingBirdIcon`.
+- [ ] **241b.3** Improve distance label styling.
+
+---
+
+## Phase 242b: V33 — ScienceHUD
+
+- [ ] **242b.1** Create `ScienceHUD.tsx` in `/src/components/ui/`.
+- [ ] **242b.2** Display latitude, longitude, biome, season, temperature.
+- [ ] **242b.3** Space-science styling (dark translucent, glowing borders).
+- [ ] **242b.4** Add `ScienceHUD` to sidebar layer in `App.tsx`.
+
+---
+
+## Phase 243b: V33 — Integration & Verification
+
+- [ ] **243b.1** Right side panel shows only 3 modes. (AC-V33)
+- [ ] **243b.2** Mode switching updates tool panel. (AC-V33)
+- [ ] **243b.3** Bird card supports compact and expanded modes. (AC-V33)
+- [ ] **243b.4** Migration routes display animated arcs. (AC-V33)
+- [ ] **243b.5** HUD shows location information. (AC-V33)
+- [ ] **243b.6** Build passes. (AC-V33)

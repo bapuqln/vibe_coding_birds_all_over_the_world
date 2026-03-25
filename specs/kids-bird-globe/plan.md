@@ -1327,3 +1327,87 @@ src/
 | `types.ts` | SoundRecognitionState type | v32 |
 | `birds.json` | Expanded to 100 birds | v32 |
 | `bird-knowledge.json` | Knowledge entries for new birds | v32 |
+
+---
+
+# Implementation Plan — V33
+
+## Overview
+
+Redesign the right-side control panel into a three-mode system (Explore / Learn / Play), add compact/expanded bird info card, upgrade migration arc visualization, add a science HUD overlay, and unify UI with space-science design language.
+
+## Phase 1 — Control System Refactor
+
+Refactor right-side control panel. Replace the long button list with a mode-based panel.
+
+Create: `/src/components/ui/MainModePanel.tsx`
+
+Responsibilities:
+- Mode switching (Explore / Learn / Play)
+- Context tool rendering per mode
+- Utility actions (Screenshot, Share, Reset) always visible
+
+## Phase 2 — Bird Info Card Upgrade
+
+Upgrade existing BirdInfoCard component to support compact/expanded modes.
+
+Modify: `/src/components/ui/BirdInfoCard.tsx`
+
+Supports:
+- Compact mode (name, image, quick stats — max 160px)
+- Expanded mode (full encyclopedia card)
+- Toggle via arrow icon
+
+## Phase 3 — Migration Visualization Upgrade
+
+Upgrade migration system with enhanced arc rendering.
+
+Modify: `/src/components/three/MigrationPaths.tsx`
+
+Features:
+- Arc path rendering with glow shader
+- Animated bird markers with particle trails
+- Distance labels with season context
+
+## Phase 4 — Scientific HUD
+
+Create: `/src/components/ui/ScienceHUD.tsx`
+
+Displays:
+- Latitude / Longitude
+- Biome
+- Season
+- Temperature
+
+Position: Top-left overlay, below app title.
+
+## Phase 5 — Integration
+
+Integrate new components in App.tsx:
+- Replace RightControlPanel with MainModePanel
+- Add ScienceHUD to sidebar layer
+- Register new store state for UI mode
+
+## Store State Additions (v33)
+
+| Field | Purpose | Version |
+|-------|---------|---------|
+| `uiMode` | Current UI mode: explore / learn / play | v33 |
+| `birdCardExpanded` | Bird info card expanded state | v33 |
+
+## Component Inventory (v33)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `MainModePanel.tsx` | Three-mode control panel | v33 |
+| `ScienceHUD.tsx` | Scientific information overlay | v33 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `BirdInfoCard.tsx` | Compact/expanded mode toggle | v33 |
+| `MigrationPaths.tsx` | Enhanced arc glow and particle trails | v33 |
+| `App.tsx` | MainModePanel + ScienceHUD integration | v33 |
+| `store.ts` | V33 state fields (uiMode, birdCardExpanded) | v33 |
+| `types.ts` | UIMode type | v33 |

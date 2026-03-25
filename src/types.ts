@@ -415,6 +415,9 @@ export interface DiscoveryMissionProgress {
   completedAt?: number;
 }
 
+// V33 — UI Mode
+export type UIMode = "explore" | "learn" | "play";
+
 // V31 — Evolution Eras
 export interface EvolutionEraInfo {
   id: string;

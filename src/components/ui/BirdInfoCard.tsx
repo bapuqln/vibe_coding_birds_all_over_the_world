@@ -25,6 +25,8 @@ export function BirdInfoCard() {
   const updateMissionProgress = useAppStore((s) => s.updateMissionProgress);
   const checkAchievements = useAppStore((s) => s.checkAchievements);
   const incrementListenCount = useAppStore((s) => s.incrementListenCount);
+  const birdCardExpanded = useAppStore((s) => s.birdCardExpanded);
+  const setBirdCardExpanded = useAppStore((s) => s.setBirdCardExpanded);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -187,7 +189,7 @@ export function BirdInfoCard() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             {/* ImageHeader */}
             <div
-              style={{ position: "relative", height: 180, width: "100%", overflow: "hidden", flexShrink: 0 }}
+              style={{ position: "relative", height: birdCardExpanded ? 180 : 80, width: "100%", overflow: "hidden", flexShrink: 0, transition: "height 0.3s ease" }}
               className="bird-info-card-header bg-linear-to-br from-sky-300 via-teal-200 to-emerald-300"
             >
               <img
@@ -201,7 +203,7 @@ export function BirdInfoCard() {
               />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.35), transparent)" }} />
 
-              {bird.rarity && bird.rarity !== "common" && (
+              {birdCardExpanded && bird.rarity && bird.rarity !== "common" && (
                 <div style={{ position: "absolute", left: SP.md, top: SP.sm }}>
                   <RarityBadge rarity={bird.rarity} language={language} />
                 </div>
@@ -215,14 +217,14 @@ export function BirdInfoCard() {
                   position: "absolute",
                   right: 12,
                   top: 12,
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   borderRadius: "50%",
                   background: "rgba(0,0,0,0.3)",
                   backdropFilter: "blur(4px)",
                   border: "none",
                   color: "white",
-                  fontSize: 16,
+                  fontSize: 14,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
@@ -234,393 +236,468 @@ export function BirdInfoCard() {
               >
                 ✕
               </button>
-            </div>
 
-            {/* TitleSection */}
-            <div style={{ padding: `${SP.md}px ${SP.lg}px ${SP.xs}px` }}>
-              <h2 style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.2, color: "#111827", margin: 0, letterSpacing: "-0.01em" }}>
-                {bird.nameZh}
-              </h2>
-              <p style={{ fontSize: 11, color: "#9ca3af", letterSpacing: "0.05em", margin: "2px 0 0", fontStyle: "italic" }}>
-                {bird.pinyin}
-              </p>
-              <p style={{ fontSize: 16, fontWeight: 600, color: "#4b5563", margin: "2px 0 0" }}>
-                {bird.nameEn}
-              </p>
-              {bird.scientificName && (
-                <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0", fontStyle: "italic" }}>
-                  {bird.scientificName}
-                </p>
-              )}
-            </div>
-
-            {/* FunFact */}
-            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.sm }}>
-              <div style={{
-                borderRadius: 16,
-                background: "rgba(255, 251, 235, 0.8)",
-                padding: `${SP.sm}px ${SP.md}px`,
-                border: "1px solid rgba(251, 191, 36, 0.25)",
-              }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: "#b45309", margin: 0 }}>
-                  {language === "zh" ? "🌟 你知道吗？" : "🌟 Did you know?"}
-                </p>
-                <p style={{ fontSize: 14, lineHeight: 1.6, color: "#374151", margin: `${SP.xs}px 0 0` }}>
-                  {funFact}
-                </p>
-              </div>
-            </div>
-
-            {/* TagRow — Habitat & Region */}
-            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                {language === "zh" ? "栖息地与分布" : "Habitat & Region"}
-              </p>
-            </div>
-            <div style={{
-              padding: `0 ${SP.lg}px`,
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 8,
-            }}>
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                borderRadius: 9999,
-                background: "rgba(219, 234, 254, 0.8)",
-                padding: "4px 12px",
-                fontSize: 12,
-                fontWeight: 600,
-                color: "#1d4ed8",
-                border: "1px solid rgba(59, 130, 246, 0.2)",
-              }}>
-                {REGION_EMOJI[bird.region] || "📍"}{" "}
-                {language === "zh" ? regionNameZh(bird.region) : regionNameEn(bird.region)}
-              </span>
-
-              {bird.habitatType && (
-                <span style={{
-                  display: "inline-flex",
+              {/* Expand/Collapse toggle */}
+              <button
+                type="button"
+                onClick={() => setBirdCardExpanded(!birdCardExpanded)}
+                aria-label={birdCardExpanded ? "Collapse" : "Expand"}
+                style={{
+                  position: "absolute",
+                  right: 50,
+                  top: 12,
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  background: "rgba(0,0,0,0.3)",
+                  backdropFilter: "blur(4px)",
+                  border: "none",
+                  color: "white",
+                  fontSize: 14,
+                  cursor: "pointer",
+                  display: "flex",
                   alignItems: "center",
-                  gap: 4,
-                  borderRadius: 9999,
-                  background: "rgba(220, 252, 231, 0.8)",
-                  padding: "4px 12px",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: "#15803d",
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
-                }}>
-                  🌿 {language === "zh" ? habitatNameZh(bird.habitatType) : bird.habitatType}
-                </span>
-              )}
-
-              {bird.lifespan && (
-                <span style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                  borderRadius: 9999,
-                  background: "rgba(255, 237, 213, 0.8)",
-                  padding: "4px 12px",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: "#c2410c",
-                  border: "1px solid rgba(249, 115, 22, 0.2)",
-                }}>
-                  ⏳ {bird.lifespan}
-                </span>
-              )}
+                  justifyContent: "center",
+                  transition: "transform 0.3s",
+                  transform: birdCardExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              >
+                ▼
+              </button>
             </div>
 
-            {/* InfoGrid — Size & Diet */}
-            <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                {language === "zh" ? "详细信息" : "Details"}
-              </p>
-            </div>
-            <div style={{
-              padding: `0 ${SP.lg}px`,
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: SP.sm,
-            }}>
-              {bird.sizeCategory && (
-                <div style={{
-                  borderRadius: 14,
-                  background: "rgba(224, 242, 254, 0.7)",
-                  padding: SP.sm,
-                  border: "1px solid rgba(56, 189, 248, 0.2)",
-                }}>
-                  <p style={{ fontSize: 10, fontWeight: 600, color: "#0369a1", margin: 0 }}>
-                    {language === "zh" ? "📏 体型" : "📏 Size"}
-                  </p>
-                  <SizeBar category={bird.sizeCategory} language={language} />
-                </div>
-              )}
-              {bird.dietType && (
-                <div style={{
-                  borderRadius: 14,
-                  background: "rgba(220, 252, 231, 0.7)",
-                  padding: SP.sm,
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
-                }}>
-                  <p style={{ fontSize: 10, fontWeight: 600, color: "#15803d", margin: 0 }}>
-                    {language === "zh" ? "🍽️ 食性" : "🍽️ Diet"}
-                  </p>
-                  <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 16 }}>{DIET_EMOJI[bird.dietType]}</span>
-                    <span style={{ fontSize: 12, color: "#166534" }}>
-                      {language === "zh"
-                        ? DIET_LABELS[bird.dietType].zh
-                        : DIET_LABELS[bird.dietType].en}
+            {/* Compact: name + quick stats inline */}
+            {!birdCardExpanded && (
+              <div style={{ padding: `${SP.sm}px ${SP.md}px`, display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 800, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {bird.nameZh} <span style={{ fontWeight: 500, fontSize: 13, color: "#6b7280" }}>{bird.nameEn}</span>
+                  </h2>
+                  <div style={{ display: "flex", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+                    {bird.habitatType && (
+                      <span style={{ fontSize: 10, color: "#15803d", background: "rgba(220,252,231,0.8)", borderRadius: 9999, padding: "2px 8px", fontWeight: 600 }}>
+                        🌿 {language === "zh" ? habitatNameZh(bird.habitatType) : bird.habitatType}
+                      </span>
+                    )}
+                    <span style={{ fontSize: 10, color: "#1d4ed8", background: "rgba(219,234,254,0.8)", borderRadius: 9999, padding: "2px 8px", fontWeight: 600 }}>
+                      {REGION_EMOJI[bird.region] || "📍"} {language === "zh" ? regionNameZh(bird.region) : regionNameEn(bird.region)}
                     </span>
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Wingspan */}
-            {bird.wingspanCm != null && bird.wingspanCm > 0 && (
-              <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  {language === "zh" ? "翼展" : "Wingspan"}
-                </p>
-                <div style={{
-                  borderRadius: 14,
-                  background: "rgba(237, 233, 254, 0.7)",
-                  padding: SP.sm,
-                  border: "1px solid rgba(139, 92, 246, 0.2)",
-                }}>
-                  <p style={{ fontSize: 10, fontWeight: 600, color: "#6d28d9", margin: 0 }}>
-                    {language === "zh" ? "🦅 翼展" : "🦅 Wingspan"}
-                  </p>
-                  <WingspanBar
-                    wingspanCm={bird.wingspanCm}
-                    habitatType={bird.habitatType}
-                    language={language}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* ActionButtons */}
-            <div style={{
-              padding: `0 ${SP.lg}px`,
-              marginTop: SP.lg,
-              marginBottom: SP.lg,
-              display: "flex",
-              flexDirection: "column",
-              gap: SP.sm,
-            }}>
-              <div style={{ display: "flex", gap: SP.sm }}>
                 <button
                   type="button"
                   onClick={handleCollect}
                   disabled={isCollected}
                   style={{
-                    position: "relative",
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    borderRadius: 9999,
-                    padding: "12px 0",
-                    fontSize: 14,
-                    fontWeight: 700,
+                    flexShrink: 0,
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
                     border: "none",
                     cursor: isCollected ? "default" : "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                    background: isCollected
-                      ? "linear-gradient(135deg, #dcfce7, #bbf7d0)"
-                      : "linear-gradient(135deg, #f59e0b, #f97316)",
+                    background: isCollected ? "#dcfce7" : "linear-gradient(135deg, #f59e0b, #f97316)",
                     color: isCollected ? "#15803d" : "white",
-                    boxShadow: isCollected
-                      ? "0 2px 8px rgba(34, 197, 94, 0.2)"
-                      : "0 4px 16px rgba(245, 158, 11, 0.3)",
-                  }}
-                  onMouseEnter={(e) => { if (!isCollected) (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                >
-                  {isCollected ? (
-                    <>{language === "zh" ? "✓ 已收集" : "✓ Collected"}</>
-                  ) : (
-                    <>{language === "zh" ? "⭐ 收集" : "⭐ Collect"}</>
-                  )}
-                  {showSparkle && <CollectSparkle />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleListen}
-                  style={{
+                    fontSize: 16,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 6,
-                    borderRadius: 9999,
-                    padding: "12px 16px",
-                    fontSize: 14,
-                    fontWeight: 600,
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
-                    background: audioStatus === "playing"
-                      ? "linear-gradient(135deg, #0ea5e9, #0284c7)"
-                      : "#e0f2fe",
-                    color: audioStatus === "playing" ? "white" : "#0369a1",
-                    boxShadow: audioStatus === "playing"
-                      ? "0 4px 16px rgba(14, 165, 233, 0.3)"
-                      : "0 2px 8px rgba(0, 0, 0, 0.08)",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                  aria-label={language === "zh" ? "播放声音" : "Listen"}
                 >
-                  {audioStatus === "loading" ? (
-                    <span style={{
-                      display: "inline-block",
-                      width: 16,
-                      height: 16,
-                      border: "2px solid rgba(3,105,161,0.3)",
-                      borderTopColor: "#0369a1",
-                      borderRadius: "50%",
-                      animation: "spin 0.6s linear infinite",
-                    }} />
-                  ) : audioStatus === "playing" ? (
-                    <AudioBars />
-                  ) : (
-                    "🔊"
-                  )}
-                  <span>{language === "zh" ? "聆听" : "Listen"}</span>
+                  {isCollected ? "✓" : "⭐"}
                 </button>
               </div>
+            )}
 
-              {/* Narration Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (narrationState === "speaking") {
-                    stopNarration();
-                    setShowNarrationText(false);
-                  } else if (bird) {
-                    speakNarration(bird, language);
-                    if (!narrationAvailable) {
-                      setShowNarrationText(true);
-                    }
-                  }
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  borderRadius: 9999,
-                  padding: "12px 0",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  background: narrationState === "speaking"
-                    ? "linear-gradient(135deg, #10b981, #059669)"
-                    : "linear-gradient(135deg, #14b8a6, #0d9488)",
-                  color: "white",
-                  boxShadow: narrationState === "speaking"
-                    ? "0 4px 16px rgba(16, 185, 129, 0.4)"
-                    : "0 4px 16px rgba(20, 184, 166, 0.3)",
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                aria-label={language === "zh" ? "讲述这只鸟" : "Tell me about this bird"}
-              >
-                <span>{narrationState === "speaking" ? "⏹" : "🗣️"}</span>
-                <span>
-                  {narrationState === "speaking"
-                    ? (language === "zh" ? "停止讲述" : "Stop narration")
-                    : (language === "zh" ? "讲讲这只鸟" : "Tell me about this bird")}
-                </span>
-              </button>
-
-              {/* Narration text fallback */}
-              {showNarrationText && narrationText && (
-                <div style={{
-                  borderRadius: 14,
-                  background: "rgba(240, 253, 250, 0.9)",
-                  padding: `${SP.sm}px ${SP.md}px`,
-                  border: "1px solid rgba(20, 184, 166, 0.2)",
-                  fontSize: 13,
-                  lineHeight: 1.6,
-                  color: "#134e4a",
-                }}>
-                  {narrationText}
+            {/* Expanded: full details */}
+            {birdCardExpanded && (
+              <>
+                {/* TitleSection */}
+                <div style={{ padding: `${SP.md}px ${SP.lg}px ${SP.xs}px` }}>
+                  <h2 style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.2, color: "#111827", margin: 0, letterSpacing: "-0.01em" }}>
+                    {bird.nameZh}
+                  </h2>
+                  <p style={{ fontSize: 11, color: "#9ca3af", letterSpacing: "0.05em", margin: "2px 0 0", fontStyle: "italic" }}>
+                    {bird.pinyin}
+                  </p>
+                  <p style={{ fontSize: 16, fontWeight: 600, color: "#4b5563", margin: "2px 0 0" }}>
+                    {bird.nameEn}
+                  </p>
+                  {bird.scientificName && (
+                    <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0", fontStyle: "italic" }}>
+                      {bird.scientificName}
+                    </p>
+                  )}
                 </div>
-              )}
 
-              <div style={{ display: "flex", gap: SP.sm }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (selectedBirdId) {
-                      setARViewerBird(selectedBirdId);
-                    }
-                  }}
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 6,
-                    borderRadius: 9999,
-                    padding: "12px 0",
-                    fontSize: 14,
-                    fontWeight: 600,
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                    background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-                    color: "white",
-                    boxShadow: "0 4px 16px rgba(139, 92, 246, 0.3)",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                  aria-label={language === "zh" ? "AR查看" : "View in AR"}
-                >
-                  <span>📱</span>
-                  <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
-                </button>
+                {/* FunFact */}
+                <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.sm }}>
+                  <div style={{
+                    borderRadius: 16,
+                    background: "rgba(255, 251, 235, 0.8)",
+                    padding: `${SP.sm}px ${SP.md}px`,
+                    border: "1px solid rgba(251, 191, 36, 0.25)",
+                  }}>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: "#b45309", margin: 0 }}>
+                      {language === "zh" ? "🌟 你知道吗？" : "🌟 Did you know?"}
+                    </p>
+                    <p style={{ fontSize: 14, lineHeight: 1.6, color: "#374151", margin: `${SP.xs}px 0 0` }}>
+                      {funFact}
+                    </p>
+                  </div>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => setPhotoMode(true)}
-                  style={{
-                    flex: 1,
-                    display: "flex",
+                {/* TagRow — Habitat & Region */}
+                <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    {language === "zh" ? "栖息地与分布" : "Habitat & Region"}
+                  </p>
+                </div>
+                <div style={{
+                  padding: `0 ${SP.lg}px`,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 8,
+                }}>
+                  <span style={{
+                    display: "inline-flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    gap: 6,
+                    gap: 4,
                     borderRadius: 9999,
-                    padding: "12px 0",
-                    fontSize: 14,
+                    background: "rgba(219, 234, 254, 0.8)",
+                    padding: "4px 12px",
+                    fontSize: 12,
                     fontWeight: 600,
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                    background: "linear-gradient(135deg, #0ea5e9, #0284c7)",
-                    color: "white",
-                    boxShadow: "0 4px 16px rgba(14, 165, 233, 0.3)",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-                  aria-label={language === "zh" ? "拍照" : "Take Photo"}
-                >
-                  <span>📸</span>
-                  <span>{language === "zh" ? "拍照" : "Photo"}</span>
-                </button>
-              </div>
-            </div>
+                    color: "#1d4ed8",
+                    border: "1px solid rgba(59, 130, 246, 0.2)",
+                  }}>
+                    {REGION_EMOJI[bird.region] || "📍"}{" "}
+                    {language === "zh" ? regionNameZh(bird.region) : regionNameEn(bird.region)}
+                  </span>
+
+                  {bird.habitatType && (
+                    <span style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      borderRadius: 9999,
+                      background: "rgba(220, 252, 231, 0.8)",
+                      padding: "4px 12px",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: "#15803d",
+                      border: "1px solid rgba(34, 197, 94, 0.2)",
+                    }}>
+                      🌿 {language === "zh" ? habitatNameZh(bird.habitatType) : bird.habitatType}
+                    </span>
+                  )}
+
+                  {bird.lifespan && (
+                    <span style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      borderRadius: 9999,
+                      background: "rgba(255, 237, 213, 0.8)",
+                      padding: "4px 12px",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: "#c2410c",
+                      border: "1px solid rgba(249, 115, 22, 0.2)",
+                    }}>
+                      ⏳ {bird.lifespan}
+                    </span>
+                  )}
+                </div>
+
+                {/* InfoGrid — Size & Diet */}
+                <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    {language === "zh" ? "详细信息" : "Details"}
+                  </p>
+                </div>
+                <div style={{
+                  padding: `0 ${SP.lg}px`,
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: SP.sm,
+                }}>
+                  {bird.sizeCategory && (
+                    <div style={{
+                      borderRadius: 14,
+                      background: "rgba(224, 242, 254, 0.7)",
+                      padding: SP.sm,
+                      border: "1px solid rgba(56, 189, 248, 0.2)",
+                    }}>
+                      <p style={{ fontSize: 10, fontWeight: 600, color: "#0369a1", margin: 0 }}>
+                        {language === "zh" ? "📏 体型" : "📏 Size"}
+                      </p>
+                      <SizeBar category={bird.sizeCategory} language={language} />
+                    </div>
+                  )}
+                  {bird.dietType && (
+                    <div style={{
+                      borderRadius: 14,
+                      background: "rgba(220, 252, 231, 0.7)",
+                      padding: SP.sm,
+                      border: "1px solid rgba(34, 197, 94, 0.2)",
+                    }}>
+                      <p style={{ fontSize: 10, fontWeight: 600, color: "#15803d", margin: 0 }}>
+                        {language === "zh" ? "🍽️ 食性" : "🍽️ Diet"}
+                      </p>
+                      <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 16 }}>{DIET_EMOJI[bird.dietType]}</span>
+                        <span style={{ fontSize: 12, color: "#166534" }}>
+                          {language === "zh"
+                            ? DIET_LABELS[bird.dietType].zh
+                            : DIET_LABELS[bird.dietType].en}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Wingspan */}
+                {bird.wingspanCm != null && bird.wingspanCm > 0 && (
+                  <div style={{ padding: `0 ${SP.lg}px`, marginTop: SP.md }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", margin: `0 0 ${SP.xs}px`, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      {language === "zh" ? "翼展" : "Wingspan"}
+                    </p>
+                    <div style={{
+                      borderRadius: 14,
+                      background: "rgba(237, 233, 254, 0.7)",
+                      padding: SP.sm,
+                      border: "1px solid rgba(139, 92, 246, 0.2)",
+                    }}>
+                      <p style={{ fontSize: 10, fontWeight: 600, color: "#6d28d9", margin: 0 }}>
+                        {language === "zh" ? "🦅 翼展" : "🦅 Wingspan"}
+                      </p>
+                      <WingspanBar
+                        wingspanCm={bird.wingspanCm}
+                        habitatType={bird.habitatType}
+                        language={language}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* ActionButtons */}
+                <div style={{
+                  padding: `0 ${SP.lg}px`,
+                  marginTop: SP.lg,
+                  marginBottom: SP.lg,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: SP.sm,
+                }}>
+                  <div style={{ display: "flex", gap: SP.sm }}>
+                    <button
+                      type="button"
+                      onClick={handleCollect}
+                      disabled={isCollected}
+                      style={{
+                        position: "relative",
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        borderRadius: 9999,
+                        padding: "12px 0",
+                        fontSize: 14,
+                        fontWeight: 700,
+                        border: "none",
+                        cursor: isCollected ? "default" : "pointer",
+                        transition: "transform 0.2s, box-shadow 0.2s",
+                        background: isCollected
+                          ? "linear-gradient(135deg, #dcfce7, #bbf7d0)"
+                          : "linear-gradient(135deg, #f59e0b, #f97316)",
+                        color: isCollected ? "#15803d" : "white",
+                        boxShadow: isCollected
+                          ? "0 2px 8px rgba(34, 197, 94, 0.2)"
+                          : "0 4px 16px rgba(245, 158, 11, 0.3)",
+                      }}
+                      onMouseEnter={(e) => { if (!isCollected) (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                    >
+                      {isCollected ? (
+                        <>{language === "zh" ? "✓ 已收集" : "✓ Collected"}</>
+                      ) : (
+                        <>{language === "zh" ? "⭐ 收集" : "⭐ Collect"}</>
+                      )}
+                      {showSparkle && <CollectSparkle />}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleListen}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        borderRadius: 9999,
+                        padding: "12px 16px",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        border: "none",
+                        cursor: "pointer",
+                        transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
+                        background: audioStatus === "playing"
+                          ? "linear-gradient(135deg, #0ea5e9, #0284c7)"
+                          : "#e0f2fe",
+                        color: audioStatus === "playing" ? "white" : "#0369a1",
+                        boxShadow: audioStatus === "playing"
+                          ? "0 4px 16px rgba(14, 165, 233, 0.3)"
+                          : "0 2px 8px rgba(0, 0, 0, 0.08)",
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                      aria-label={language === "zh" ? "播放声音" : "Listen"}
+                    >
+                      {audioStatus === "loading" ? (
+                        <span style={{
+                          display: "inline-block",
+                          width: 16,
+                          height: 16,
+                          border: "2px solid rgba(3,105,161,0.3)",
+                          borderTopColor: "#0369a1",
+                          borderRadius: "50%",
+                          animation: "spin 0.6s linear infinite",
+                        }} />
+                      ) : audioStatus === "playing" ? (
+                        <AudioBars />
+                      ) : (
+                        "🔊"
+                      )}
+                      <span>{language === "zh" ? "聆听" : "Listen"}</span>
+                    </button>
+                  </div>
+
+                  {/* Narration Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (narrationState === "speaking") {
+                        stopNarration();
+                        setShowNarrationText(false);
+                      } else if (bird) {
+                        speakNarration(bird, language);
+                        if (!narrationAvailable) {
+                          setShowNarrationText(true);
+                        }
+                      }
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      borderRadius: 9999,
+                      padding: "12px 0",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                      background: narrationState === "speaking"
+                        ? "linear-gradient(135deg, #10b981, #059669)"
+                        : "linear-gradient(135deg, #14b8a6, #0d9488)",
+                      color: "white",
+                      boxShadow: narrationState === "speaking"
+                        ? "0 4px 16px rgba(16, 185, 129, 0.4)"
+                        : "0 4px 16px rgba(20, 184, 166, 0.3)",
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                    aria-label={language === "zh" ? "讲述这只鸟" : "Tell me about this bird"}
+                  >
+                    <span>{narrationState === "speaking" ? "⏹" : "🗣️"}</span>
+                    <span>
+                      {narrationState === "speaking"
+                        ? (language === "zh" ? "停止讲述" : "Stop narration")
+                        : (language === "zh" ? "讲讲这只鸟" : "Tell me about this bird")}
+                    </span>
+                  </button>
+
+                  {/* Narration text fallback */}
+                  {showNarrationText && narrationText && (
+                    <div style={{
+                      borderRadius: 14,
+                      background: "rgba(240, 253, 250, 0.9)",
+                      padding: `${SP.sm}px ${SP.md}px`,
+                      border: "1px solid rgba(20, 184, 166, 0.2)",
+                      fontSize: 13,
+                      lineHeight: 1.6,
+                      color: "#134e4a",
+                    }}>
+                      {narrationText}
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", gap: SP.sm }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (selectedBirdId) {
+                          setARViewerBird(selectedBirdId);
+                        }
+                      }}
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        borderRadius: 9999,
+                        padding: "12px 0",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        border: "none",
+                        cursor: "pointer",
+                        transition: "transform 0.2s, box-shadow 0.2s",
+                        background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
+                        color: "white",
+                        boxShadow: "0 4px 16px rgba(139, 92, 246, 0.3)",
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                      aria-label={language === "zh" ? "AR查看" : "View in AR"}
+                    >
+                      <span>📱</span>
+                      <span>{language === "zh" ? "AR 查看" : "View in AR"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPhotoMode(true)}
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        borderRadius: 9999,
+                        padding: "12px 0",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        border: "none",
+                        cursor: "pointer",
+                        transition: "transform 0.2s, box-shadow 0.2s",
+                        background: "linear-gradient(135deg, #0ea5e9, #0284c7)",
+                        color: "white",
+                        boxShadow: "0 4px 16px rgba(14, 165, 233, 0.3)",
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                      aria-label={language === "zh" ? "拍照" : "Take Photo"}
+                    >
+                      <span>📸</span>
+                      <span>{language === "zh" ? "拍照" : "Photo"}</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

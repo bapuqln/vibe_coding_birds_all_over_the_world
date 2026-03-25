@@ -9,6 +9,7 @@ import type {
   ExpeditionProgress,
   HabitatFilterType,
   Language,
+  UIMode,
   MissionTemplate,
   PhotoScore,
   QuestProgress,
@@ -290,6 +291,10 @@ interface AppStore {
   soundRecognitionResult: string | null;
   soundRecognitionConfidence: number;
 
+  // V33 — UI Mode
+  uiMode: UIMode;
+  birdCardExpanded: boolean;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -445,6 +450,10 @@ interface AppStore {
   setSoundRecognitionActive: (active: boolean) => void;
   setSoundRecognitionResult: (birdId: string | null) => void;
   setSoundRecognitionConfidence: (confidence: number) => void;
+
+  // V33 — UI Mode
+  setUIMode: (mode: UIMode) => void;
+  setBirdCardExpanded: (expanded: boolean) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -594,6 +603,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   soundRecognitionActive: false,
   soundRecognitionResult: null,
   soundRecognitionConfidence: 0,
+
+  uiMode: "explore",
+  birdCardExpanded: true,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -1205,4 +1217,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setSoundRecognitionActive: (soundRecognitionActive) => set({ soundRecognitionActive }),
   setSoundRecognitionResult: (soundRecognitionResult) => set({ soundRecognitionResult }),
   setSoundRecognitionConfidence: (soundRecognitionConfidence) => set({ soundRecognitionConfidence }),
+
+  setUIMode: (uiMode) => set({ uiMode }),
+  setBirdCardExpanded: (birdCardExpanded) => set({ birdCardExpanded }),
 }));

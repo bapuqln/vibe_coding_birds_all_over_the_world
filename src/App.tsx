@@ -6,7 +6,8 @@ import { BirdInfoCard } from "./components/ui/BirdInfoCard";
 import { LangToggle } from "./components/ui/LangToggle";
 import { AudioPlayer } from "./components/ui/AudioPlayer";
 import { LoadingScreen } from "./components/ui/LoadingScreen";
-import { RightControlPanel } from "./components/ui/RightControlPanel";
+import { MainModePanel } from "./components/ui/MainModePanel";
+import { ScienceHUD } from "./components/ui/ScienceHUD";
 import { MyBirdsPanel } from "./components/ui/MyBirdsPanel";
 import { RegionFilterPanel } from "./components/ui/RegionFilterPanel";
 import { QuestPanel } from "./components/ui/QuestPanel";
@@ -77,10 +78,11 @@ export default function App() {
         }}
       >
         <AppTitle />
+        <ScienceHUD />
         <LangToggle />
         <DiscoveryProgressBar />
         <ExpeditionProgressBar />
-        <RightControlPanel />
+        <MainModePanel />
         <BirdGuide />
         <BirdRadar />
         <StoryExplorer />

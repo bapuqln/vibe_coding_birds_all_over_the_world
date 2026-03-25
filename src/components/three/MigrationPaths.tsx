@@ -37,7 +37,8 @@ const fragmentShader = `
   void main() {
     float dash = mod(vArc * 8.0 - uTime * 0.3, 1.0);
     if (dash > 0.4) discard;
-    gl_FragColor = vec4(uColor, (1.0 - dash) * uOpacity);
+    float glow = smoothstep(0.4, 0.0, dash) * 0.6 + 0.4;
+    gl_FragColor = vec4(uColor * glow, (1.0 - dash * 0.8) * uOpacity);
   }
 `;
 
@@ -121,6 +122,8 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
   const mainRef = useRef<Mesh>(null);
   const trail1Ref = useRef<Mesh>(null);
   const trail2Ref = useRef<Mesh>(null);
+  const trail3Ref = useRef<Mesh>(null);
+  const trail4Ref = useRef<Mesh>(null);
   const season = useAppStore((s) => s.ecosystemState.season);
 
   const points = useMemo(() => {
@@ -144,12 +147,16 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
     const progress = getMigrationProgress(season, cycleFraction);
 
     const mainPos = getPointAtProgress(points, progress);
-    const trail1Pos = getPointAtProgress(points, Math.max(0, progress - 0.05));
-    const trail2Pos = getPointAtProgress(points, Math.max(0, progress - 0.1));
+    const trail1Pos = getPointAtProgress(points, Math.max(0, progress - 0.03));
+    const trail2Pos = getPointAtProgress(points, Math.max(0, progress - 0.06));
+    const trail3Pos = getPointAtProgress(points, Math.max(0, progress - 0.10));
+    const trail4Pos = getPointAtProgress(points, Math.max(0, progress - 0.15));
 
     if (mainRef.current) mainRef.current.position.copy(mainPos);
     if (trail1Ref.current) trail1Ref.current.position.copy(trail1Pos);
     if (trail2Ref.current) trail2Ref.current.position.copy(trail2Pos);
+    if (trail3Ref.current) trail3Ref.current.position.copy(trail3Pos);
+    if (trail4Ref.current) trail4Ref.current.position.copy(trail4Pos);
   });
 
   if (points.length === 0) return null;
@@ -159,12 +166,28 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
 
   return (
     <>
+      <mesh ref={trail4Ref}>
+        <sphereGeometry args={[0.003, 6, 4]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.12 : 0.04}
+        />
+      </mesh>
+      <mesh ref={trail3Ref}>
+        <sphereGeometry args={[0.004, 6, 4]} />
+        <meshBasicMaterial
+          color={routeColor}
+          transparent
+          opacity={migrating ? 0.2 : 0.06}
+        />
+      </mesh>
       <mesh ref={trail2Ref}>
         <sphereGeometry args={[0.005, 8, 6]} />
         <meshBasicMaterial
           color={routeColor}
           transparent
-          opacity={migrating ? 0.3 : 0.1}
+          opacity={migrating ? 0.35 : 0.1}
         />
       </mesh>
       <mesh ref={trail1Ref}>
@@ -172,11 +195,11 @@ function FlyingBirdIcon({ route }: FlyingBirdIconProps) {
         <meshBasicMaterial
           color={routeColor}
           transparent
-          opacity={migrating ? 0.5 : 0.15}
+          opacity={migrating ? 0.55 : 0.15}
         />
       </mesh>
       <mesh ref={mainRef}>
-        <sphereGeometry args={[0.008, 8, 6]} />
+        <sphereGeometry args={[0.009, 10, 8]} />
         <meshBasicMaterial color={routeColor} transparent opacity={migrating ? 1.0 : 0.3} />
       </mesh>
     </>
@@ -232,19 +255,26 @@ function MigrationLabel({ route }: MigrationLabelProps) {
         style={{
           opacity: showLabel ? 1 : 0,
           pointerEvents: "none",
-          transition: "opacity 0.2s ease",
+          transition: "opacity 0.3s ease",
         }}
       >
         <span
           style={{
-            display: "inline-block",
-            padding: "2px 8px",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "3px 10px",
             fontSize: "11px",
-            fontWeight: 500,
-            color: "white",
-            backgroundColor: "rgba(0,0,0,0.6)",
+            fontWeight: 600,
+            color: "rgba(255, 255, 255, 0.95)",
+            background: "rgba(0, 10, 30, 0.7)",
+            backdropFilter: "blur(8px)",
             borderRadius: "9999px",
             whiteSpace: "nowrap",
+            border: "1px solid rgba(100, 180, 255, 0.15)",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
+            letterSpacing: "0.02em",
           }}
         >
           ✈ {distText}
