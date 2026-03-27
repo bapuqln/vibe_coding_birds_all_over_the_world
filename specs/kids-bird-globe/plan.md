@@ -1,3 +1,87 @@
+# 万羽拾音 (Kids Bird Globe) — Implementation Plan (v32)
+
+> **v32 changelog**: Bird Migration Intelligence — centralized TimeController, animation scheduler, InstancedMesh flock rendering, spherical interpolation migration paths, season visual system, learning interaction, timeline UI.
+
+---
+
+## V32 Architecture Design
+
+### Core Principle: TimeController as Single Source of Truth
+
+All time-dependent behavior derives from a single `TimeState` object managed by `TimeController`. No component maintains its own animation clock.
+
+```
+TimeController (Zustand)
+    ├── AnimationScheduler (single useFrame)
+    │   ├── MigrationFlockSystem (reads TimeState, updates InstancedMesh matrices)
+    │   ├── MigrationPathRenderer (reads TimeState, updates path visibility/gradient)
+    │   └── SeasonVisualSystem (reads TimeState, updates hemisphere tint uniforms)
+    └── TimelineUI (writes TimeState via actions)
+```
+
+### Module Structure
+
+```
+src/core/
+  TimeController.ts        — TimeState store slice, tick(), play/pause/scrub actions
+  AnimationScheduler.tsx   — Single useFrame driving all animation systems
+
+src/domain/
+  migration-paths.ts       — MigrationPath data model, path computation
+  flock-config.ts          — FlockConfig generation from migration data
+
+src/render/
+  MigrationPathRenderer.tsx — CatmullRomCurve3 path rendering with gradient shader
+  MigrationFlockRenderer.tsx — InstancedMesh flock with per-instance offsets
+  SeasonOverlay.tsx         — Shader-based hemisphere season tinting
+
+src/ui/
+  TimelinePanel.tsx         — Month scrubber, play/pause, speed control
+  MigrationInfoCard.tsx     — Bird migration info on click
+```
+
+### Animation Pipeline
+
+1. **Each frame:** `AnimationScheduler.useFrame(delta)` fires
+2. **TimeController.tick(delta):** Updates `month` and `progress` based on `speed` and `isPlaying`
+3. **MigrationFlockSystem:** Reads `progress`, computes position on CatmullRomCurve3, updates InstancedMesh matrices
+4. **MigrationPathRenderer:** Reads `month`, shows/hides paths based on season, updates gradient uniform
+5. **SeasonVisualSystem:** Reads `month`, interpolates hemisphere tint colors
+
+### Performance Strategy
+
+1. **InstancedMesh:** One mesh per species, 3–8 instances. Single draw call per species.
+2. **Shared geometry/material:** All instances of a species share ConeGeometry + MeshStandardMaterial.
+3. **Batch matrix updates:** Set all instance matrices in one loop, then `instanceMatrix.needsUpdate = true`.
+4. **No per-frame allocations:** Reuse Vector3/Matrix4/Quaternion objects via refs.
+5. **CatmullRomCurve3 caching:** Compute curves once, sample via `getPointAt(t)`.
+6. **Shader uniforms:** Season tinting via uniform updates, no texture swaps.
+
+### Integration Points
+
+- `TimeController` added as Zustand store slice alongside existing store
+- `AnimationScheduler` component added to `GlobeScene.tsx`
+- `MigrationPathRenderer` and `MigrationFlockRenderer` added to globe group
+- `SeasonOverlay` wraps globe mesh
+- `TimelinePanel` added to App.tsx sidebar layer
+- `MigrationInfoCard` added to App.tsx card layer
+- Click handler on flock instances calls `TimeController.pause()` and shows info card
+
+### Data Flow
+
+```
+migration-journeys.json → MigrationPath[] → CatmullRomCurve3[]
+                                          → FlockConfig[]
+                                          → MigrationPathRenderer (3D paths)
+                                          → MigrationFlockRenderer (InstancedMesh birds)
+
+TimeState.month → SeasonOverlay (tint uniforms)
+               → MigrationPathRenderer (path visibility)
+               → TimelinePanel (UI state)
+```
+
+---
+
 # 万羽拾音 (Kids Bird Globe) — Implementation Plan (v31)
 
 > **v31 changelog**: Structured Learning Experience — LearningTrackSystem with themed bird discovery journeys and badge rewards, upgraded BirdGuideService with RAG-like architecture (PromptBuilder + ResponseRenderer) and bird_facts.json fallback, EcosystemSystem with seasonal world state (season/temperature/wind/timeOfDay) influencing bird density and migration, HabitatFilter sidebar toggle for 6 habitat types, SeasonController managing season transitions, MigrationVisualizer with glowing arcs and directional particles tied to ecosystem seasons, BirdDataLoader with lazy regional JSON loading.
@@ -1411,3 +1495,217 @@ Integrate new components in App.tsx:
 | `App.tsx` | MainModePanel + ScienceHUD integration | v33 |
 | `store.ts` | V33 state fields (uiMode, birdCardExpanded) | v33 |
 | `types.ts` | UIMode type | v33 |
+
+---
+
+# Implementation Plan — V34: Migration Journey System
+
+## Overview
+
+Implement a migration journey gameplay system. Children select a journey, follow the route on the globe, discover birds at each stop, and earn badges upon completion. Includes season-aware route filtering, LOD performance optimization, and UI panels for journey selection and progress tracking.
+
+## Architecture
+
+### New Data: `/src/data/`
+
+| File | Purpose |
+|------|---------|
+| `migration-journeys.json` | Journey data: 4 journeys with stops, coordinates, bird IDs, seasons |
+
+### New Components: `/src/components/ui/`
+
+| File | Purpose |
+|------|---------|
+| `MigrationJourneyPanel.tsx` | Journey selection and progress panel |
+| `SeasonSelector.tsx` | Season toggle (Spring/Summer/Autumn/Winter) |
+
+### New Three.js Components: `/src/components/three/`
+
+| File | Purpose |
+|------|---------|
+| `JourneyRoute.tsx` | Renders journey path with CatmullRomCurve3, stop markers, animated bird |
+
+---
+
+## Phase 1 — Migration Journey Data
+
+Create `/src/data/migration-journeys.json` with 4 journey definitions.
+
+Each journey structure:
+
+```
+id, nameZh, nameEn, descriptionZh, descriptionEn, badge, seasons[], stops[]
+```
+
+Each stop structure:
+
+```
+id, nameZh, nameEn, lat, lng, birdIds[]
+```
+
+---
+
+## Phase 2 — Types & Store
+
+Add to `types.ts`:
+- `MigrationJourney` interface
+- `JourneyStop` interface
+- `JourneyProgress` interface
+
+Add to `store.ts`:
+- `activeJourneyId: string | null`
+- `journeyProgress: JourneyProgress[]`
+- `visitedStops: string[]`
+- `journeyPanelOpen: boolean`
+- Actions: `setActiveJourney`, `visitStop`, `completeJourney`, `setJourneyPanelOpen`
+
+---
+
+## Phase 3 — Journey Route Rendering
+
+Create `JourneyRoute.tsx` using Three.js:
+
+- Convert stop coordinates to globe positions via `latLngToVector3`
+- Generate CatmullRomCurve3 through all stops
+- Render path with animated glow ShaderMaterial
+- Add clickable stop markers
+- Animate bird icon along path: `t += speed * delta; position = curve.getPointAt(t)`
+
+LOD:
+- Distance > 3.0: glowing line only
+- Distance < 3.0: full animation + stop markers
+
+---
+
+## Phase 4 — Journey Selection Panel
+
+Create `MigrationJourneyPanel.tsx`:
+- Journey list with cards
+- Progress bar per journey
+- Start/resume buttons
+- Badge display for completed journeys
+
+---
+
+## Phase 5 — Season Selector
+
+Create `SeasonSelector.tsx`:
+- 4 season buttons (Spring/Summer/Autumn/Winter)
+- Position: top-right, below language toggle
+- Wires to `setCurrentSeason` store action
+- Filters active journeys by season
+
+---
+
+## Phase 6 — Integration
+
+- Add `MigrationJourneyPanel` to App.tsx modal layer
+- Add `SeasonSelector` to App.tsx sidebar layer
+- Add `JourneyRoute` to GlobeScene
+- Add journey button to MainModePanel Explore tools
+- Wire panel open/close via `setActivePanel`
+
+---
+
+## Phase 7 — UI Consistency Fix
+
+- Consistent button dimensions: width 180px, height 44px, border-radius 12px
+- Bottom-left buttons: flex-direction column, gap 12px
+- Safe margins: left 20px, bottom 20px
+
+---
+
+## Store State Additions (v34)
+
+| Field | Purpose | Version |
+|-------|---------|---------|
+| `activeJourneyId` | Currently active journey | v34 |
+| `journeyProgress` | Progress per journey | v34 |
+| `visitedStops` | Set of visited stop IDs | v34 |
+| `journeyPanelOpen` | Journey panel visibility | v34 |
+
+## Component Inventory (v34)
+
+### New Components
+| Component | Purpose | Version |
+|-----------|---------|---------|
+| `MigrationJourneyPanel.tsx` | Journey selection and progress | v34 |
+| `SeasonSelector.tsx` | Season toggle UI | v34 |
+| `JourneyRoute.tsx` | Three.js journey route rendering | v34 |
+
+### Modified Components
+| Component | Changes | Version |
+|-----------|---------|---------|
+| `App.tsx` | Journey panel + season selector integration | v34 |
+| `store.ts` | V34 state fields and actions | v34 |
+| `types.ts` | Journey types | v34 |
+| `MainModePanel.tsx` | Journey button in Explore mode | v34 |
+| `GlobeScene.tsx` | JourneyRoute component mount | v34 |
+
+---
+
+# v35-labels Plan: Smart Continent Label System
+
+## Overview
+
+Rewrite `MapLabels.tsx` to implement physically correct label behavior:
+backside occlusion, horizon fade, zoom-level LOD, and distance-based scaling.
+
+All logic is self-contained within `MapLabels.tsx` — no new modules required.
+
+---
+
+## Phase 1 — Backside Occlusion
+
+In the `useFrame` loop of each `GlobeLabel`:
+
+1. Compute the label's 3D position as a normalized direction vector.
+2. Compute the camera direction (camera position normalized, since globe is at origin).
+3. Calculate `dot = labelDir.dot(cameraDir)`.
+4. If `dot < 0`, the label is behind the globe → hide it.
+
+---
+
+## Phase 2 — Horizon Fade
+
+Extend the dot product check with a smooth fade zone:
+
+- `dot < 0` → opacity = 0 (hidden)
+- `0 <= dot < 0.15` → opacity fades in smoothly
+- `dot >= 0.15` → opacity = 1 (fully visible)
+
+Formula: `opacity = clamp((dot - 0.05) / 0.2, 0, 1)`
+
+This replaces the old distance-only opacity logic.
+
+---
+
+## Phase 3 — Zoom-Level LOD
+
+Add camera distance thresholds to reduce label density:
+
+- `distance > 4.0` → hide all labels
+- `distance > 3.0` → show only major labels (ids: `north-america`, `europe`, `asia`)
+- `distance <= 3.0` → show all labels
+
+Major labels are defined as a constant set.
+
+---
+
+## Phase 4 — Distance-Based Scaling
+
+Apply a scale factor to each label based on camera distance:
+
+```
+scale = clamp(2 / distance, 0.6, 1.4)
+```
+
+Applied via CSS `transform: scale(...)` on the label container.
+
+---
+
+## Modified Components (v35-labels)
+
+| Component | Changes |
+|-----------|---------|
+| `MapLabels.tsx` | Full rewrite of `GlobeLabel` useFrame: occlusion, fade, LOD, scaling |

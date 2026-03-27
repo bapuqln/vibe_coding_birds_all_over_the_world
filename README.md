@@ -71,6 +71,14 @@ Prepared for larger datasets with lazy loading:
 - **Tailwind CSS** for styling
 - **Vite** for build tooling
 
+## AI Workflow
+
+本项目使用 **spec-kit + gstack** 混合 AI 工作流。spec-kit 管理需求/方案/任务/实现的全流程，gstack (`gk`) 提供 AI 辅助审查与代码生成。
+
+- 详细衔接指南见 [`ai/INTEGRATION.md`](./ai/INTEGRATION.md)
+- gstack 行为配置见 [`ai/gstack.yaml`](./ai/gstack.yaml)
+- 环境检查脚本：`./ai/setup-agents.sh`
+
 ## Getting Started
 
 ```bash

@@ -8,6 +8,7 @@ import type {
   DiscoveryMissionProgress,
   ExpeditionProgress,
   HabitatFilterType,
+  JourneyProgress,
   Language,
   UIMode,
   MissionTemplate,
@@ -21,10 +22,12 @@ import type {
   SpawnedBird,
   StoryPlayState,
   TimeOfDay,
+  TimeState,
   TourState,
   TrackProgress,
   WorldState,
 } from "./types";
+import { createInitialTimeState } from "./core/TimeController";
 import birdsData from "./data/birds.json";
 import missionTemplates from "./data/missions.json";
 import achievementDefs from "./data/achievements.json";
@@ -57,7 +60,9 @@ export type PanelType =
   | "sandbox"
   | "learningTracks"
   | "discoverMissions"
-  | "ecosystemPanel";
+  | "ecosystemPanel"
+  | "journeyPanel"
+  | "migrationIntelligence";
 
 const COLLECTION_KEY = "kids-bird-globe-collection";
 const QUEST_KEY = "kids-bird-globe-quests";
@@ -74,6 +79,8 @@ const EXPEDITIONS_KEY = "kids-bird-globe-expeditions";
 const TRACKS_KEY = "kids-bird-globe-learning-tracks";
 const DISCOVERY_BADGES_KEY = "kids-bird-globe-discovery-badges";
 const DISCOVERY_MISSIONS_KEY = "kids-bird-globe-discovery-missions-progress";
+const JOURNEY_PROGRESS_KEY = "kids-bird-globe-journey-progress";
+const VISITED_STOPS_KEY = "kids-bird-globe-visited-stops";
 
 const allBirds = birdsData as Bird[];
 const templates = missionTemplates as MissionTemplate[];
@@ -295,6 +302,16 @@ interface AppStore {
   uiMode: UIMode;
   birdCardExpanded: boolean;
 
+  // V34 — Migration Journey
+  activeJourneyId: string | null;
+  journeyProgress: JourneyProgress[];
+  visitedStops: string[];
+  journeyPanelOpen: boolean;
+
+  // V32 — Bird Migration Intelligence
+  timeState: TimeState;
+  migrationInfoPathIndex: number | null;
+
   // Actions
   setSelectedBird: (id: string | null) => void;
   toggleLanguage: () => void;
@@ -454,6 +471,21 @@ interface AppStore {
   // V33 — UI Mode
   setUIMode: (mode: UIMode) => void;
   setBirdCardExpanded: (expanded: boolean) => void;
+
+  // V34 — Migration Journey
+  setActiveJourney: (id: string | null) => void;
+  visitStop: (journeyId: string, stopId: string) => void;
+  completeJourney: (journeyId: string) => void;
+  setJourneyPanelOpen: (open: boolean) => void;
+
+  // V32 — Bird Migration Intelligence
+  setTimeState: (state: TimeState) => void;
+  playTimeline: () => void;
+  pauseTimeline: () => void;
+  setTimeMonth: (month: number) => void;
+  setTimeSpeed: (speed: number) => void;
+  scrubTimeline: (progress: number) => void;
+  setMigrationInfoPathIndex: (index: number | null) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -606,6 +638,14 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   uiMode: "explore",
   birdCardExpanded: true,
+
+  activeJourneyId: null,
+  journeyProgress: loadFromStorage<JourneyProgress[]>(JOURNEY_PROGRESS_KEY, []),
+  visitedStops: loadFromStorage<string[]>(VISITED_STOPS_KEY, []),
+  journeyPanelOpen: false,
+
+  timeState: createInitialTimeState(),
+  migrationInfoPathIndex: null,
 
   setSelectedBird: (id) => set({ selectedBirdId: id }),
   toggleLanguage: () =>
@@ -833,6 +873,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
     if (activePanel !== null && activePanel !== "ecosystemPanel") {
       reset.ecosystemPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "journeyPanel") {
+      reset.journeyPanelOpen = false;
+    }
+    if (activePanel !== null && activePanel !== "migrationIntelligence") {
+      reset.migrationInfoPathIndex = null;
     }
     set(reset);
   },
@@ -1220,4 +1266,58 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   setUIMode: (uiMode) => set({ uiMode }),
   setBirdCardExpanded: (birdCardExpanded) => set({ birdCardExpanded }),
+
+  setActiveJourney: (activeJourneyId) => set({ activeJourneyId }),
+
+  visitStop: (journeyId, stopId) => {
+    const state = get();
+    const visitedStops = state.visitedStops.includes(stopId)
+      ? state.visitedStops
+      : [...state.visitedStops, stopId];
+    saveToStorage(VISITED_STOPS_KEY, visitedStops);
+
+    const existing = state.journeyProgress.find((p) => p.journeyId === journeyId);
+    let journeyProgress: JourneyProgress[];
+    if (existing) {
+      journeyProgress = state.journeyProgress.map((p) =>
+        p.journeyId === journeyId
+          ? { ...p, visitedStopIds: p.visitedStopIds.includes(stopId) ? p.visitedStopIds : [...p.visitedStopIds, stopId] }
+          : p,
+      );
+    } else {
+      journeyProgress = [
+        ...state.journeyProgress,
+        { journeyId, visitedStopIds: [stopId], discoveredBirdIds: [], completed: false },
+      ];
+    }
+    saveToStorage(JOURNEY_PROGRESS_KEY, journeyProgress);
+    set({ visitedStops, journeyProgress });
+  },
+
+  completeJourney: (journeyId) => {
+    const state = get();
+    const journeyProgress = state.journeyProgress.map((p) =>
+      p.journeyId === journeyId
+        ? { ...p, completed: true, completedAt: Date.now() }
+        : p,
+    );
+    saveToStorage(JOURNEY_PROGRESS_KEY, journeyProgress);
+    set({ journeyProgress });
+  },
+
+  setJourneyPanelOpen: (journeyPanelOpen) => set({ journeyPanelOpen }),
+
+  setTimeState: (timeState) => set({ timeState }),
+  playTimeline: () =>
+    set((s) => ({ timeState: { ...s.timeState, isPlaying: true } })),
+  pauseTimeline: () =>
+    set((s) => ({ timeState: { ...s.timeState, isPlaying: false } })),
+  setTimeMonth: (month) =>
+    set((s) => ({ timeState: { ...s.timeState, month, progress: 0 } })),
+  setTimeSpeed: (speed) =>
+    set((s) => ({ timeState: { ...s.timeState, speed } })),
+  scrubTimeline: (progress) =>
+    set((s) => ({ timeState: { ...s.timeState, progress } })),
+  setMigrationInfoPathIndex: (migrationInfoPathIndex) =>
+    set({ migrationInfoPathIndex }),
 }));

@@ -1,0 +1,26 @@
+# Spec-Kit Extension Hooks — gstack integration
+# These hooks are checked by /speckit.implement before and after execution.
+
+hooks:
+  before_implement:
+    - extension: gstack-plan-review
+      command: "echo '💡 Tip: Run gk /plan --context specs/kids-bird-globe/plan.md in your terminal for AI plan review'"
+      description: "Remind to run gstack plan review before implementation"
+      enabled: true
+      optional: true
+      prompt: "Run gstack AI plan review before implementing?"
+
+  after_implement:
+    - extension: gstack-code-review
+      command: "echo '💡 Tip: Run git add . && gk /review in your terminal for AI code review'"
+      description: "Remind to run gstack code review after implementation"
+      enabled: true
+      optional: true
+      prompt: "Run gstack AI code review on the implemented changes?"
+
+    - extension: gstack-qa
+      command: "echo '💡 Tip: Run gk /qa in your terminal for quality checks'"
+      description: "Remind to run gstack QA checks"
+      enabled: true
+      optional: true
+      prompt: "Run gstack QA checks?"

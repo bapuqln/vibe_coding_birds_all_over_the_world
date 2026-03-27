@@ -68,6 +68,8 @@ export function MainModePanel() {
   const setActivePanel = useAppStore((s) => s.setActivePanel);
   const questsOpen = useAppStore((s) => s.questsOpen);
   const setQuestsOpen = useAppStore((s) => s.setQuestsOpen);
+  const journeyPanelOpen = useAppStore((s) => s.journeyPanelOpen);
+  const setJourneyPanelOpen = useAppStore((s) => s.setJourneyPanelOpen);
 
   const [habitatExpanded, setHabitatExpanded] = useState(false);
 
@@ -123,12 +125,12 @@ export function MainModePanel() {
     <div
       className="pointer-events-auto fixed"
       style={{
-        right: "var(--safe-area)",
-        bottom: "var(--safe-area)",
+        right: 20,
+        bottom: 20,
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
-        gap: 8,
+        gap: 10,
         maxHeight: "calc(100vh - 40px)",
         overflowY: "auto",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -193,13 +195,14 @@ export function MainModePanel() {
           flexDirection: "column",
           gap: 6,
           padding: 8,
-          borderRadius: 20,
+          borderRadius: 16,
           background: "rgba(0, 10, 30, 0.65)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: "1px solid rgba(100, 180, 255, 0.12)",
           boxShadow: "0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04)",
-          minWidth: 140,
+          minWidth: 160,
+          width: 180,
         }}
       >
         {uiMode === "explore" && (
@@ -222,6 +225,16 @@ export function MainModePanel() {
                 onClick={() => setMigrationSpeed(migrationSpeed >= 5 ? 1 : migrationSpeed === 1 ? 2 : 5)}
               />
             )}
+            <ModeToolButton
+              icon="🗺️"
+              label={language === "zh" ? "迁徙旅程" : "Journeys"}
+              active={journeyPanelOpen}
+              onClick={() => {
+                const next = !journeyPanelOpen;
+                setJourneyPanelOpen(next);
+                setActivePanel(next ? "journeyPanel" : null);
+              }}
+            />
             <ModeToolButton
               icon="🌿"
               label={language === "zh" ? "栖息地" : "Habitats"}
@@ -362,6 +375,8 @@ export function MainModePanel() {
         style={{
           display: "flex",
           gap: 6,
+          width: 180,
+          justifyContent: "flex-end",
         }}
       >
         <UtilityButton icon="📸" label={language === "zh" ? "截图" : "Shot"} onClick={handleScreenshot} />
@@ -396,7 +411,8 @@ function ModeToolButton({ icon, label, active = false, badge, onClick }: ModeToo
         alignItems: "center",
         gap: 8,
         padding: "8px 12px",
-        borderRadius: 14,
+        height: 40,
+        borderRadius: 12,
         border: active
           ? "1px solid rgba(56, 189, 248, 0.35)"
           : "1px solid transparent",

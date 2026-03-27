@@ -1,0 +1,68 @@
+[
+  {
+    "birdId": "arctic-tern",
+    "waypoints": [[71.0, -25.0], [60.0, -20.0], [40.0, -15.0], [20.0, -10.0], [0.0, -5.0], [-20.0, 0.0], [-40.0, 5.0], [-60.0, 10.0], [-70.0, 2.0]],
+    "season": "autumn",
+    "color": "#f87171",
+    "nameZh": "北极燕鸥大迁徙",
+    "nameEn": "Arctic Tern Great Migration",
+    "distanceKm": 71000,
+    "funFactZh": "北极燕鸥每年往返南北极，是地球上迁徙距离最长的鸟类！",
+    "funFactEn": "The Arctic Tern migrates pole-to-pole every year — the longest migration of any bird on Earth!"
+  },
+  {
+    "birdId": "bar-tailed-godwit",
+    "waypoints": [[64.0, -165.0], [50.0, -175.0], [35.0, 175.0], [20.0, 170.0], [0.0, 165.0], [-20.0, 170.0], [-37.0, 175.0]],
+    "season": "autumn",
+    "color": "#34d399",
+    "nameZh": "斑尾塍鹬跨太平洋之旅",
+    "nameEn": "Bar-tailed Godwit Trans-Pacific Journey",
+    "distanceKm": 11000,
+    "funFactZh": "斑尾塍鹬能连续飞行11天不休息，横跨整个太平洋！",
+    "funFactEn": "The Bar-tailed Godwit can fly non-stop for 11 days across the entire Pacific Ocean!"
+  },
+  {
+    "birdId": "barn-swallow",
+    "waypoints": [[52.0, 0.0], [45.0, 5.0], [35.0, 10.0], [25.0, 10.0], [15.0, 5.0], [5.0, 15.0], [-5.0, 25.0], [-15.0, 30.0]],
+    "season": "autumn",
+    "color": "#a78bfa",
+    "nameZh": "家燕欧非迁徙",
+    "nameEn": "Barn Swallow Europe-Africa Migration",
+    "distanceKm": 20000,
+    "funFactZh": "家燕每年从欧洲飞到非洲南部过冬，往返超过2万公里！",
+    "funFactEn": "Barn Swallows fly from Europe to southern Africa each winter — a round trip of over 20,000 km!"
+  },
+  {
+    "birdId": "white-stork",
+    "waypoints": [[52.0, 13.0], [42.0, 28.0], [35.0, 33.0], [30.0, 35.0], [20.0, 33.0], [10.0, 30.0], [0.0, 32.0], [-10.0, 28.0]],
+    "season": "autumn",
+    "color": "#fbbf24",
+    "nameZh": "白鹳东线迁徙",
+    "nameEn": "White Stork Eastern Migration",
+    "distanceKm": 20000,
+    "funFactZh": "白鹳利用热气流滑翔，几乎不需要拍打翅膀就能飞越数千公里！",
+    "funFactEn": "White Storks ride thermal currents and can soar thousands of kilometers with barely a wingbeat!"
+  },
+  {
+    "birdId": "ruby-throated-hummingbird",
+    "waypoints": [[42.0, -80.0], [35.0, -85.0], [30.0, -88.0], [25.0, -90.0], [20.0, -88.0], [18.0, -85.0]],
+    "season": "autumn",
+    "color": "#fb923c",
+    "nameZh": "红喉蜂鸟墨西哥湾之旅",
+    "nameEn": "Ruby-throated Hummingbird Gulf Crossing",
+    "distanceKm": 3200,
+    "funFactZh": "红喉蜂鸟体重仅3克，却能一口气飞越800公里的墨西哥湾！",
+    "funFactEn": "Weighing just 3 grams, the Ruby-throated Hummingbird flies 800 km non-stop across the Gulf of Mexico!"
+  },
+  {
+    "birdId": "whooping-crane",
+    "waypoints": [[58.0, -112.0], [52.0, -108.0], [45.0, -100.0], [38.0, -97.0], [32.0, -96.0], [28.0, -97.0]],
+    "season": "autumn",
+    "color": "#ec4899",
+    "nameZh": "美洲鹤南迁之路",
+    "nameEn": "Whooping Crane Southward Migration",
+    "distanceKm": 4000,
+    "funFactZh": "美洲鹤是北美最稀有的鸟类之一，野生种群不到800只！",
+    "funFactEn": "The Whooping Crane is one of North America's rarest birds — fewer than 800 exist in the wild!"
+  }
+]

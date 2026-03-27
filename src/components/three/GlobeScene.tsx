@@ -21,6 +21,11 @@ import { WeatherEffects } from "./WeatherEffects";
 import { RegionClusters } from "./RegionCluster";
 import { FlockRenderer } from "./FlockRenderer";
 import { BiomeEffects } from "./BiomeEffects";
+import { JourneyRoute } from "./JourneyRoute";
+import { AnimationScheduler } from "../../core/AnimationScheduler";
+import { MigrationPathRenderer } from "../../render/MigrationPathRenderer";
+import { MigrationFlockRenderer } from "../../render/MigrationFlockRenderer";
+import { SeasonOverlay } from "../../render/SeasonOverlay";
 import birdsData from "../../data/birds.json";
 import type { Bird } from "../../types";
 import { useAppStore } from "../../store";
@@ -90,6 +95,7 @@ export function GlobeScene() {
   return (
     <>
       <EngineHost />
+      <AnimationScheduler />
       <ambientLight intensity={0.2} />
       <hemisphereLight args={["#c8e6ff", "#0a1628", 0.3]} />
       <SunLight />
@@ -116,6 +122,10 @@ export function GlobeScene() {
         <RegionClusters />
         <FlockRenderer />
         <BiomeEffects />
+        <JourneyRoute />
+        <SeasonOverlay />
+        <MigrationPathRenderer />
+        <MigrationFlockRenderer />
       </group>
       <MapLabels />
       <CameraController controlsRef={controlsRef} />

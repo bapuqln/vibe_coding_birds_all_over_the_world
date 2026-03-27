@@ -1,6 +1,103 @@
-# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v31)
+# 万羽拾音 (Kids Bird Globe) — Task Breakdown (v32)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
+> v32 phases (257–264) in progress.
+
+---
+
+# v32 Tasks (Bird Migration Intelligence)
+
+---
+
+## Phase 257: Core — TimeController & Store
+
+- [ ] **257.1** Add `TimeState` interface to `types.ts` (month, progress, isPlaying, speed).
+- [ ] **257.2** Add `MigrationPath` interface to `types.ts` (birdId, waypoints, season, color, nameZh, nameEn).
+- [ ] **257.3** Add `FlockConfig` interface to `types.ts` (birdId, instanceCount, pathId, offsets).
+- [ ] **257.4** Add `SeasonVisual` interface to `types.ts` (month, northTint, southTint, migrationHighlight).
+- [ ] **257.5** Add `TimeState` slice to Zustand store: `timeState`, `tickTime`, `playTimeline`, `pauseTimeline`, `setTimeMonth`, `setTimeSpeed`, `scrubTimeline`.
+- [ ] **257.6** Create `src/core/TimeController.ts` with `tick(delta)` logic advancing month/progress.
+- [ ] **257.7** Create `src/core/AnimationScheduler.tsx` — single `useFrame` component calling `TimeController.tick`.
+
+---
+
+## Phase 258: Domain — Migration Data & Path Computation
+
+- [ ] **258.1** Create `src/domain/migration-paths.ts` — load migration path data, compute `CatmullRomCurve3` from waypoints using `latLngToVector3`.
+- [ ] **258.2** Create `src/domain/flock-config.ts` — generate `FlockConfig[]` from migration paths (3–8 instances per species, random offsets).
+- [ ] **258.3** Create `src/data/migration-intelligence.json` — 6 migration paths with waypoint arrays, seasons, colors.
+
+---
+
+## Phase 259: Render — Migration Path Renderer
+
+- [ ] **259.1** Create `src/render/MigrationPathRenderer.tsx` — render `CatmullRomCurve3` paths as `TubeGeometry` or `Line` with gradient `ShaderMaterial`.
+- [ ] **259.2** Implement gradient shader: bright at bird head position, dim at tail.
+- [ ] **259.3** Path elevation: waypoints at `globeRadius + 0.02`.
+- [ ] **259.4** Path visibility tied to `TimeState.month` matching path season.
+- [ ] **259.5** Smooth fade-in/fade-out for path appearance.
+
+---
+
+## Phase 260: Render — Flock Renderer (InstancedMesh)
+
+- [ ] **260.1** Create `src/render/MigrationFlockRenderer.tsx` — `InstancedMesh` per species with shared `ConeGeometry` + `MeshStandardMaterial`.
+- [ ] **260.2** Position instances along `CatmullRomCurve3` using `TimeState.progress`.
+- [ ] **260.3** Per-instance random offset (±0.01 units) for natural spread.
+- [ ] **260.4** Batch matrix updates: reuse `Matrix4`/`Vector3`/`Quaternion` refs.
+- [ ] **260.5** Orient bird instances along path tangent.
+- [ ] **260.6** Click handler on flock: pause timeline, highlight path, show info card.
+
+---
+
+## Phase 261: Render — Season Visual Overlay
+
+- [ ] **261.1** Create `src/render/SeasonOverlay.tsx` — shader-based hemisphere tinting.
+- [ ] **261.2** Winter (months 11–1): cooler blue tone in northern hemisphere.
+- [ ] **261.3** Summer (months 5–7): greener tones globally.
+- [ ] **261.4** Migration season (months 2–4, 8–10): highlight migration paths with glow.
+- [ ] **261.5** Smooth interpolation between season states using `TimeState.progress`.
+
+---
+
+## Phase 262: UI — Timeline Panel
+
+- [ ] **262.1** Create `src/ui/TimelinePanel.tsx` — horizontal month bar (Jan–Dec).
+- [ ] **262.2** Implement play/pause button toggling `TimeState.isPlaying`.
+- [ ] **262.3** Implement speed toggle (1x / 2x).
+- [ ] **262.4** Implement drag-to-scrub on month bar.
+- [ ] **262.5** Current month indicator with label.
+- [ ] **262.6** Glass-morphism styling consistent with existing UI.
+
+---
+
+## Phase 263: UI — Migration Info Card
+
+- [ ] **263.1** Create `src/ui/MigrationInfoCard.tsx` — shown on flock click.
+- [ ] **263.2** Display: bird name, migration origin → destination, distance, season, fun fact.
+- [ ] **263.3** "Resume" button to unpause timeline.
+- [ ] **263.4** Glass-morphism card styling.
+
+---
+
+## Phase 264: Integration & Verification
+
+- [ ] **264.1** Add `AnimationScheduler` to `GlobeScene.tsx`.
+- [ ] **264.2** Add `MigrationPathRenderer` to globe group in `GlobeScene.tsx`.
+- [ ] **264.3** Add `MigrationFlockRenderer` to globe group in `GlobeScene.tsx`.
+- [ ] **264.4** Add `SeasonOverlay` to globe group in `GlobeScene.tsx`.
+- [ ] **264.5** Add `TimelinePanel` to App.tsx bottom panel layer.
+- [ ] **264.6** Add `MigrationInfoCard` to App.tsx card layer.
+- [ ] **264.7** Add `migrationIntelligence` to `PanelType` union in store.
+- [ ] **264.8** Verify TimeController is single source of truth. (AC-V32-1)
+- [ ] **264.9** Verify no per-object animation loops. (AC-V32-2)
+- [ ] **264.10** Verify InstancedMesh for bird rendering. (AC-V32-3)
+- [ ] **264.11** Verify spherical interpolation on paths. (AC-V32-4)
+- [ ] **264.12** Verify ≥30 birds at 50+ FPS. (AC-V32-5)
+- [ ] **264.13** Verify click-to-learn interaction. (AC-V32-6)
+- [ ] **264.14** Build passes without TypeScript errors. (AC-V32-7)
+
+---
 > v8 phases (56–64) and v9 phases (65–75) are complete.
 > v10 phases (76–84) are complete.
 > v11 phases (85–92) are complete.
@@ -2172,3 +2269,127 @@
 - [ ] **243b.4** Migration routes display animated arcs. (AC-V33)
 - [ ] **243b.5** HUD shows location information. (AC-V33)
 - [ ] **243b.6** Build passes. (AC-V33)
+
+---
+
+## Phase 244b: V34 — Migration Journey Data
+
+- [ ] **244b.1** Create `/src/data/migration-journeys.json` with 4 journeys (Arctic Tern, Swan, Pacific Flyway, Amazon Loop).
+- [ ] **244b.2** Each journey has stops with lat/lng, name (zh/en), birdIds, seasons.
+- [ ] **244b.3** Add `MigrationJourney`, `JourneyStop`, `JourneyProgress` types to `types.ts`.
+
+---
+
+## Phase 245b: V34 — Store State for Journeys
+
+- [ ] **245b.1** Add `activeJourneyId`, `journeyProgress`, `visitedStops`, `journeyPanelOpen` to store.
+- [ ] **245b.2** Add `setActiveJourney`, `visitStop`, `completeJourney`, `setJourneyPanelOpen` actions.
+- [ ] **245b.3** Add `journeyPanel` to `PanelType` union.
+- [ ] **245b.4** Persist journey progress to localStorage.
+
+---
+
+## Phase 246b: V34 — Journey Route Rendering
+
+- [ ] **246b.1** Create `JourneyRoute.tsx` in `/src/components/three/`.
+- [ ] **246b.2** Generate CatmullRomCurve3 from journey stops using `latLngToVector3`.
+- [ ] **246b.3** Render path with animated glow ShaderMaterial.
+- [ ] **246b.4** Add clickable stop markers (glowing spheres).
+- [ ] **246b.5** Animate bird icon along path.
+- [ ] **246b.6** Implement LOD: hide bird animation when camera > 3.0.
+
+---
+
+## Phase 247b: V34 — Migration Journey Panel
+
+- [ ] **247b.1** Create `MigrationJourneyPanel.tsx` in `/src/components/ui/`.
+- [ ] **247b.2** Display journey list with cards (name, stops, progress, badge).
+- [ ] **247b.3** Start/resume journey button.
+- [ ] **247b.4** Season filter: only show journeys active in current season.
+
+---
+
+## Phase 248b: V34 — Season Selector
+
+- [ ] **248b.1** Create `SeasonSelector.tsx` in `/src/components/ui/`.
+- [ ] **248b.2** Display 4 season buttons (Spring/Summer/Autumn/Winter).
+- [ ] **248b.3** Wire to `setCurrentSeason` store action.
+- [ ] **248b.4** Position top-right corner below language toggle.
+
+---
+
+## Phase 249b: V34 — Integration
+
+- [ ] **249b.1** Add `MigrationJourneyPanel` to App.tsx modal layer.
+- [ ] **249b.2** Add `SeasonSelector` to App.tsx sidebar layer.
+- [ ] **249b.3** Add `JourneyRoute` to `GlobeScene.tsx`.
+- [ ] **249b.4** Add "Migration Journeys" button to MainModePanel Explore tools.
+- [ ] **249b.5** Wire journey panel open/close via `setActivePanel`.
+
+---
+
+## Phase 250b: V34 — UI Refactor
+
+- [ ] **250b.1** Fix bottom-left button layout: flex-direction column, gap 12px.
+- [ ] **250b.2** Consistent button style: width 180px, height 44px, border-radius 12px.
+- [ ] **250b.3** Safe margins: left 20px, bottom 20px.
+
+---
+
+## Phase 251b: V34 — Verification
+
+- [ ] **251b.1** Migration journey data loads correctly. (AC-V34)
+- [ ] **251b.2** Journey selection panel opens from Explore mode. (AC-V34)
+- [ ] **251b.3** Journey routes render as glowing animated paths. (AC-V34)
+- [ ] **251b.4** Stop markers are clickable. (AC-V34)
+- [ ] **251b.5** Season selector changes journey availability. (AC-V34)
+- [ ] **251b.6** LOD hides bird animation when camera is far. (AC-V34)
+- [ ] **251b.7** Build passes without errors. (AC-V34)
+
+---
+
+# v35-labels Tasks (Smart Continent Label System)
+
+---
+
+## Phase 252b: Backside Occlusion
+
+- [ ] **252b.1** Compute normalized label direction vector from lat/lng position.
+- [ ] **252b.2** Compute camera direction vector (normalized camera position).
+- [ ] **252b.3** Calculate dot product of label direction and camera direction.
+- [ ] **252b.4** Hide label when `dot < 0` (backside of globe).
+
+---
+
+## Phase 253b: Horizon Fade
+
+- [ ] **253b.1** Apply smooth opacity fade for labels near globe horizon.
+- [ ] **253b.2** Opacity formula: `clamp((dot - 0.05) / 0.2, 0, 1)`.
+- [ ] **253b.3** Labels at `dot < 0` fully hidden, `dot >= 0.15` fully visible.
+
+---
+
+## Phase 254b: Label LOD System
+
+- [ ] **254b.1** Define major label set: `north-america`, `europe`, `asia`.
+- [ ] **254b.2** Camera distance > 4.0: hide all labels.
+- [ ] **254b.3** Camera distance > 3.0: show only major labels.
+- [ ] **254b.4** Camera distance <= 3.0: show all labels.
+
+---
+
+## Phase 255b: Distance-Based Label Scaling
+
+- [ ] **255b.1** Compute scale factor: `clamp(2 / distance, 0.6, 1.4)`.
+- [ ] **255b.2** Apply scale via CSS transform on label container.
+
+---
+
+## Phase 256b: V35-labels Verification
+
+- [ ] **256b.1** Labels hidden when continent is behind the globe. (AC-V35-labels)
+- [ ] **256b.2** Labels fade smoothly near the globe horizon. (AC-V35-labels)
+- [ ] **256b.3** Labels reduce density when zoomed out. (AC-V35-labels)
+- [ ] **256b.4** Label size scales with camera distance. (AC-V35-labels)
+- [ ] **256b.5** Build succeeds without errors. (AC-V35-labels)
+- [ ] **256b.6** 60 FPS maintained. (AC-V35-labels)

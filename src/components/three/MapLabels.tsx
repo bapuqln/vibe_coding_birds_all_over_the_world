@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
+import { Vector3 } from "three";
 import { latLngToVector3 } from "../../utils/coordinates";
 import { useAppStore } from "../../store";
 import {
@@ -10,8 +11,18 @@ import {
 } from "../../data/labels";
 
 const LABEL_RADIUS = 1.02;
-const FADE_IN_DISTANCE = 2.2;
-const FULL_VISIBLE_DISTANCE = 1.6;
+
+const MAJOR_LABEL_IDS = new Set(["north-america", "europe", "asia"]);
+
+const LOD_HIDE_ALL = 4.0;
+const LOD_MAJOR_ONLY = 3.0;
+
+function clamp(v: number, min: number, max: number): number {
+  return v < min ? min : v > max ? max : v;
+}
+
+const _labelDir = new Vector3();
+const _camDir = new Vector3();
 
 function GlobeLabel({
   label,
@@ -26,20 +37,53 @@ function GlobeLabel({
   const containerRef = useRef<HTMLDivElement>(null);
   const { camera } = useThree();
 
-  const position = latLngToVector3(label.lat, label.lng, LABEL_RADIUS);
+  const position = useMemo(
+    () => latLngToVector3(label.lat, label.lng, LABEL_RADIUS),
+    [label.lat, label.lng],
+  );
+
+  const isMajor = MAJOR_LABEL_IDS.has(label.id);
 
   useFrame(() => {
     if (!containerRef.current) return;
+
     const dist = camera.position.length();
-    let opacity = 0;
-    if (dist < FULL_VISIBLE_DISTANCE) {
-      opacity = 1;
-    } else if (dist < FADE_IN_DISTANCE) {
-      opacity =
-        1 - (dist - FULL_VISIBLE_DISTANCE) / (FADE_IN_DISTANCE - FULL_VISIBLE_DISTANCE);
+
+    // LOD: hide all labels when very far
+    if (dist > LOD_HIDE_ALL) {
+      containerRef.current.style.opacity = "0";
+      containerRef.current.style.display = "none";
+      return;
     }
-    containerRef.current.style.opacity = String(opacity);
-    containerRef.current.style.display = opacity < 0.01 ? "none" : "block";
+
+    // LOD: show only major continent labels at medium distance
+    if (dist > LOD_MAJOR_ONLY && !isMajor) {
+      containerRef.current.style.opacity = "0";
+      containerRef.current.style.display = "none";
+      return;
+    }
+
+    // Backside occlusion + horizon fade
+    _labelDir.set(position[0], position[1], position[2]).normalize();
+    _camDir.copy(camera.position).normalize();
+    const dot = _labelDir.dot(_camDir);
+
+    // Fully behind the globe
+    if (dot < 0) {
+      containerRef.current.style.opacity = "0";
+      containerRef.current.style.display = "none";
+      return;
+    }
+
+    // Horizon fade: smooth transition from edge to front
+    const occlusionOpacity = clamp((dot - 0.05) / 0.2, 0, 1);
+
+    // Distance-based scaling
+    const scale = clamp(2 / dist, 0.6, 1.4);
+
+    containerRef.current.style.opacity = String(occlusionOpacity);
+    containerRef.current.style.display = occlusionOpacity < 0.01 ? "none" : "block";
+    containerRef.current.style.transform = `scale(${scale})`;
   });
 
   const text = language === "zh" ? label.nameZh : label.nameEn;
@@ -65,10 +109,11 @@ function GlobeLabel({
           textShadow: "0 1px 3px rgba(0,0,0,0.5)",
           userSelect: "none",
           opacity: 0,
-          transition: "opacity 0.3s",
+          transition: "color 0.2s, background 0.2s",
           cursor: interactive ? "pointer" : "default",
           padding: interactive ? "4px 8px" : undefined,
           borderRadius: interactive ? "8px" : undefined,
+          transformOrigin: "center center",
         }}
         onMouseEnter={(e) => {
           if (interactive) {

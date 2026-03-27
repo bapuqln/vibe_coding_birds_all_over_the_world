@@ -1,3 +1,121 @@
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v32
+
+> **v32 changelog**: Bird Migration Intelligence — centralized TimeController as single source of truth for all animation (birds, paths, seasons), centralized animation scheduler replacing per-object loops, InstancedMesh-based bird flock rendering for 30+ simultaneous birds at 50+ FPS, spherical interpolation migration paths using CatmullRomCurve3 mapped onto globe surface, gradient path materials (bright head, dim tail), season visual system with shader-based hemisphere tinting (winter cool north, summer green, migration highlight), learning interaction system (click bird → pause timeline → highlight path → show info card), timeline UI with month scrubbing (Jan–Dec), play/pause, speed control (1x/2x).
+
+---
+
+## V32 — Bird Migration Intelligence
+
+### Overview
+
+V32 introduces a unified time-driven migration intelligence system. All animations — bird movement, path rendering, season visuals — derive from a single `TimeState` controlled by a `TimeController`. Birds are rendered via `InstancedMesh` for GPU efficiency. Migration paths use spherical interpolation on the globe surface. The architecture enforces strict separation between rendering, domain logic, and UI.
+
+### Data Models
+
+#### TimeState
+```typescript
+interface TimeState {
+  month: number;       // 0–11 (Jan=0, Dec=11)
+  progress: number;    // 0–1 continuous progress within month
+  isPlaying: boolean;  // play/pause state
+  speed: number;       // 1 or 2
+}
+```
+
+#### MigrationPath
+```typescript
+interface MigrationPath {
+  birdId: string;
+  waypoints: [number, number][];  // [lat, lng] array
+  season: "spring" | "autumn";
+  color: string;
+  nameZh: string;
+  nameEn: string;
+}
+```
+
+#### FlockConfig
+```typescript
+interface FlockConfig {
+  birdId: string;
+  instanceCount: number;  // 3–8
+  pathId: string;
+  offsets: number[];      // random per-instance offset
+}
+```
+
+#### SeasonVisual
+```typescript
+interface SeasonVisual {
+  month: number;
+  northTint: string;    // hex color for northern hemisphere
+  southTint: string;    // hex color for southern hemisphere
+  migrationHighlight: boolean;
+}
+```
+
+### TimeController (Single Source of Truth)
+
+- Manages `TimeState` in Zustand store
+- Provides `tick(delta)` method called by centralized animation scheduler
+- All consumers read from `TimeState` — no independent timers
+- Timeline UI drives `TimeState` via actions: `play()`, `pause()`, `setMonth(n)`, `setSpeed(s)`, `scrub(progress)`
+
+### Animation Scheduler
+
+- Single `useFrame` hook in `AnimationScheduler` component
+- Calls `TimeController.tick(delta)` each frame
+- All animated systems register update callbacks
+- No per-object `useFrame` loops for migration animation
+
+### Migration Path Rendering
+
+- Paths computed via `CatmullRomCurve3` from waypoints
+- Each waypoint converted to 3D via `latLngToVector3` at `radius + 0.02` (slight elevation)
+- Spherical interpolation ensures paths follow globe curvature
+- Gradient `ShaderMaterial`: bright at bird position (head), dim behind (tail)
+- Path visibility tied to `TimeState.month` matching path season
+
+### Flock Animation (InstancedMesh)
+
+- Each species spawns 3–8 instances in a single `InstancedMesh`
+- Shared `ConeGeometry` + `MeshStandardMaterial`
+- Position derived from `TimeState.progress` along `CatmullRomCurve3`
+- Per-instance random offset (±0.01 units) for natural spread
+- Instance matrices updated in batch via `instanceMatrix.needsUpdate`
+
+### Season Visual System
+
+- Shader-based hemisphere tinting (no texture swapping)
+- Winter (month 11–1): cooler blue tone in northern hemisphere
+- Summer (month 5–7): greener tones globally
+- Migration season (month 2–4, 8–10): highlighted migration paths with glow
+- Smooth transitions between season states using `TimeState.progress`
+
+### Learning Interaction
+
+- Click on bird flock → `TimeController.pause()`
+- Highlight associated migration path (increase glow intensity)
+- Show info card: "This [bird name] migrates from [origin] to [destination]"
+- Card includes: bird name, migration distance, season, fun fact
+- Resume timeline on card dismiss
+
+### Performance Requirements
+
+- ≥ 30 birds rendered simultaneously via InstancedMesh
+- Maintain 50+ FPS on M1 MacBook baseline
+- No visible GC spikes (avoid per-frame allocations)
+- Single draw call per flock species
+
+### Non-Functional Requirements
+
+- TimeController is the ONLY source of animation time
+- No per-object animation loops
+- Rendering, domain logic, and UI fully decoupled
+- All migration paths use spherical interpolation
+
+---
+
 # 万羽拾音 (Kids Bird Globe) — Feature Specification v31
 
 > **v31 changelog**: Structured Learning Experience — Learning Tracks system with themed bird discovery journeys (Birds of Prey, Ocean Birds, Rainforest Birds, Migratory Birds, Colorful Birds), track progress with badge rewards, upgraded AI Bird Guide with RAG-like BirdGuideService and prewritten fallback answers, Ecosystem Simulation with seasonal/temperature/wind/timeOfDay world state influencing bird behavior, Habitat Filter sidebar toggle for forest/wetlands/ocean/grassland/mountain/urban filtering, Seasonal Migration Visualization with glowing arc lines and directional particle flow tied to ecosystem seasons, Data Expansion with regional JSON lazy loading (asia.json, europe.json, americas.json).
@@ -3271,3 +3389,228 @@ Elements:
 - [ ] Build succeeds without errors.
 - [ ] 60 FPS maintained.
 - [ ] <150MB memory usage.
+
+---
+
+# Feature Specification — V34: Migration Journey System
+
+## Problem
+
+Current app interaction is passive. Users click birds but lack motivation to explore further. Birds appear isolated without ecological context — there is no sense of journey or seasonal movement.
+
+Children learn better through:
+
+- Journeys and narrative progression
+- Discovery and surprise
+- Rewards and collectible systems
+
+## Goal
+
+Create an exploration gameplay loop using real bird migration routes. Children follow seasonal journeys across the globe, discover birds at each stop, unlock facts, and earn badges upon completion.
+
+## Gameplay Loop
+
+```
+Choose Migration Journey
+→ Follow route on globe
+→ Discover birds at each stop
+→ Unlock bird facts
+→ Complete journey
+→ Earn badge
+```
+
+---
+
+## R-142: Migration Journey Data Model (v34)
+
+Each journey represents a real-world migration route with multiple geographic stops.
+
+Example — Arctic Tern Journey:
+
+| Stop | Location |
+|------|----------|
+| 1 | Greenland (72°N, -40°W) |
+| 2 | United Kingdom (54°N, -2°W) |
+| 3 | Morocco (32°N, -5°W) |
+| 4 | South Africa (-34°S, 18°E) |
+| 5 | Antarctica (-75°S, 0°E) |
+
+Each stop contains:
+- `latitude` / `longitude`
+- `name` (zh/en)
+- `birdIds` — birds discoverable at that stop
+- `season` — which seasons this stop is active
+
+---
+
+## R-143: Migration Journey UI Panel (v34)
+
+Add a "Migration Journeys" button to the Explore mode tool panel.
+
+Clicking opens a journey selection panel listing available journeys:
+
+- Arctic Tern Journey
+- Swan Migration
+- Pacific Flyway
+- Amazon Rainforest Loop
+
+Each journey card shows:
+- Journey name
+- Number of stops
+- Completion progress
+- Badge earned (if completed)
+
+---
+
+## R-144: Journey Route Visualization (v34)
+
+When a journey is active:
+
+- Render the full route as a glowing CatmullRomCurve3 path on the globe
+- Show stop markers at each waypoint (clickable)
+- Animate a bird icon moving along the path
+- Camera follows the route when "auto-follow" is enabled
+
+Clicking a stop marker:
+- Zooms camera to that region
+- Shows birds located at that stop
+- Allows discovery of new birds
+
+---
+
+## R-145: Bird Discovery System (v34)
+
+When the user discovers a new bird at a journey stop:
+
+- Show animated notification: "✨ New Bird Discovered!"
+- Bird is added to the collection
+- Journey progress updates
+- Discovery count increments
+
+---
+
+## R-146: Bird Collection Panel Enhancement (v34)
+
+Enhance the existing My Birds panel:
+
+- Show discovery progress: "Discovered: 18 / 120"
+- Grid of bird cards
+- Locked/undiscovered birds appear as silhouette with "?" overlay
+- Filter by journey, region, or rarity
+
+---
+
+## R-147: Season Selector System (v34)
+
+Add a season selector in the top-right corner of the UI.
+
+Options:
+- 🌸 Spring
+- ☀️ Summer
+- 🍂 Autumn
+- ❄️ Winter
+
+Changing season updates:
+- Active migration routes (some routes only active in certain seasons)
+- Bird availability at stops
+- Visual atmosphere on globe
+
+---
+
+## R-148: Journey Completion & Badges (v34)
+
+When all stops in a journey are visited and all required birds discovered:
+
+- Show completion animation
+- Award journey badge
+- Badge appears in collection panel
+
+---
+
+## R-149: Migration LOD Performance (v34)
+
+Migration routes support Level of Detail:
+
+- Camera far (distance > 3.0): Hide animated birds, show only glowing line
+- Camera close (distance < 3.0): Enable bird animation and stop markers
+- Maximum 4 active journey routes rendered simultaneously
+
+---
+
+### AC-V34: Migration Journey System
+
+- [ ] Migration journey data model with stops, birds, and seasons.
+- [ ] Journey selection panel accessible from Explore mode.
+- [ ] Journey routes render as glowing animated paths on globe.
+- [ ] Stop markers are clickable and zoom camera to region.
+- [ ] Bird discovery notification shows on new bird found.
+- [ ] Bird collection panel shows progress with silhouette for locked birds.
+- [ ] Season selector changes migration route availability.
+- [ ] Journey completion awards badge.
+- [ ] LOD hides bird animation when camera is far.
+- [ ] Build succeeds without errors.
+- [ ] 60 FPS maintained.
+- [ ] <150MB memory usage.
+
+---
+
+## R-150: Smart Continent Label System (v35-labels)
+
+Continent and ocean labels must behave like physical markers attached to the globe surface.
+
+### Backside Occlusion
+
+Labels must be hidden when the continent they represent is on the back side of the globe relative to the camera.
+
+Detection method:
+- Convert each label's lat/lng position to a normalized 3D vector on the unit sphere.
+- Compute the camera direction vector (normalized camera position, since the globe is at origin).
+- Calculate `dot = positionVector.dot(cameraDirection)`.
+- If `dot < 0`, the label is on the back side. Set `visible = false`.
+
+### Horizon Fade
+
+Even when a label is technically on the front side, labels near the globe's horizon edge should fade out smoothly.
+
+Thresholds:
+- `dot < 0` → fully hidden
+- `dot < 0.15` → fading zone
+- `dot >= 0.15` → fully visible
+
+Opacity formula:
+```
+opacity = clamp((dot - 0.05) / 0.2, 0, 1)
+```
+
+This creates a smooth gradient from invisible to visible near the globe edge.
+
+### Zoom-Level LOD (Level of Detail)
+
+When the camera is zoomed out, reduce label density to prevent visual clutter.
+
+Camera distance thresholds:
+- `distance > 4.0` → hide all labels
+- `distance > 3.0` → show only major continents: North America, Europe, Asia
+- `distance <= 3.0` → show all labels (current behavior)
+
+### Distance-Based Label Scaling
+
+Label size must scale with camera distance for consistent visual weight.
+
+Scale formula:
+```
+scale = clamp(2 / distance, 0.6, 1.4)
+```
+
+Applied to the label container transform.
+
+---
+
+### AC-V35-labels: Smart Continent Label System
+
+- [ ] Labels hidden when continent is behind the globe.
+- [ ] Labels fade smoothly near the globe horizon.
+- [ ] Labels reduce density when zoomed out (LOD thresholds).
+- [ ] Label size scales with camera distance.
+- [ ] Build succeeds without errors.
+- [ ] 60 FPS maintained.

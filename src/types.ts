@@ -418,6 +418,70 @@ export interface DiscoveryMissionProgress {
 // V33 — UI Mode
 export type UIMode = "explore" | "learn" | "play";
 
+// V34 — Migration Journey System
+export interface JourneyStop {
+  id: string;
+  nameZh: string;
+  nameEn: string;
+  lat: number;
+  lng: number;
+  birdIds: string[];
+}
+
+export interface MigrationJourney {
+  id: string;
+  nameZh: string;
+  nameEn: string;
+  descriptionZh: string;
+  descriptionEn: string;
+  badge: string;
+  color: string;
+  seasons: Season[];
+  stops: JourneyStop[];
+}
+
+export interface JourneyProgress {
+  journeyId: string;
+  visitedStopIds: string[];
+  discoveredBirdIds: string[];
+  completed: boolean;
+  completedAt?: number;
+}
+
+// V32 — Bird Migration Intelligence
+export interface TimeState {
+  month: number;
+  progress: number;
+  isPlaying: boolean;
+  speed: number;
+}
+
+export interface MigrationIntelligencePath {
+  birdId: string;
+  waypoints: [number, number][];
+  season: "spring" | "autumn";
+  color: string;
+  nameZh: string;
+  nameEn: string;
+  distanceKm: number;
+  funFactZh: string;
+  funFactEn: string;
+}
+
+export interface FlockConfig {
+  birdId: string;
+  instanceCount: number;
+  pathIndex: number;
+  offsets: number[];
+}
+
+export interface SeasonVisual {
+  month: number;
+  northTint: [number, number, number];
+  southTint: [number, number, number];
+  migrationHighlight: boolean;
+}
+
 // V31 — Evolution Eras
 export interface EvolutionEraInfo {
   id: string;

@@ -87,7 +87,7 @@ export function BottomDiscoveryPanel() {
         bottom: "var(--safe-area)",
         left: "50%",
         transform: "translateX(-50%)",
-        width: "min(440px, calc(100% - 240px))",
+        width: "min(420px, calc(100% - 320px))",
         padding: "12px 16px",
         animation: "panelSlideUp var(--panel-duration) var(--panel-ease)",
       }}

@@ -46,6 +46,10 @@ import { PhotographerMode } from "./components/ui/PhotographerMode";
 import { ClassroomPanel } from "./components/ui/ClassroomPanel";
 import { SandboxToolbar } from "./components/ui/SandboxToolbar";
 import { EcosystemPanel } from "./components/ui/EcosystemPanel";
+import { MigrationJourneyPanel } from "./components/ui/MigrationJourneyPanel";
+import { SeasonSelector } from "./components/ui/SeasonSelector";
+import { TimelinePanel } from "./ui/TimelinePanel";
+import { MigrationInfoCard } from "./ui/MigrationInfoCard";
 import { useAppStore } from "./store";
 
 export default function App() {
@@ -79,6 +83,7 @@ export default function App() {
       >
         <AppTitle />
         <ScienceHUD />
+        <SeasonSelector />
         <LangToggle />
         <DiscoveryProgressBar />
         <ExpeditionProgressBar />
@@ -101,6 +106,7 @@ export default function App() {
         <GuidedTour />
         <BottomDiscoveryPanel />
         <SandboxToolbar />
+        <TimelinePanel />
       </div>
 
       {/* Layer 4 — Information Cards */}
@@ -115,6 +121,7 @@ export default function App() {
         <TrackNotification />
         <BirdEntryPanel />
         <AIBirdGuidePanel />
+        <MigrationInfoCard />
       </div>
 
       {/* Layer 5 — Modal Dialogs */}
@@ -138,6 +145,7 @@ export default function App() {
         <BirdComparePanel />
         <DiscoverMissionsPanel />
         <EcosystemPanel />
+        <MigrationJourneyPanel />
       </div>
 
       {/* Layer 6 — Full Screen Overlays */}
