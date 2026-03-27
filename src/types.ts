@@ -415,8 +415,11 @@ export interface DiscoveryMissionProgress {
   completedAt?: number;
 }
 
-// V33 — UI Mode
-export type UIMode = "explore" | "learn" | "play";
+// V33 — App Mode (mode-driven HUD)
+export type AppMode = "explore" | "migration" | "learning";
+
+/** @deprecated Use AppMode instead */
+export type UIMode = AppMode;
 
 // V34 — Migration Journey System
 export interface JourneyStop {
@@ -480,6 +483,33 @@ export interface SeasonVisual {
   northTint: [number, number, number];
   southTint: [number, number, number];
   migrationHighlight: boolean;
+}
+
+// V33 — AI Bird Guide Knowledge System
+export interface KnowledgeResult {
+  text: string;
+  textZh: string;
+  source: "static" | "cache" | "ai";
+}
+
+export interface PromptTemplate {
+  id: string;
+  system: string;
+  user: string;
+}
+
+export type TTSStatus = "idle" | "speaking" | "unavailable";
+
+export interface CachedExplanation {
+  text: string;
+  textZh: string;
+  timestamp: number;
+}
+
+export interface AIProvider {
+  id: string;
+  isAvailable(): boolean;
+  generate(systemPrompt: string, userPrompt: string): Promise<{ text: string; textZh: string } | null>;
 }
 
 // V31 — Evolution Eras

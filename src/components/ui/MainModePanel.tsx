@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useAppStore } from "../../store";
-import type { UIMode } from "../../types";
+import type { AppMode } from "../../types";
 import birdsData from "../../data/birds.json";
 import type { Bird, HabitatFilterType } from "../../types";
 
 const birds = birdsData as Bird[];
 
-const MODES: { id: UIMode; icon: string; labelZh: string; labelEn: string }[] = [
+const MODES: { id: AppMode; icon: string; labelZh: string; labelEn: string }[] = [
   { id: "explore", icon: "🔭", labelZh: "探索", labelEn: "Explore" },
-  { id: "learn", icon: "📖", labelZh: "学习", labelEn: "Learn" },
-  { id: "play", icon: "🎮", labelZh: "游戏", labelEn: "Play" },
+  { id: "migration", icon: "✈️", labelZh: "迁徙", labelEn: "Migration" },
+  { id: "learning", icon: "📖", labelZh: "学习", labelEn: "Learning" },
 ];
 
 const HABITAT_FILTERS: { id: HabitatFilterType; zh: string; en: string }[] = [
@@ -28,8 +28,8 @@ function pickRandomBird(excludeId: string | null): Bird {
 
 export function MainModePanel() {
   const language = useAppStore((s) => s.language);
-  const uiMode = useAppStore((s) => s.uiMode);
-  const setUIMode = useAppStore((s) => s.setUIMode);
+  const appMode = useAppStore((s) => s.appMode);
+  const setAppMode = useAppStore((s) => s.setAppMode);
   const selectedBirdId = useAppStore((s) => s.selectedBirdId);
   const setSelectedBird = useAppStore((s) => s.setSelectedBird);
   const setActiveRegion = useAppStore((s) => s.setActiveRegion);
@@ -72,6 +72,18 @@ export function MainModePanel() {
   const setJourneyPanelOpen = useAppStore((s) => s.setJourneyPanelOpen);
 
   const [habitatExpanded, setHabitatExpanded] = useState(false);
+
+  const toggleJourneyPanel = () => {
+    const next = !journeyPanelOpen;
+    setJourneyPanelOpen(next);
+    setActivePanel(next ? "journeyPanel" : null);
+  };
+
+  const toggleEcosystemPanel = () => {
+    const next = !ecosystemPanelOpen;
+    setEcosystemPanelOpen(next);
+    setActivePanel(next ? "ecosystemPanel" : null);
+  };
 
   const handleDiscover = () => {
     const bird = pickRandomBird(selectedBirdId);
@@ -152,12 +164,12 @@ export function MainModePanel() {
         }}
       >
         {MODES.map((mode) => {
-          const active = uiMode === mode.id;
+          const active = appMode === mode.id;
           return (
             <button
               key={mode.id}
               type="button"
-              onClick={() => setUIMode(mode.id)}
+              onClick={() => setAppMode(mode.id)}
               aria-label={language === "zh" ? mode.labelZh : mode.labelEn}
               style={{
                 display: "flex",
@@ -205,7 +217,7 @@ export function MainModePanel() {
           width: 180,
         }}
       >
-        {uiMode === "explore" && (
+        {appMode === "explore" && (
           <>
             <ModeToolButton
               icon="🎲"
@@ -213,27 +225,10 @@ export function MainModePanel() {
               onClick={handleDiscover}
             />
             <ModeToolButton
-              icon="✈️"
-              label={language === "zh" ? "迁徙" : "Migration"}
-              active={migrationModeActive}
-              onClick={() => setMigrationModeActive(!migrationModeActive)}
-            />
-            {migrationModeActive && (
-              <ModeToolButton
-                icon="⏩"
-                label={`${migrationSpeed}x`}
-                onClick={() => setMigrationSpeed(migrationSpeed >= 5 ? 1 : migrationSpeed === 1 ? 2 : 5)}
-              />
-            )}
-            <ModeToolButton
               icon="🗺️"
               label={language === "zh" ? "迁徙旅程" : "Journeys"}
               active={journeyPanelOpen}
-              onClick={() => {
-                const next = !journeyPanelOpen;
-                setJourneyPanelOpen(next);
-                setActivePanel(next ? "journeyPanel" : null);
-              }}
+              onClick={toggleJourneyPanel}
             />
             <ModeToolButton
               icon="🌿"
@@ -311,16 +306,57 @@ export function MainModePanel() {
               icon="🌍"
               label={language === "zh" ? "生态" : "Ecosystem"}
               active={ecosystemPanelOpen}
-              onClick={() => {
-                const next = !ecosystemPanelOpen;
-                setEcosystemPanelOpen(next);
-                setActivePanel(next ? "ecosystemPanel" : null);
-              }}
+              onClick={toggleEcosystemPanel}
+            />
+            <ModeToolButton
+              icon="📋"
+              label={language === "zh" ? "任务" : "Missions"}
+              active={missionsPanelOpen}
+              badge={incompleteMissions || undefined}
+              onClick={() => setMissionsPanelOpen(!missionsPanelOpen)}
+            />
+            <ModeToolButton
+              icon="🎯"
+              label={language === "zh" ? "探索" : "Quests"}
+              active={questsOpen}
+              onClick={() => setQuestsOpen(!questsOpen)}
             />
           </>
         )}
 
-        {uiMode === "learn" && (
+        {appMode === "migration" && (
+          <>
+            <ModeToolButton
+              icon="✈️"
+              label={language === "zh" ? "迁徙路线" : "Routes"}
+              active={migrationModeActive}
+              onClick={() => setMigrationModeActive(!migrationModeActive)}
+            />
+            {migrationModeActive && (
+              <ModeToolButton
+                icon="⏩"
+                label={`${migrationSpeed}x`}
+                onClick={() => setMigrationSpeed(migrationSpeed >= 5 ? 1 : migrationSpeed === 1 ? 2 : 5)}
+              />
+            )}
+            <ModeToolButton
+              icon="🗺️"
+              label={language === "zh" ? "迁徙旅程" : "Journeys"}
+              active={journeyPanelOpen}
+              onClick={toggleJourneyPanel}
+            />
+            <ModeToolButton
+              icon="🎤"
+              label={soundRecognitionActive
+                ? (language === "zh" ? "录音中..." : "Listening...")
+                : (language === "zh" ? "识音" : "Sound ID")}
+              active={soundRecognitionActive}
+              onClick={handleSoundRecognition}
+            />
+          </>
+        )}
+
+        {appMode === "learning" && (
           <>
             <ModeToolButton
               icon="📚"
@@ -340,31 +376,10 @@ export function MainModePanel() {
               active={evolutionTimelineOpen}
               onClick={() => setEvolutionTimelineOpen(!evolutionTimelineOpen)}
             />
-          </>
-        )}
-
-        {uiMode === "play" && (
-          <>
             <ModeToolButton
-              icon="📋"
-              label={language === "zh" ? "任务" : "Missions"}
-              active={missionsPanelOpen}
-              badge={incompleteMissions || undefined}
-              onClick={() => setMissionsPanelOpen(!missionsPanelOpen)}
-            />
-            <ModeToolButton
-              icon="🎤"
-              label={soundRecognitionActive
-                ? (language === "zh" ? "录音中..." : "Listening...")
-                : (language === "zh" ? "识音" : "Sound ID")}
-              active={soundRecognitionActive}
-              onClick={handleSoundRecognition}
-            />
-            <ModeToolButton
-              icon="🎯"
-              label={language === "zh" ? "探索" : "Quests"}
-              active={questsOpen}
-              onClick={() => setQuestsOpen(!questsOpen)}
+              icon="🎲"
+              label={language === "zh" ? "发现" : "Discover"}
+              onClick={handleDiscover}
             />
           </>
         )}

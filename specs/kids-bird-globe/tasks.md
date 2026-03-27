@@ -98,6 +98,7 @@
 - [ ] **264.14** Build passes without TypeScript errors. (AC-V32-7)
 
 ---
+
 > v8 phases (56–64) and v9 phases (65–75) are complete.
 > v10 phases (76–84) are complete.
 > v11 phases (85–92) are complete.
@@ -1554,71 +1555,71 @@
 
 ## Summary (v30)
 
-| Group | Tasks | Status |
-|-------|-------|--------|
-| Core Module Setup (v21) | 174.1–174.5 | Complete |
-| Systems Module Setup (v21) | 175.1–175.7 | Complete |
-| Data Separation (v21) | 176.1–176.3 | Complete |
-| Component Rewiring (v21) | 177.1–177.3 | Complete |
-| V21 Verification | 178.1–178.5 | Complete |
-| **Total v21 tasks** | **23 tasks** | **23 complete** |
-| Bird Database Expansion (v22) | 179.1–179.4 | Complete |
-| Region Clusters (v22) | 180.1–180.5 | Complete |
-| V22 Verification | 181.1–181.4 | Complete |
-| **Total v22 tasks** | **13 tasks** | **13 complete** |
-| Model LOD System (v23) | 182.1–182.4 | Complete |
-| Lazy Loading (v23) | 183.1–183.4 | Complete |
-| Instanced Markers (v23) | 184.1–184.4 | Complete |
-| Render Loop Optimization (v23) | 185.1–185.4 | Complete |
-| V23 Verification | 186.1–186.4 | Complete |
-| **Total v23 tasks** | **20 tasks** | **20 complete** |
-| Atmosphere Glow (v24) | 187.1–187.3 | Complete |
-| Cloud Layer (v24) | 188.1–188.3 | Complete |
-| Sun Light & Shadows (v24) | 189.1–189.4 | Complete |
-| Marker Visuals (v24) | 190.1–190.4 | Complete |
-| Camera Inertia (v24) | 191.1–191.3 | Complete |
-| V24 Verification | 192.1–192.6 | Complete |
-| **Total v24 tasks** | **23 tasks** | **23 complete** |
-| Expedition System (v25) | 193.1–193.6 | Complete |
-| Mission Panel (v25) | 194.1–194.7 | Complete |
-| Progress Tracker (v25) | 195.1–195.4 | Complete |
-| Completion Celebration (v25) | 196.1–196.4 | Complete |
-| V25 Verification | 197.1–197.7 | Complete |
-| **Total v25 tasks** | **28 tasks** | **28 complete** |
-| Enhanced Day/Night (v26) | 198.1–198.4 | Complete |
-| Weather Zones (v26) | 199.1–199.8 | Complete |
-| Bird Activity (v26) | 200.1–200.6 | Complete |
-| V26 Verification | 201.1–201.6 | Complete |
-| **Total v26 tasks** | **24 tasks** | **24 complete** |
-| Boids Algorithm (v27) | 202.1–202.7 | Complete |
-| Flock Rendering (v27) | 203.1–203.7 | Complete |
-| V27 Verification | 204.1–204.5 | Complete |
-| **Total v27 tasks** | **19 tasks** | **19 complete** |
-| Story System (v28) | 205.1–205.5 | Complete |
-| Story Camera (v28) | 206.1–206.4 | Complete |
-| Story Narration (v28) | 207.1–207.4 | Complete |
-| Story Panel UI (v28) | 208.1–208.8 | Complete |
-| V28 Verification | 209.1–209.7 | Complete |
-| **Total v28 tasks** | **28 tasks** | **28 complete** |
-| Screenshot Capture (v29) | 210.1–210.4 | Complete |
-| Share Card Generator (v29) | 211.1–211.5 | Complete |
-| Progress Export (v29) | 212.1–212.4 | Complete |
-| Share Panel UI (v29) | 213.1–213.6 | Complete |
-| V29 Verification | 214.1–214.6 | Complete |
-| **Total v29 tasks** | **25 tasks** | **25 complete** |
-| Enhanced Encyclopedia (v30) | 215.1–215.6 | Complete |
-| Detailed Bird Entry (v30) | 216.1–216.6 | Complete |
-| Performance Monitoring (v30) | 217.1–217.4 | Complete |
-| Dynamic LOD Tuning (v30) | 218.1–218.5 | Complete |
-| Asset Preloading (v30) | 219.1–219.4 | Complete |
-| Texture Compression (v30) | 220.1–220.4 | Complete |
-| V30 Verification | 221.1–221.7 | Complete |
-| **Total v30 tasks** | **36 tasks** | **36 complete** |
-| **Total v20 tasks** | **36 tasks** | **36 complete** |
-| **Total v19 tasks** | **36 tasks** | **36 complete** |
-| **Total v18 tasks** | **28 tasks** | **28 complete** |
-| **Total v17 tasks** | **30 tasks** | **30 complete** |
-| **Total all tasks (v1–v30)** | **~1267 tasks** | **~1169 complete** |
+| Group                          | Tasks           | Status             |
+| ------------------------------ | --------------- | ------------------ |
+| Core Module Setup (v21)        | 174.1–174.5     | Complete           |
+| Systems Module Setup (v21)     | 175.1–175.7     | Complete           |
+| Data Separation (v21)          | 176.1–176.3     | Complete           |
+| Component Rewiring (v21)       | 177.1–177.3     | Complete           |
+| V21 Verification               | 178.1–178.5     | Complete           |
+| **Total v21 tasks**            | **23 tasks**    | **23 complete**    |
+| Bird Database Expansion (v22)  | 179.1–179.4     | Complete           |
+| Region Clusters (v22)          | 180.1–180.5     | Complete           |
+| V22 Verification               | 181.1–181.4     | Complete           |
+| **Total v22 tasks**            | **13 tasks**    | **13 complete**    |
+| Model LOD System (v23)         | 182.1–182.4     | Complete           |
+| Lazy Loading (v23)             | 183.1–183.4     | Complete           |
+| Instanced Markers (v23)        | 184.1–184.4     | Complete           |
+| Render Loop Optimization (v23) | 185.1–185.4     | Complete           |
+| V23 Verification               | 186.1–186.4     | Complete           |
+| **Total v23 tasks**            | **20 tasks**    | **20 complete**    |
+| Atmosphere Glow (v24)          | 187.1–187.3     | Complete           |
+| Cloud Layer (v24)              | 188.1–188.3     | Complete           |
+| Sun Light & Shadows (v24)      | 189.1–189.4     | Complete           |
+| Marker Visuals (v24)           | 190.1–190.4     | Complete           |
+| Camera Inertia (v24)           | 191.1–191.3     | Complete           |
+| V24 Verification               | 192.1–192.6     | Complete           |
+| **Total v24 tasks**            | **23 tasks**    | **23 complete**    |
+| Expedition System (v25)        | 193.1–193.6     | Complete           |
+| Mission Panel (v25)            | 194.1–194.7     | Complete           |
+| Progress Tracker (v25)         | 195.1–195.4     | Complete           |
+| Completion Celebration (v25)   | 196.1–196.4     | Complete           |
+| V25 Verification               | 197.1–197.7     | Complete           |
+| **Total v25 tasks**            | **28 tasks**    | **28 complete**    |
+| Enhanced Day/Night (v26)       | 198.1–198.4     | Complete           |
+| Weather Zones (v26)            | 199.1–199.8     | Complete           |
+| Bird Activity (v26)            | 200.1–200.6     | Complete           |
+| V26 Verification               | 201.1–201.6     | Complete           |
+| **Total v26 tasks**            | **24 tasks**    | **24 complete**    |
+| Boids Algorithm (v27)          | 202.1–202.7     | Complete           |
+| Flock Rendering (v27)          | 203.1–203.7     | Complete           |
+| V27 Verification               | 204.1–204.5     | Complete           |
+| **Total v27 tasks**            | **19 tasks**    | **19 complete**    |
+| Story System (v28)             | 205.1–205.5     | Complete           |
+| Story Camera (v28)             | 206.1–206.4     | Complete           |
+| Story Narration (v28)          | 207.1–207.4     | Complete           |
+| Story Panel UI (v28)           | 208.1–208.8     | Complete           |
+| V28 Verification               | 209.1–209.7     | Complete           |
+| **Total v28 tasks**            | **28 tasks**    | **28 complete**    |
+| Screenshot Capture (v29)       | 210.1–210.4     | Complete           |
+| Share Card Generator (v29)     | 211.1–211.5     | Complete           |
+| Progress Export (v29)          | 212.1–212.4     | Complete           |
+| Share Panel UI (v29)           | 213.1–213.6     | Complete           |
+| V29 Verification               | 214.1–214.6     | Complete           |
+| **Total v29 tasks**            | **25 tasks**    | **25 complete**    |
+| Enhanced Encyclopedia (v30)    | 215.1–215.6     | Complete           |
+| Detailed Bird Entry (v30)      | 216.1–216.6     | Complete           |
+| Performance Monitoring (v30)   | 217.1–217.4     | Complete           |
+| Dynamic LOD Tuning (v30)       | 218.1–218.5     | Complete           |
+| Asset Preloading (v30)         | 219.1–219.4     | Complete           |
+| Texture Compression (v30)      | 220.1–220.4     | Complete           |
+| V30 Verification               | 221.1–221.7     | Complete           |
+| **Total v30 tasks**            | **36 tasks**    | **36 complete**    |
+| **Total v20 tasks**            | **36 tasks**    | **36 complete**    |
+| **Total v19 tasks**            | **36 tasks**    | **36 complete**    |
+| **Total v18 tasks**            | **28 tasks**    | **28 complete**    |
+| **Total v17 tasks**            | **30 tasks**    | **30 complete**    |
+| **Total all tasks (v1–v30)**   | **~1267 tasks** | **~1169 complete** |
 
 ---
 
@@ -2101,59 +2102,59 @@
 
 ## Summary (v31-v40)
 
-| Group | Tasks | Status |
-|-------|-------|--------|
-| AI Guide Knowledge Base (v31) | 222.1–222.6 | Pending |
-| AI Guide Service Layer (v31) | 223.1–223.5 | Pending |
-| AI Guide UI Upgrade (v31) | 224.1–224.9 | Pending |
-| Learning Track Data (v31) | 225b.1–225b.7 | Pending |
-| Learning Track UI (v31) | 226b.1–226b.8 | Pending |
-| Ecosystem Simulation (v31) | 227b.1–227b.8 | Pending |
-| Habitat Filter (v31) | 228b.1–228b.8 | Pending |
-| Seasonal Migration (v31) | 229b.1–229b.7 | Pending |
-| Data Expansion (v31) | 230b.1–230b.9 | Pending |
-| V31 Verification | 231b.1–231b.12 | Pending |
-| **Total v31 tasks** | **79 tasks** | **0 complete** |
-| Enhanced AR Mode (v32) | 225.1–225.6 | Pending |
-| AR UI Overlay (v32) | 226.1–226.5 | Pending |
-| V32 Verification | 227.1–227.5 | Pending |
-| **Total v32 tasks** | **16 tasks** | **0 complete** |
-| Animation State Machine (v33) | 228.1–228.7 | Pending |
-| Anchor Points (v33) | 229.1–229.4 | Pending |
-| V33 Verification | 230.1–230.5 | Pending |
-| **Total v33 tasks** | **16 tasks** | **0 complete** |
-| Photographer System (v34) | 231.1–231.7 | Pending |
-| Photographer UI (v34) | 232.1–232.7 | Pending |
-| V34 Verification | 233.1–233.5 | Pending |
-| **Total v34 tasks** | **19 tasks** | **0 complete** |
-| Biome System (v35) | 234.1–234.8 | Pending |
-| Biome Audio (v35) | 235.1–235.4 | Pending |
-| Biome Bird Assignment (v35) | 236.1–236.4 | Pending |
-| V35 Verification | 237.1–237.5 | Pending |
-| **Total v35 tasks** | **21 tasks** | **0 complete** |
-| Real Migration Data (v36) | 238.1–238.5 | Pending |
-| Migration Visualization (v36) | 239.1–239.5 | Pending |
-| V36 Verification | 240.1–240.5 | Pending |
-| **Total v36 tasks** | **15 tasks** | **0 complete** |
-| HDR Lighting (v37) | 241.1–241.4 | Pending |
-| Volumetric Clouds (v37) | 242.1–242.4 | Pending |
-| Atmospheric Scattering (v37) | 243.1–243.4 | Pending |
-| V37 Verification | 244.1–244.5 | Pending |
-| **Total v37 tasks** | **17 tasks** | **0 complete** |
-| Encyclopedia Pro Filters (v38) | 245.1–245.6 | Pending |
-| Enhanced Bird Entry (v38) | 246.1–246.6 | Pending |
-| V38 Verification | 247.1–247.5 | Pending |
-| **Total v38 tasks** | **17 tasks** | **0 complete** |
-| Classroom System (v39) | 248.1–248.5 | Pending |
-| Presentation UI (v39) | 249.1–249.6 | Pending |
-| V39 Verification | 250.1–250.5 | Pending |
-| **Total v39 tasks** | **16 tasks** | **0 complete** |
-| Sandbox System (v40) | 251.1–251.9 | Pending |
-| Sandbox UI (v40) | 252.1–252.9 | Pending |
-| V40 Verification | 253.1–253.8 | Pending |
-| **Total v40 tasks** | **26 tasks** | **0 complete** |
-| **Total v31-v40 tasks** | **242 tasks** | **0 complete** |
-| **Total all tasks (v1–v40)** | **~1509 tasks** | **~1169 complete** |
+| Group                          | Tasks           | Status             |
+| ------------------------------ | --------------- | ------------------ |
+| AI Guide Knowledge Base (v31)  | 222.1–222.6     | Pending            |
+| AI Guide Service Layer (v31)   | 223.1–223.5     | Pending            |
+| AI Guide UI Upgrade (v31)      | 224.1–224.9     | Pending            |
+| Learning Track Data (v31)      | 225b.1–225b.7   | Pending            |
+| Learning Track UI (v31)        | 226b.1–226b.8   | Pending            |
+| Ecosystem Simulation (v31)     | 227b.1–227b.8   | Pending            |
+| Habitat Filter (v31)           | 228b.1–228b.8   | Pending            |
+| Seasonal Migration (v31)       | 229b.1–229b.7   | Pending            |
+| Data Expansion (v31)           | 230b.1–230b.9   | Pending            |
+| V31 Verification               | 231b.1–231b.12  | Pending            |
+| **Total v31 tasks**            | **79 tasks**    | **0 complete**     |
+| Enhanced AR Mode (v32)         | 225.1–225.6     | Pending            |
+| AR UI Overlay (v32)            | 226.1–226.5     | Pending            |
+| V32 Verification               | 227.1–227.5     | Pending            |
+| **Total v32 tasks**            | **16 tasks**    | **0 complete**     |
+| Animation State Machine (v33)  | 228.1–228.7     | Pending            |
+| Anchor Points (v33)            | 229.1–229.4     | Pending            |
+| V33 Verification               | 230.1–230.5     | Pending            |
+| **Total v33 tasks**            | **16 tasks**    | **0 complete**     |
+| Photographer System (v34)      | 231.1–231.7     | Pending            |
+| Photographer UI (v34)          | 232.1–232.7     | Pending            |
+| V34 Verification               | 233.1–233.5     | Pending            |
+| **Total v34 tasks**            | **19 tasks**    | **0 complete**     |
+| Biome System (v35)             | 234.1–234.8     | Pending            |
+| Biome Audio (v35)              | 235.1–235.4     | Pending            |
+| Biome Bird Assignment (v35)    | 236.1–236.4     | Pending            |
+| V35 Verification               | 237.1–237.5     | Pending            |
+| **Total v35 tasks**            | **21 tasks**    | **0 complete**     |
+| Real Migration Data (v36)      | 238.1–238.5     | Pending            |
+| Migration Visualization (v36)  | 239.1–239.5     | Pending            |
+| V36 Verification               | 240.1–240.5     | Pending            |
+| **Total v36 tasks**            | **15 tasks**    | **0 complete**     |
+| HDR Lighting (v37)             | 241.1–241.4     | Pending            |
+| Volumetric Clouds (v37)        | 242.1–242.4     | Pending            |
+| Atmospheric Scattering (v37)   | 243.1–243.4     | Pending            |
+| V37 Verification               | 244.1–244.5     | Pending            |
+| **Total v37 tasks**            | **17 tasks**    | **0 complete**     |
+| Encyclopedia Pro Filters (v38) | 245.1–245.6     | Pending            |
+| Enhanced Bird Entry (v38)      | 246.1–246.6     | Pending            |
+| V38 Verification               | 247.1–247.5     | Pending            |
+| **Total v38 tasks**            | **17 tasks**    | **0 complete**     |
+| Classroom System (v39)         | 248.1–248.5     | Pending            |
+| Presentation UI (v39)          | 249.1–249.6     | Pending            |
+| V39 Verification               | 250.1–250.5     | Pending            |
+| **Total v39 tasks**            | **16 tasks**    | **0 complete**     |
+| Sandbox System (v40)           | 251.1–251.9     | Pending            |
+| Sandbox UI (v40)               | 252.1–252.9     | Pending            |
+| V40 Verification               | 253.1–253.8     | Pending            |
+| **Total v40 tasks**            | **26 tasks**    | **0 complete**     |
+| **Total v31-v40 tasks**        | **242 tasks**   | **0 complete**     |
+| **Total all tasks (v1–v40)**   | **~1509 tasks** | **~1169 complete** |
 
 ---
 
@@ -2393,3 +2394,195 @@
 - [ ] **256b.4** Label size scales with camera distance. (AC-V35-labels)
 - [ ] **256b.5** Build succeeds without errors. (AC-V35-labels)
 - [ ] **256b.6** 60 FPS maintained. (AC-V35-labels)
+
+---
+
+# V33 Tasks (AI Bird Guide)
+
+---
+
+## Phase 265: Types & PromptTemplate System
+
+- [ ] **265.1** Add `KnowledgeResult` interface to `types.ts` (text, textZh, source: "static" | "cache" | "ai").
+- [ ] **265.2** Add `PromptTemplate` interface to `types.ts` (id, system, user template strings).
+- [ ] **265.3** Add `TTSStatus` type to `types.ts` ("idle" | "speaking" | "unavailable").
+- [ ] **265.4** Create `src/features/prompt-templates.ts` — template registry with `getTemplate(id)` and `renderTemplate(template, vars)`.
+- [ ] **265.5** Define `bird-explain` template: system prompt for kid-friendly educator, user prompt with `{{birdName}}`, `{{habitat}}`, `{{funFact}}`, `{{diet}}`, `{{region}}` variables.
+
+---
+
+## Phase 266: AIProvider Abstraction
+
+- [ ] **266.1** Create `src/features/ai-provider.ts` — `AIProvider` interface with `id`, `isAvailable()`, `generate(system, user)`.
+- [ ] **266.2** Implement `OpenAIProvider` class using `VITE_OPENAI_API_KEY` and `gpt-4o-mini`.
+- [ ] **266.3** `generate()` returns `{ text: string; textZh: string } | null`.
+- [ ] **266.4** `isAvailable()` checks for API key presence.
+- [ ] **266.5** Error handling: return `null` on network/auth/parse failures.
+
+---
+
+## Phase 267: KnowledgeCache
+
+- [ ] **267.1** Create `src/features/knowledge-cache.ts` — localStorage-backed cache.
+- [ ] **267.2** Key format: `bird-guide-cache-{birdId}`.
+- [ ] **267.3** `get(birdId)` returns `{ text, textZh, timestamp } | null`.
+- [ ] **267.4** `set(birdId, result)` stores with current timestamp.
+- [ ] **267.5** LRU eviction at 200 entries max.
+
+---
+
+## Phase 268: KnowledgeService Orchestrator
+
+- [ ] **268.1** Create `src/features/KnowledgeService.ts` — single `queryBirdExplanation(birdId): Promise<KnowledgeResult>`.
+- [ ] **268.2** L1: Build static explanation from bird data fields via PromptTemplate rendering.
+- [ ] **268.3** L2: Check KnowledgeCache. If hit, return with `source: "cache"`.
+- [ ] **268.4** L3: If AIProvider available, render prompt, call provider, cache result, return with `source: "ai"`.
+- [ ] **268.5** Fallback: If L3 fails or unavailable, return L1 with `source: "static"`.
+- [ ] **268.6** Enforce ≤100 word limit on all returned explanations.
+
+---
+
+## Phase 269: TTS Service
+
+- [ ] **269.1** Create `src/features/tts-service.ts` — `speak(text, lang)`, `stop()`, `isAvailable()`.
+- [ ] **269.2** Use `SpeechSynthesisUtterance` with rate 0.9.
+- [ ] **269.3** Language: `zh-CN` for Chinese, `en-US` for English.
+- [ ] **269.4** Cancel current speech on `stop()` or new `speak()` call.
+
+---
+
+## Phase 270: Store Integration
+
+- [ ] **270.1** Add `birdExplanation: KnowledgeResult | null` to store interface.
+- [ ] **270.2** Add `birdExplanationLoading: boolean` to store interface.
+- [ ] **270.3** Add `ttsStatus: TTSStatus` to store interface.
+- [ ] **270.4** Add `requestBirdExplanation(birdId: string)` async action — calls KnowledgeService, sets result.
+- [ ] **270.5** Add `clearBirdExplanation()` action.
+- [ ] **270.6** Add `speakExplanation()` action — triggers TTS with current explanation.
+- [ ] **270.7** Add `stopSpeaking()` action.
+
+---
+
+## Phase 271: UI — BirdInfoCard Button
+
+- [ ] **271.1** Add "Tell me about this bird!" / "给我讲讲这只鸟！" button to `BirdInfoCard.tsx`.
+- [ ] **271.2** Button dispatches `requestBirdExplanation(selectedBirdId)`.
+- [ ] **271.3** Button disabled while `birdExplanationLoading` is true.
+- [ ] **271.4** Minimum tap size 56px.
+
+---
+
+## Phase 272: UI — AIBirdGuidePanel Upgrade
+
+- [ ] **272.1** Show explanation text with `ResponseRenderer` typing animation when `birdExplanation` is set.
+- [ ] **272.2** Show loading spinner during AI call (`birdExplanationLoading`).
+- [ ] **272.3** Show TTS play button after typing completes.
+- [ ] **272.4** Show source badge: "📚 Local" / "💾 Cached" / "🤖 AI".
+- [ ] **272.5** TTS button calls `speakExplanation()` store action.
+- [ ] **272.6** Panel auto-opens when explanation arrives.
+- [ ] **272.7** Clear explanation on panel close.
+
+---
+
+## Phase 273: Integration & Verification
+
+- [ ] **273.1** Wire `BirdInfoCard` button to store `requestBirdExplanation`.
+- [ ] **273.2** Wire `AIBirdGuidePanel` to read `birdExplanation` and `birdExplanationLoading` from store.
+- [ ] **273.3** Verify L1 → L2 → L3 query order (static → cache → AI).
+- [ ] **273.4** Verify each bird triggers AI at most once (second click returns cache).
+- [ ] **273.5** Verify offline mode works (L1 static data returned).
+- [ ] **273.6** Verify no hardcoded prompts (all via PromptTemplate).
+- [ ] **273.7** Verify no direct API calls in UI components.
+- [ ] **273.8** Verify TTS playback works.
+- [ ] **273.9** Build passes without TypeScript errors. (AC-V33-guide)
+- [ ] **273.10** 60 FPS maintained. (AC-V33-guide)
+
+---
+
+# V33 Upgrade Tasks — Mode-Driven HUD + Knowledge System Hardening
+
+## Phase 280: Types — Replace UIMode with AppMode
+
+- [ ] **280.1** Add `AppMode` type: `"explore" | "migration" | "learning"` to `types.ts`.
+- [ ] **280.2** Deprecate `UIMode` type (keep as alias for backward compat during migration).
+- [ ] **280.3** Verify no TypeScript errors after type addition.
+
+---
+
+## Phase 281: Store — AppMode Integration
+
+- [ ] **281.1** Replace `uiMode: UIMode` with `appMode: AppMode` in store interface.
+- [ ] **281.2** Replace `setUIMode` with `setAppMode` action.
+- [ ] **281.3** Update initial state: `appMode: "explore"`.
+- [ ] **281.4** Update all internal references from `uiMode` to `appMode`.
+- [ ] **281.5** Verify store compiles without errors.
+
+---
+
+## Phase 282: ModeGate Component
+
+- [ ] **282.1** Create `src/components/ui/ModeGate.tsx`.
+- [ ] **282.2** Implement: reads `appMode` from store, returns `null` if mode not in allowed list.
+- [ ] **282.3** Export `ModeGate` and `MODE_VISIBILITY` map.
+
+---
+
+## Phase 283: App.tsx — Mode-Driven Rendering
+
+- [ ] **283.1** Import `ModeGate` in `App.tsx`.
+- [ ] **283.2** Wrap sidebar panels (ScienceHUD, SeasonSelector, etc.) with appropriate `ModeGate`.
+- [ ] **283.3** Wrap bottom panels (GuidedTour, BottomDiscoveryPanel, TimelinePanel) with `ModeGate`.
+- [ ] **283.4** Wrap card panels (BirdInfoCard, AIBirdGuidePanel, MigrationInfoCard) with `ModeGate`.
+- [ ] **283.5** Wrap modal panels with `ModeGate`.
+- [ ] **283.6** Keep always-visible components unwrapped (LoadingScreen, PerformanceMonitor, AudioPlayer).
+- [ ] **283.7** Verify all panels render correctly in each mode.
+
+---
+
+## Phase 284: MainModePanel — Mode Selector Update
+
+- [ ] **284.1** Update MODES array: `explore` → "Explore", `migration` → "Migration", `learning` → "Learning".
+- [ ] **284.2** Replace `setUIMode` calls with `setAppMode`.
+- [ ] **284.3** Replace `uiMode` reads with `appMode`.
+- [ ] **284.4** Update context tools to match new mode names.
+- [ ] **284.5** Verify mode switching works end-to-end.
+
+---
+
+## Phase 285: KnowledgeService Hardening
+
+- [ ] **285.1** Add try/catch error boundary around L3 AI call in `queryBirdExplanation`.
+- [ ] **285.2** Add timeout (10s) for AI provider calls.
+- [ ] **285.3** Ensure L1 static fallback always returns valid data.
+- [ ] **285.4** Add input validation for birdId parameter.
+- [ ] **285.5** Verify cache-first behavior (L2 before L3).
+
+---
+
+## Phase 286: AIProvider Hardening
+
+- [ ] **286.1** Add AbortController timeout (10s) to fetch call.
+- [ ] **286.2** Add response validation (check JSON structure).
+- [ ] **286.3** Return null on any error (no thrown exceptions).
+- [ ] **286.4** Verify provider works with and without API key.
+
+---
+
+## Phase 287: AIBirdGuidePanel — Remove Direct Speech Calls
+
+- [ ] **287.1** Remove direct `window.speechSynthesis` usage in `handleNarrate`.
+- [ ] **287.2** Use store `speakExplanation`/`stopSpeaking` actions instead.
+- [ ] **287.3** Verify TTS works through store actions only.
+
+---
+
+## Phase 288: Integration & Verification
+
+- [ ] **288.1** All panels render correctly per mode.
+- [ ] **288.2** Mode switching hides/shows correct panels.
+- [ ] **288.3** KnowledgeService L1→L2→L3 flow works.
+- [ ] **288.4** No direct AI calls in UI components.
+- [ ] **288.5** No duplicated feature entry points.
+- [ ] **288.6** Globe occupies ≥70% viewport.
+- [ ] **288.7** Build passes without TypeScript errors. (AC-V33-mode)
+- [ ] **288.8** 60 FPS maintained. (AC-V33-mode)

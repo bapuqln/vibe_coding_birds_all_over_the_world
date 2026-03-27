@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type {
   AchievementProgress,
+  AppMode,
   AudioStatus,
   BirdPhoto,
   CollectedBird,
@@ -9,8 +10,8 @@ import type {
   ExpeditionProgress,
   HabitatFilterType,
   JourneyProgress,
+  KnowledgeResult,
   Language,
-  UIMode,
   MissionTemplate,
   PhotoScore,
   QuestProgress,
@@ -25,6 +26,7 @@ import type {
   TimeState,
   TourState,
   TrackProgress,
+  TTSStatus,
   WorldState,
 } from "./types";
 import { createInitialTimeState } from "./core/TimeController";
@@ -238,6 +240,11 @@ interface AppStore {
   aiGuideQuestion: string | null;
   aiGuideAnswer: string | null;
 
+  // V33 — AI Bird Guide Knowledge System
+  birdExplanation: KnowledgeResult | null;
+  birdExplanationLoading: boolean;
+  ttsStatus: TTSStatus;
+
   // V32 — AR
   arSessionActive: boolean;
 
@@ -298,8 +305,8 @@ interface AppStore {
   soundRecognitionResult: string | null;
   soundRecognitionConfidence: number;
 
-  // V33 — UI Mode
-  uiMode: UIMode;
+  // V33 — App Mode (mode-driven HUD)
+  appMode: AppMode;
   birdCardExpanded: boolean;
 
   // V34 — Migration Journey
@@ -409,6 +416,12 @@ interface AppStore {
   setAiGuideQuestion: (q: string | null) => void;
   setAiGuideAnswer: (a: string | null) => void;
 
+  // V33 — AI Bird Guide Knowledge System
+  requestBirdExplanation: (birdId: string) => void;
+  clearBirdExplanation: () => void;
+  speakExplanation: () => void;
+  stopSpeaking: () => void;
+
   // V32
   setArSessionActive: (active: boolean) => void;
 
@@ -468,8 +481,8 @@ interface AppStore {
   setSoundRecognitionResult: (birdId: string | null) => void;
   setSoundRecognitionConfidence: (confidence: number) => void;
 
-  // V33 — UI Mode
-  setUIMode: (mode: UIMode) => void;
+  // V33 — App Mode (mode-driven HUD)
+  setAppMode: (mode: AppMode) => void;
   setBirdCardExpanded: (expanded: boolean) => void;
 
   // V34 — Migration Journey
@@ -585,6 +598,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
   aiGuideQuestion: null,
   aiGuideAnswer: null,
 
+  birdExplanation: null,
+  birdExplanationLoading: false,
+  ttsStatus: "idle" as TTSStatus,
+
   arSessionActive: false,
 
   photographerModeActive: false,
@@ -636,7 +653,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   soundRecognitionResult: null,
   soundRecognitionConfidence: 0,
 
-  uiMode: "explore",
+  appMode: "explore",
   birdCardExpanded: true,
 
   activeJourneyId: null,
@@ -1126,6 +1143,38 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setAiGuideQuestion: (aiGuideQuestion) => set({ aiGuideQuestion }),
   setAiGuideAnswer: (aiGuideAnswer) => set({ aiGuideAnswer }),
 
+  requestBirdExplanation: (birdId) => {
+    set({ birdExplanationLoading: true, birdExplanation: null });
+    import("./features/KnowledgeService").then(({ queryBirdExplanation }) => {
+      queryBirdExplanation(birdId).then((result) => {
+        set({
+          birdExplanation: result,
+          birdExplanationLoading: false,
+          aiGuideOpen: true,
+        });
+      }).catch(() => {
+        set({ birdExplanationLoading: false });
+      });
+    });
+  },
+  clearBirdExplanation: () =>
+    set({ birdExplanation: null, birdExplanationLoading: false }),
+  speakExplanation: () => {
+    const { birdExplanation, language } = get();
+    if (!birdExplanation) return;
+    import("./features/tts-service").then(({ speak }) => {
+      const text = language === "zh" ? birdExplanation.textZh : birdExplanation.text;
+      const status = speak(text, language, () => set({ ttsStatus: "idle" }));
+      set({ ttsStatus: status });
+    });
+  },
+  stopSpeaking: () => {
+    import("./features/tts-service").then(({ stop }) => {
+      stop();
+      set({ ttsStatus: "idle" });
+    });
+  },
+
   setArSessionActive: (arSessionActive) => set({ arSessionActive }),
 
   setPhotographerModeActive: (photographerModeActive) => set({ photographerModeActive, photographerScore: null }),
@@ -1264,7 +1313,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setSoundRecognitionResult: (soundRecognitionResult) => set({ soundRecognitionResult }),
   setSoundRecognitionConfidence: (soundRecognitionConfidence) => set({ soundRecognitionConfidence }),
 
-  setUIMode: (uiMode) => set({ uiMode }),
+  setAppMode: (appMode) => set({ appMode }),
   setBirdCardExpanded: (birdCardExpanded) => set({ birdCardExpanded }),
 
   setActiveJourney: (activeJourneyId) => set({ activeJourneyId }),

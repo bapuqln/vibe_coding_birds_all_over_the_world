@@ -27,6 +27,8 @@ export function BirdInfoCard() {
   const incrementListenCount = useAppStore((s) => s.incrementListenCount);
   const birdCardExpanded = useAppStore((s) => s.birdCardExpanded);
   const setBirdCardExpanded = useAppStore((s) => s.setBirdCardExpanded);
+  const requestBirdExplanation = useAppStore((s) => s.requestBirdExplanation);
+  const birdExplanationLoading = useAppStore((s) => s.birdExplanationLoading);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -633,6 +635,58 @@ export function BirdInfoCard() {
                       {narrationText}
                     </div>
                   )}
+
+                  {/* V33: AI Bird Guide — "Tell me about this bird!" */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedBirdId) requestBirdExplanation(selectedBirdId);
+                    }}
+                    disabled={birdExplanationLoading}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      borderRadius: 9999,
+                      padding: "12px 0",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: birdExplanationLoading ? "wait" : "pointer",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                      background: birdExplanationLoading
+                        ? "linear-gradient(135deg, #a78bfa, #818cf8)"
+                        : "linear-gradient(135deg, #f472b6, #ec4899)",
+                      color: "white",
+                      boxShadow: "0 4px 16px rgba(236, 72, 153, 0.3)",
+                      minHeight: 56,
+                      opacity: birdExplanationLoading ? 0.7 : 1,
+                    }}
+                    onMouseEnter={(e) => { if (!birdExplanationLoading) (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+                    aria-label={language === "zh" ? "给我讲讲这只鸟" : "Tell me about this bird"}
+                  >
+                    {birdExplanationLoading ? (
+                      <>
+                        <span style={{
+                          display: "inline-block",
+                          width: 16,
+                          height: 16,
+                          border: "2px solid rgba(255,255,255,0.3)",
+                          borderTopColor: "white",
+                          borderRadius: "50%",
+                          animation: "spin 0.6s linear infinite",
+                        }} />
+                        <span>{language === "zh" ? "正在思考..." : "Thinking..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>✨</span>
+                        <span>{language === "zh" ? "给我讲讲这只鸟！" : "Tell me about this bird!"}</span>
+                      </>
+                    )}
+                  </button>
 
                   <div style={{ display: "flex", gap: SP.sm }}>
                     <button

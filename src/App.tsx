@@ -50,6 +50,7 @@ import { MigrationJourneyPanel } from "./components/ui/MigrationJourneyPanel";
 import { SeasonSelector } from "./components/ui/SeasonSelector";
 import { TimelinePanel } from "./ui/TimelinePanel";
 import { MigrationInfoCard } from "./ui/MigrationInfoCard";
+import { ModeGate } from "./components/ui/ModeGate";
 import { useAppStore } from "./store";
 
 export default function App() {
@@ -57,7 +58,7 @@ export default function App() {
 
   return (
     <div className="relative h-full w-full">
-      {/* Layer 0 — Globe Canvas */}
+      {/* Layer 0 — Globe Canvas (always visible, ≥70% viewport) */}
       <div className="absolute inset-0" style={{ zIndex: "var(--z-globe)" }}>
         <Canvas
           shadows
@@ -71,7 +72,7 @@ export default function App() {
         </Canvas>
       </div>
 
-      {/* Layer 2 — Sidebar Controls (dims when bird card open) */}
+      {/* Layer 2 — Sidebar Controls (mode-gated) */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{
@@ -82,73 +83,99 @@ export default function App() {
         }}
       >
         <AppTitle />
-        <ScienceHUD />
-        <SeasonSelector />
+        <ModeGate modes={["explore", "learning"]}>
+          <ScienceHUD />
+        </ModeGate>
+        <ModeGate modes={["explore", "migration"]}>
+          <SeasonSelector />
+        </ModeGate>
         <LangToggle />
-        <DiscoveryProgressBar />
-        <ExpeditionProgressBar />
+        <ModeGate modes={["explore"]}>
+          <DiscoveryProgressBar />
+          <ExpeditionProgressBar />
+        </ModeGate>
         <MainModePanel />
-        <BirdGuide />
-        <BirdRadar />
-        <StoryExplorer />
-        <BirdEncyclopediaPanel />
-        <QuizPanel />
-        <SoundGuessPanel />
-        <EvolutionTimeline />
-        <TimeIndicator />
+        <ModeGate modes={["explore"]}>
+          <BirdGuide />
+          <BirdRadar />
+          <StoryExplorer />
+          <QuizPanel />
+          <SoundGuessPanel />
+          <TimeIndicator />
+        </ModeGate>
+        <ModeGate modes={["learning"]}>
+          <BirdEncyclopediaPanel />
+          <EvolutionTimeline />
+        </ModeGate>
       </div>
 
-      {/* Layer 3 — Bottom Panels */}
+      {/* Layer 3 — Bottom Panels (mode-gated) */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{ zIndex: "var(--z-bottom-panel)" }}
       >
-        <GuidedTour />
-        <BottomDiscoveryPanel />
-        <SandboxToolbar />
-        <TimelinePanel />
+        <ModeGate modes={["explore"]}>
+          <GuidedTour />
+          <BottomDiscoveryPanel />
+          <SandboxToolbar />
+        </ModeGate>
+        <ModeGate modes={["migration"]}>
+          <TimelinePanel />
+        </ModeGate>
       </div>
 
-      {/* Layer 4 — Information Cards */}
+      {/* Layer 4 — Information Cards (mode-gated) */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{ zIndex: "var(--z-card)" }}
       >
-        <BirdInfoCard />
-        <DiscoveryNotification />
-        <ExpeditionNotification />
-        <AchievementNotification />
-        <TrackNotification />
-        <BirdEntryPanel />
-        <AIBirdGuidePanel />
-        <MigrationInfoCard />
+        <ModeGate modes={["explore", "learning"]}>
+          <BirdInfoCard />
+          <BirdEntryPanel />
+          <AIBirdGuidePanel />
+        </ModeGate>
+        <ModeGate modes={["explore"]}>
+          <DiscoveryNotification />
+          <ExpeditionNotification />
+          <AchievementNotification />
+          <TrackNotification />
+        </ModeGate>
+        <ModeGate modes={["migration"]}>
+          <MigrationInfoCard />
+        </ModeGate>
       </div>
 
-      {/* Layer 5 — Modal Dialogs */}
+      {/* Layer 5 — Modal Dialogs (mode-gated) */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{ zIndex: "var(--z-modal)" }}
       >
-        <MyBirdsPanel />
-        <RegionFilterPanel />
-        <QuestPanel />
-        <ContinentBirdPanel />
-        <ARViewerModal />
-        <DailyMissionsPanel />
-        <PhotoGalleryPanel />
-        <AchievementPanel />
-        <ExpeditionPanel />
-        <StoryModePanel />
-        <SharePanel />
-        <ClassroomPanel />
-        <TrackPanel />
-        <BirdComparePanel />
-        <DiscoverMissionsPanel />
-        <EcosystemPanel />
-        <MigrationJourneyPanel />
+        <ModeGate modes={["explore"]}>
+          <MyBirdsPanel />
+          <RegionFilterPanel />
+          <QuestPanel />
+          <ContinentBirdPanel />
+          <ARViewerModal />
+          <DailyMissionsPanel />
+          <PhotoGalleryPanel />
+          <AchievementPanel />
+          <ExpeditionPanel />
+          <StoryModePanel />
+          <SharePanel />
+          <EcosystemPanel />
+        </ModeGate>
+        <ModeGate modes={["explore", "migration"]}>
+          <MigrationJourneyPanel />
+        </ModeGate>
+        <ModeGate modes={["learning"]}>
+          <ClassroomPanel />
+          <TrackPanel />
+          <BirdComparePanel />
+          <DiscoverMissionsPanel />
+        </ModeGate>
       </div>
 
-      {/* Layer 6 — Full Screen Overlays */}
+      {/* Layer 6 — Full Screen Overlays (always visible) */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{ zIndex: "var(--z-overlay)" }}

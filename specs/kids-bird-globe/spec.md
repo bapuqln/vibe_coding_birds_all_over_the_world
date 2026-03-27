@@ -1,4 +1,4 @@
-# 万羽拾音 (Kids Bird Globe) — Feature Specification v32
+# 万羽拾音 (Kids Bird Globe) — Feature Specification v33
 
 > **v32 changelog**: Bird Migration Intelligence — centralized TimeController as single source of truth for all animation (birds, paths, seasons), centralized animation scheduler replacing per-object loops, InstancedMesh-based bird flock rendering for 30+ simultaneous birds at 50+ FPS, spherical interpolation migration paths using CatmullRomCurve3 mapped onto globe surface, gradient path materials (bright head, dim tail), season visual system with shader-based hemisphere tinting (winter cool north, summer green, migration highlight), learning interaction system (click bird → pause timeline → highlight path → show info card), timeline UI with month scrubbing (Jan–Dec), play/pause, speed control (1x/2x).
 
@@ -13,20 +13,22 @@ V32 introduces a unified time-driven migration intelligence system. All animatio
 ### Data Models
 
 #### TimeState
+
 ```typescript
 interface TimeState {
-  month: number;       // 0–11 (Jan=0, Dec=11)
-  progress: number;    // 0–1 continuous progress within month
-  isPlaying: boolean;  // play/pause state
-  speed: number;       // 1 or 2
+  month: number; // 0–11 (Jan=0, Dec=11)
+  progress: number; // 0–1 continuous progress within month
+  isPlaying: boolean; // play/pause state
+  speed: number; // 1 or 2
 }
 ```
 
 #### MigrationPath
+
 ```typescript
 interface MigrationPath {
   birdId: string;
-  waypoints: [number, number][];  // [lat, lng] array
+  waypoints: [number, number][]; // [lat, lng] array
   season: "spring" | "autumn";
   color: string;
   nameZh: string;
@@ -35,21 +37,23 @@ interface MigrationPath {
 ```
 
 #### FlockConfig
+
 ```typescript
 interface FlockConfig {
   birdId: string;
-  instanceCount: number;  // 3–8
+  instanceCount: number; // 3–8
   pathId: string;
-  offsets: number[];      // random per-instance offset
+  offsets: number[]; // random per-instance offset
 }
 ```
 
 #### SeasonVisual
+
 ```typescript
 interface SeasonVisual {
   month: number;
-  northTint: string;    // hex color for northern hemisphere
-  southTint: string;    // hex color for southern hemisphere
+  northTint: string; // hex color for northern hemisphere
+  southTint: string; // hex color for southern hemisphere
   migrationHighlight: boolean;
 }
 ```
@@ -2207,10 +2211,10 @@ interface TrackProgress {
 
 ```typescript
 interface WorldState {
-  season: 'spring' | 'summer' | 'autumn' | 'winter';
+  season: "spring" | "summer" | "autumn" | "winter";
   temperature: number;
   wind: number;
-  timeOfDay: 'dawn' | 'morning' | 'afternoon' | 'dusk' | 'night';
+  timeOfDay: "dawn" | "morning" | "afternoon" | "dusk" | "night";
 }
 ```
 
@@ -2784,6 +2788,7 @@ As a child, I have a sandbox where I can experiment freely with birds, time, and
 This version enhances educational depth by introducing comparison learning, exploration missions, and evolution awareness.
 
 Children learn more effectively when they:
+
 - compare animals
 - complete missions
 - explore historical evolution
@@ -2820,8 +2825,8 @@ Highlight larger value in green.
 Example:
 
 Wingspan
-Albatross: 3.5m   (highlight)
-Eagle:     2.3m
+Albatross: 3.5m (highlight)
+Eagle: 2.3m
 
 Educational goal:
 Children visually understand biological differences between species.
@@ -3427,15 +3432,16 @@ Each journey represents a real-world migration route with multiple geographic st
 
 Example — Arctic Tern Journey:
 
-| Stop | Location |
-|------|----------|
-| 1 | Greenland (72°N, -40°W) |
-| 2 | United Kingdom (54°N, -2°W) |
-| 3 | Morocco (32°N, -5°W) |
-| 4 | South Africa (-34°S, 18°E) |
-| 5 | Antarctica (-75°S, 0°E) |
+| Stop | Location                    |
+| ---- | --------------------------- |
+| 1    | Greenland (72°N, -40°W)     |
+| 2    | United Kingdom (54°N, -2°W) |
+| 3    | Morocco (32°N, -5°W)        |
+| 4    | South Africa (-34°S, 18°E)  |
+| 5    | Antarctica (-75°S, 0°E)     |
 
 Each stop contains:
+
 - `latitude` / `longitude`
 - `name` (zh/en)
 - `birdIds` — birds discoverable at that stop
@@ -3455,6 +3461,7 @@ Clicking opens a journey selection panel listing available journeys:
 - Amazon Rainforest Loop
 
 Each journey card shows:
+
 - Journey name
 - Number of stops
 - Completion progress
@@ -3472,6 +3479,7 @@ When a journey is active:
 - Camera follows the route when "auto-follow" is enabled
 
 Clicking a stop marker:
+
 - Zooms camera to that region
 - Shows birds located at that stop
 - Allows discovery of new birds
@@ -3505,12 +3513,14 @@ Enhance the existing My Birds panel:
 Add a season selector in the top-right corner of the UI.
 
 Options:
+
 - 🌸 Spring
 - ☀️ Summer
 - 🍂 Autumn
 - ❄️ Winter
 
 Changing season updates:
+
 - Active migration routes (some routes only active in certain seasons)
 - Bird availability at stops
 - Visual atmosphere on globe
@@ -3563,6 +3573,7 @@ Continent and ocean labels must behave like physical markers attached to the glo
 Labels must be hidden when the continent they represent is on the back side of the globe relative to the camera.
 
 Detection method:
+
 - Convert each label's lat/lng position to a normalized 3D vector on the unit sphere.
 - Compute the camera direction vector (normalized camera position, since the globe is at origin).
 - Calculate `dot = positionVector.dot(cameraDirection)`.
@@ -3573,11 +3584,13 @@ Detection method:
 Even when a label is technically on the front side, labels near the globe's horizon edge should fade out smoothly.
 
 Thresholds:
+
 - `dot < 0` → fully hidden
 - `dot < 0.15` → fading zone
 - `dot >= 0.15` → fully visible
 
 Opacity formula:
+
 ```
 opacity = clamp((dot - 0.05) / 0.2, 0, 1)
 ```
@@ -3589,6 +3602,7 @@ This creates a smooth gradient from invisible to visible near the globe edge.
 When the camera is zoomed out, reduce label density to prevent visual clutter.
 
 Camera distance thresholds:
+
 - `distance > 4.0` → hide all labels
 - `distance > 3.0` → show only major continents: North America, Europe, Asia
 - `distance <= 3.0` → show all labels (current behavior)
@@ -3598,6 +3612,7 @@ Camera distance thresholds:
 Label size must scale with camera distance for consistent visual weight.
 
 Scale formula:
+
 ```
 scale = clamp(2 / distance, 0.6, 1.4)
 ```
@@ -3614,3 +3629,271 @@ Applied to the label container transform.
 - [ ] Label size scales with camera distance.
 - [ ] Build succeeds without errors.
 - [ ] 60 FPS maintained.
+
+---
+
+# V33 — AI Bird Guide
+
+## Overview
+
+V33 introduces a multi-layer knowledge system that generates kid-friendly bird explanations on click. The architecture enforces strict separation: UI never calls AI directly. All knowledge flows through a `KnowledgeService` that queries three layers in order:
+
+| Layer | Source                                                 | Latency    | Offline |
+| ----- | ------------------------------------------------------ | ---------- | ------- |
+| L1    | Static bird data (`birds.json`, `bird-knowledge.json`) | 0ms        | Yes     |
+| L2    | Local cache (`localStorage`)                           | 0ms        | Yes     |
+| L3    | Remote AI provider (OpenAI)                            | 200-2000ms | No      |
+
+Query order: L1 → L2 → L3. Each bird triggers AI at most once; results are cached in L2 for all future lookups.
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│  UI Layer (AIBirdGuidePanel)                     │
+│  - Click bird → request explanation              │
+│  - Display answer with typing animation          │
+│  - TTS playback button                           │
+│                                                  │
+│  ↕ store actions only                            │
+├─────────────────────────────────────────────────┤
+│  KnowledgeService                                │
+│  - queryBirdExplanation(birdId, lang)            │
+│  - Orchestrates L1 → L2 → L3 fallback           │
+│  - Returns { text, source }                      │
+│                                                  │
+│  ↕ delegates to layers                           │
+├─────────────────────────────────────────────────┤
+│  L1: StaticKnowledge                             │
+│  - birds.json fields → template rendering        │
+│  - bird-knowledge.json pattern matching          │
+│                                                  │
+│  L2: KnowledgeCache                              │
+│  - localStorage keyed by birdId+lang             │
+│  - Persisted across sessions                     │
+│                                                  │
+│  L3: AIProvider                                  │
+│  - Abstract interface                            │
+│  - OpenAIProvider implementation                 │
+│  - Uses PromptTemplate (no hardcoded prompts)    │
+└─────────────────────────────────────────────────┘
+```
+
+## KnowledgeService
+
+Single entry point for all bird knowledge queries. Never called from UI directly — only through store actions.
+
+```typescript
+interface KnowledgeResult {
+  text: string;
+  textZh: string;
+  source: "static" | "cache" | "ai";
+}
+
+function queryBirdExplanation(birdId: string): Promise<KnowledgeResult>;
+```
+
+Query flow:
+
+1. Check L1 (static data). If a rich explanation exists, return it.
+2. Check L2 (cache). If a cached AI result exists for this birdId, return it.
+3. Call L3 (AI provider). If API key present, generate explanation, cache in L2, return it.
+4. If L3 fails or no API key, return L1 fallback.
+
+## PromptTemplate System
+
+All prompts are defined as named templates in a registry. No string literals in service code.
+
+```typescript
+interface PromptTemplate {
+  id: string;
+  system: string;
+  user: string; // supports {{birdName}}, {{habitat}}, {{funFact}} etc.
+}
+```
+
+Templates:
+
+- `bird-explain`: Generate a short (≤100 words) kid-friendly explanation of a bird.
+- `bird-explain-zh`: Same but in Simplified Chinese.
+
+Template variables are interpolated from bird data at runtime.
+
+## AIProvider Abstraction
+
+```typescript
+interface AIProvider {
+  id: string;
+  generate(systemPrompt: string, userPrompt: string): Promise<string | null>;
+  isAvailable(): boolean;
+}
+```
+
+Implementations:
+
+- `OpenAIProvider`: Uses `VITE_OPENAI_API_KEY`, calls `gpt-4o-mini`.
+- Future providers can be added without changing KnowledgeService.
+
+## KnowledgeCache
+
+localStorage-backed cache keyed by `bird-guide-cache-{birdId}`.
+
+```typescript
+interface CachedExplanation {
+  text: string;
+  textZh: string;
+  timestamp: number;
+}
+```
+
+- Max 200 entries. LRU eviction when full.
+- Each bird triggers AI at most once (cache-first).
+
+## TTS Playback
+
+Web Speech API integration for reading explanations aloud.
+
+```typescript
+interface TTSState {
+  status: "idle" | "speaking" | "unavailable";
+}
+```
+
+- Uses `SpeechSynthesisUtterance` with rate 0.9.
+- Language matches current app language.
+- Cancel on panel close or new request.
+
+## UI: Click Bird → Explanation
+
+When a bird is clicked:
+
+1. `BirdInfoCard` shows a "Tell me about this bird!" button.
+2. Button dispatches `requestBirdExplanation(birdId)` store action.
+3. Store calls `KnowledgeService.queryBirdExplanation(birdId)`.
+4. Result displayed in `AIBirdGuidePanel` with typing animation.
+5. TTS button appears after typing completes.
+
+## Constraints
+
+- Each bird triggers AI at most once (enforced by L2 cache).
+- Explanations must be ≤100 words and kid-friendly.
+- Must support offline mode (L1 always available).
+- No hardcoded prompts (all via PromptTemplate registry).
+- No direct API calls in UI components.
+- Clear layering: UI → Store → KnowledgeService → Layers.
+
+### AC-V33-guide: AI Bird Guide
+
+- [ ] Click bird generates kid-friendly explanation (≤100 words).
+- [ ] KnowledgeService queries L1 → L2 → L3 in order.
+- [ ] AI called at most once per bird (cache enforced).
+- [ ] PromptTemplate system used (no hardcoded prompts).
+- [ ] AIProvider abstraction layer present.
+- [ ] TTS playback works via Web Speech API.
+- [ ] Offline mode works (L1 static data).
+- [ ] No direct API calls in UI components.
+- [ ] Build succeeds without TypeScript errors.
+- [ ] 60 FPS maintained.
+
+---
+
+## V33 Upgrade — AI Bird Guide + Mode-Driven HUD Refactor
+
+> **v33 changelog**: Introduces `AppMode` type system (`"explore" | "migration" | "learning"`) replacing the existing `UIMode`. All UI panels render conditionally based on `AppMode`. Removes duplicated feature entry points. Hardens the 3-layer Knowledge System (L1 static → L2 cache → L3 AI). Enforces strict service-layer architecture: UI never calls AI directly. Globe remains dominant at ≥70% viewport.
+
+### Overview
+
+V33 is a combined AI Bird Guide + UI architecture refactor:
+
+1. **Replaces `UIMode` with `AppMode`** — a strict 3-mode system controlling all UI visibility.
+2. **Hardens the Knowledge System** — enforces L1→L2→L3 query pipeline with error boundaries.
+3. **Refactors UI into Mode-Driven HUD** — each panel declares which modes it belongs to.
+4. **Removes duplicated feature entry points** — consolidates into mode-specific tool groups.
+
+### AppMode (replaces UIMode)
+
+```typescript
+type AppMode = "explore" | "migration" | "learning";
+```
+
+| Mode | Purpose | Visible Panels |
+|------|---------|----------------|
+| `explore` | Default globe exploration | BirdInfoCard, AIBirdGuidePanel, RegionFilter, Habitats, Heatmap, Weather, Ecosystem, Journeys |
+| `migration` | Migration-focused view | TimelinePanel, MigrationInfoCard, MigrationPaths, SeasonOverlay, FlockRenderer |
+| `learning` | Educational content | Encyclopedia, EvolutionTimeline, BirdCompare, LearningTracks, DiscoverMissions, Classroom |
+
+### Mode Visibility Configuration
+
+```typescript
+const MODE_VISIBILITY: Record<string, AppMode[]> = {
+  BirdInfoCard:        ["explore", "learning"],
+  AIBirdGuidePanel:    ["explore", "learning"],
+  RegionFilterPanel:   ["explore"],
+  MainModePanel:       ["explore", "migration", "learning"],
+  ScienceHUD:          ["explore", "learning"],
+  SeasonSelector:      ["explore", "migration"],
+  TimelinePanel:       ["migration"],
+  MigrationInfoCard:   ["migration"],
+  BottomDiscoveryPanel:["explore"],
+  GuidedTour:          ["explore"],
+  QuizPanel:           ["explore"],
+  SoundGuessPanel:     ["explore"],
+  EvolutionTimeline:   ["learning"],
+  BirdEncyclopedia:    ["learning"],
+  BirdComparePanel:    ["learning"],
+  TrackPanel:          ["learning"],
+  DiscoverMissions:    ["learning"],
+  ClassroomPanel:      ["learning"],
+  EcosystemPanel:      ["explore"],
+  MigrationJourney:    ["explore", "migration"],
+};
+```
+
+### Knowledge System (3-Layer Pipeline)
+
+```
+L1: Static Data (always available)
+    ├── Bird model fields (funFact, habitat, diet, region)
+    └── AIGuideSystem knowledge base (pattern-matched Q&A)
+
+L2: Persistent Cache (localStorage LRU, max 200 entries)
+    └── Key: bird-guide-cache-{birdId}
+
+L3: Remote AI Provider (OpenAI gpt-4o-mini)
+    └── Guarded by API key check, JSON response { text, textZh }
+```
+
+Query order: L2 cache → L3 AI → L1 static fallback.
+
+### Service Layer Rules
+
+1. UI MUST NOT call AI directly — all through KnowledgeService.
+2. Store actions are the only bridge between UI and services.
+3. KnowledgeService orchestrates L1/L2/L3.
+4. AIProvider is swappable without touching KnowledgeService.
+5. PromptTemplate registry — no hardcoded prompts.
+
+### Globe Dominance Rule
+
+- Globe canvas ≥70% viewport at all times.
+- Panels are overlays, not side-by-side.
+- No panel exceeds 400px width or 50% viewport height.
+
+### Offline Fallback
+
+1. L2 cache checked first (may have previous AI results).
+2. L1 static data always available.
+3. Source badge: "Local" / "Cached" / "AI".
+4. No error modals — graceful degradation.
+
+### AC-V33-mode: Mode-Driven HUD
+
+- [ ] `AppMode` type replaces `UIMode` in types.ts.
+- [ ] Store uses `appMode` instead of `uiMode`.
+- [ ] Mode selector shows 3 modes: Explore, Migration, Learning.
+- [ ] Each panel only renders when current mode is in its allowed modes list.
+- [ ] Globe occupies ≥70% viewport in all modes.
+- [ ] No duplicated feature entry points across modes.
+- [ ] Mode switch animates panels in/out smoothly.
+- [ ] Build succeeds without TypeScript errors.
+- [ ] 60 FPS maintained during mode transitions.

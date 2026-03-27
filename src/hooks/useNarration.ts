@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { Bird, Language } from "../types";
+import { useAppStore } from "../store";
 
 export type NarrationState = "idle" | "speaking" | "unavailable";
 
@@ -89,6 +90,7 @@ export function useNarration() {
         return;
       }
 
+      useAppStore.getState().stopSpeaking();
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
