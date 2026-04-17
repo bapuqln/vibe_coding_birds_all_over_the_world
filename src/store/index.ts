@@ -20,6 +20,7 @@ import { createDiscoverySlice } from "./slices/discoverySlice";
 import { createProgressionSlice } from "./slices/progressionSlice";
 import { createPhotoSlice } from "./slices/photoSlice";
 import { createQuizSlice } from "./slices/quizSlice";
+import { createSoundSlice } from "./slices/soundSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -28,14 +29,10 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createProgressionSlice(set, get, store),
   ...createPhotoSlice(set, get, store),
   ...createQuizSlice(set, get, store),
+  ...createSoundSlice(set, get, store),
 
 
   showAllRoutes: false,
-  soundGuessState: "idle",
-  soundGuessRound: 0,
-  soundGuessScore: 0,
-  soundGuessOptions: [],
-  soundGuessCorrectId: null,
 
 
 
@@ -111,9 +108,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ecosystemPanelOpen: false,
   ecosystemManualOverride: false,
 
-  soundRecognitionActive: false,
-  soundRecognitionResult: null,
-  soundRecognitionConfidence: 0,
 
 
   activeJourneyId: null,
@@ -128,47 +122,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
   setShowAllRoutes: (showAllRoutes) => set({ showAllRoutes }),
-  startSoundGuess: () =>
-    set({
-      soundGuessState: "playing",
-      soundGuessRound: 1,
-      soundGuessScore: 0,
-      soundGuessOptions: [],
-      soundGuessCorrectId: null,
-    }),
-  setSoundGuessOptions: (options, correctId) =>
-    set({
-      soundGuessState: "guessing",
-      soundGuessOptions: options,
-      soundGuessCorrectId: correctId,
-    }),
-  answerSoundGuess: (birdId) =>
-    set((state) => ({
-      soundGuessScore:
-        birdId === state.soundGuessCorrectId
-          ? state.soundGuessScore + 1
-          : state.soundGuessScore,
-    })),
-  nextSoundGuessRound: () =>
-    set((state) => {
-      if (state.soundGuessRound >= 5) {
-        return { soundGuessState: "result" as const };
-      }
-      return {
-        soundGuessState: "playing" as const,
-        soundGuessRound: state.soundGuessRound + 1,
-        soundGuessOptions: [],
-        soundGuessCorrectId: null,
-      };
-    }),
-  endSoundGuess: () =>
-    set({
-      soundGuessState: "idle",
-      soundGuessRound: 0,
-      soundGuessScore: 0,
-      soundGuessOptions: [],
-      soundGuessCorrectId: null,
-    }),
 
 
 
@@ -352,9 +305,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   setEcosystemPanelOpen: (ecosystemPanelOpen) => set({ ecosystemPanelOpen }),
   setEcosystemManualOverride: (ecosystemManualOverride) => set({ ecosystemManualOverride }),
 
-  setSoundRecognitionActive: (soundRecognitionActive) => set({ soundRecognitionActive }),
-  setSoundRecognitionResult: (soundRecognitionResult) => set({ soundRecognitionResult }),
-  setSoundRecognitionConfidence: (soundRecognitionConfidence) => set({ soundRecognitionConfidence }),
 
 
   setActiveJourney: (activeJourneyId) => set({ activeJourneyId }),
