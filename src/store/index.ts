@@ -2,7 +2,6 @@ import { create } from "zustand";
 import type {
   AchievementProgress,
   BirdPhoto,
-  CollectedBird,
   DiscoveryMissionProgress,
   ExpeditionProgress,
   JourneyProgress,
@@ -22,11 +21,9 @@ import {
   loadFromStorage,
   saveToStorage,
   loadMissions,
-  COLLECTION_KEY,
   QUEST_KEY,
   STORY_KEY,
   POINTS_KEY,
-  DISCOVERY_KEY,
   MISSIONS_KEY,
   PHOTOS_KEY,
   ACHIEVEMENTS_KEY,
@@ -44,15 +41,14 @@ import {
 import type { AppStore } from "./types";
 export type { AppStore, PanelType } from "./types";
 import { createCoreSlice } from "./slices/coreSlice";
+import { createDiscoverySlice } from "./slices/discoverySlice";
 
 const allBirds = birdsData as Bird[];
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createCoreSlice(set, get, store),
-
-  encyclopediaOpen: false,
-  continentPanelRegion: null,
+  ...createDiscoverySlice(set, get, store),
 
   quizState: "idle",
   quizQuestions: [],
@@ -61,18 +57,13 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   quizLastCorrect: null,
 
   showAllRoutes: false,
-  evolutionTimelineOpen: false,
   soundGuessState: "idle",
   soundGuessRound: 0,
   soundGuessScore: 0,
   soundGuessOptions: [],
   soundGuessCorrectId: null,
 
-  collectedBirds: loadFromStorage<CollectedBird[]>(COLLECTION_KEY, []),
-  isCollectionOpen: false,
 
-  activeRegion: null,
-  regionFilterOpen: false,
 
   questsOpen: false,
   questProgress: loadFromStorage<QuestProgress[]>(QUEST_KEY, []),
@@ -89,8 +80,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  discoveredBirds: loadFromStorage<string[]>(DISCOVERY_KEY, []),
-  discoveryNotification: null,
 
   arViewerBirdId: null,
 
@@ -125,7 +114,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   screenshotFlash: false,
   recentScreenshots: [],
 
-  encyclopediaEntryBirdId: null,
 
   aiGuideOpen: false,
   aiGuideQuestion: null,
@@ -168,16 +156,12 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   activeHabitatFilters: [],
 
-  compareBirdA: null,
-  compareBirdB: null,
-  compareMode: false,
 
   discoveryMissions: loadFromStorage<DiscoveryMissionProgress[]>(DISCOVERY_MISSIONS_KEY, []),
   discoveryMissionsPanelOpen: false,
   discoveryBadges: loadFromStorage<string[]>(DISCOVERY_BADGES_KEY, []),
   discoveryMissionNotification: null,
 
-  evolutionTimelineValue: 3,
 
   ecosystemPanelOpen: false,
   ecosystemManualOverride: false,
@@ -196,9 +180,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   migrationInfoPathIndex: null,
 
 
-  setEncyclopediaOpen: (encyclopediaOpen) => set({ encyclopediaOpen }),
-  setContinentPanelRegion: (continentPanelRegion) =>
-    set({ continentPanelRegion }),
 
   startQuiz: (questions) =>
     set({
@@ -231,8 +212,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
     }),
 
   setShowAllRoutes: (showAllRoutes) => set({ showAllRoutes }),
-  setEvolutionTimelineOpen: (evolutionTimelineOpen) =>
-    set({ evolutionTimelineOpen }),
   startSoundGuess: () =>
     set({
       soundGuessState: "playing",
@@ -275,17 +254,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
       soundGuessCorrectId: null,
     }),
 
-  collectBird: (birdId) => {
-    const state = get();
-    if (state.collectedBirds.some((b) => b.birdId === birdId)) return;
-    const updated = [...state.collectedBirds, { birdId, collectedAt: Date.now() }];
-    saveToStorage(COLLECTION_KEY, updated);
-    set({ collectedBirds: updated });
-  },
-  setCollectionOpen: (isCollectionOpen) => set({ isCollectionOpen }),
 
-  setActiveRegion: (activeRegion) => set({ activeRegion }),
-  setRegionFilterOpen: (regionFilterOpen) => set({ regionFilterOpen }),
 
   setQuestsOpen: (questsOpen) => set({ questsOpen }),
   updateQuestProgress: (questId, current) => {
@@ -334,17 +303,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   },
 
 
-  discoverBird: (birdId) => {
-    const state = get();
-    if (state.discoveredBirds.includes(birdId)) return;
-    const updated = [...state.discoveredBirds, birdId];
-    saveToStorage(DISCOVERY_KEY, updated);
-    set({ discoveredBirds: updated, discoveryNotification: birdId });
-    setTimeout(() => get().updateExpeditionProgress(), 100);
-    setTimeout(() => get().updateTrackProgress(), 100);
-    setTimeout(() => get().updateDiscoveryMissions(), 150);
-  },
-  dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
 
   setARViewerBird: (arViewerBirdId) => set({ arViewerBirdId }),
 
@@ -582,7 +540,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
     })),
   setScreenshotFlash: (screenshotFlash) => set({ screenshotFlash }),
 
-  setEncyclopediaEntryBirdId: (encyclopediaEntryBirdId) => set({ encyclopediaEntryBirdId }),
 
   setAiGuideOpen: (aiGuideOpen) => set({ aiGuideOpen }),
   setAiGuideQuestion: (aiGuideQuestion) => set({ aiGuideQuestion }),
@@ -705,9 +662,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   clearHabitatFilters: () => set({ activeHabitatFilters: [] }),
 
-  setCompareMode: (compareMode) => set({ compareMode }),
-  setCompareBirdA: (compareBirdA) => set({ compareBirdA }),
-  setCompareBirdB: (compareBirdB) => set({ compareBirdB }),
 
   setDiscoveryMissionsPanelOpen: (discoveryMissionsPanelOpen) => set({ discoveryMissionsPanelOpen }),
 
@@ -749,7 +703,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   dismissDiscoveryMissionNotification: () => set({ discoveryMissionNotification: null }),
 
-  setEvolutionTimelineValue: (evolutionTimelineValue) => set({ evolutionTimelineValue }),
 
   setEcosystemPanelOpen: (ecosystemPanelOpen) => set({ ecosystemPanelOpen }),
   setEcosystemManualOverride: (ecosystemManualOverride) => set({ ecosystemManualOverride }),
