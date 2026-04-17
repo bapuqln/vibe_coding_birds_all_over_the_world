@@ -18,6 +18,7 @@ import { createSoundSlice } from "./slices/soundSlice";
 import { createTourSlice } from "./slices/tourSlice";
 import { createStorySlice } from "./slices/storySlice";
 import { createAiGuideSlice } from "./slices/aiGuideSlice";
+import { createEcosystemSlice } from "./slices/ecosystemSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -30,6 +31,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createTourSlice(set, get, store),
   ...createStorySlice(set, get, store),
   ...createAiGuideSlice(set, get, store),
+  ...createEcosystemSlice(set, get, store),
 
 
   showAllRoutes: false,
@@ -61,8 +63,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   arSessionActive: false,
 
 
-  activeBiome: null,
-  biomeAudioEnabled: true,
 
   migrationSpeed: 1,
 
@@ -76,21 +76,11 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   sandboxTimeHour: 12,
 
 
-  currentSeason: "spring",
-  ecosystemState: {
-    season: "spring",
-    temperature: 20,
-    wind: 5,
-    timeOfDay: "morning",
-  },
-
-  activeHabitatFilters: [],
 
 
 
 
-  ecosystemPanelOpen: false,
-  ecosystemManualOverride: false,
+
 
 
 
@@ -148,8 +138,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   setArSessionActive: (arSessionActive) => set({ arSessionActive }),
 
 
-  setActiveBiome: (activeBiome) => set({ activeBiome }),
-  setBiomeAudioEnabled: (biomeAudioEnabled) => set({ biomeAudioEnabled }),
 
   setMigrationSpeed: (migrationSpeed) => set({ migrationSpeed }),
 
@@ -176,33 +164,15 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  setCurrentSeason: (season) =>
-    set((s) => ({
-      currentSeason: season,
-      ecosystemState: { ...s.ecosystemState, season },
-    })),
-
-  setEcosystemState: (ecosystemState) => set({ ecosystemState }),
-
-  toggleHabitatFilter: (filter) =>
-    set((s) => {
-      const has = s.activeHabitatFilters.includes(filter);
-      return {
-        activeHabitatFilters: has
-          ? s.activeHabitatFilters.filter((f) => f !== filter)
-          : [...s.activeHabitatFilters, filter],
-      };
-    }),
-
-  clearHabitatFilters: () => set({ activeHabitatFilters: [] }),
 
 
 
 
 
 
-  setEcosystemPanelOpen: (ecosystemPanelOpen) => set({ ecosystemPanelOpen }),
-  setEcosystemManualOverride: (ecosystemManualOverride) => set({ ecosystemManualOverride }),
+
+
+
 
 
 
