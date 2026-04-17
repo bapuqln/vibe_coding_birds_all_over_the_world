@@ -8,7 +8,6 @@ import type {
   JourneyProgress,
   QuestProgress,
   StoryPlayState,
-  TimeOfDay,
   TrackProgress,
   TTSStatus,
 } from "../types";
@@ -44,16 +43,13 @@ import {
 } from "./persistence";
 import type { AppStore } from "./types";
 export type { AppStore, PanelType } from "./types";
+import { createCoreSlice } from "./slices/coreSlice";
 
 const allBirds = birdsData as Bird[];
 
 
-export const useAppStore = create<AppStore>()((set, get) => ({
-  selectedBirdId: null,
-  language: "zh",
-  audioStatus: "idle",
-  globeReady: false,
-  modelsReady: false,
+export const useAppStore = create<AppStore>()((set, get, store) => ({
+  ...createCoreSlice(set, get, store),
 
   encyclopediaOpen: false,
   continentPanelRegion: null,
@@ -85,25 +81,19 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   tourState: "idle",
   tourStep: 0,
 
-  guideMessage: null,
-  guideMessageZh: null,
 
   migrationModeActive: false,
 
   storyExplorerOpen: false,
   storyProgress: loadFromStorage<Record<string, string[]>>(STORY_KEY, {}),
 
-  radarOpen: false,
 
-  hoveredBirdId: null,
 
   discoveredBirds: loadFromStorage<string[]>(DISCOVERY_KEY, []),
   discoveryNotification: null,
 
-  heatmapVisible: false,
   arViewerBirdId: null,
 
-  activePanel: null,
 
   dailyMissions: loadMissions(),
   missionsPanelOpen: false,
@@ -130,15 +120,11 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   storyHighlightBirdId: null,
   completedStories: loadFromStorage<string[]>(COMPLETED_STORIES_KEY, []),
 
-  weatherVisible: false,
-  timeOfDay: "morning" as TimeOfDay,
 
   sharePanelOpen: false,
   screenshotFlash: false,
   recentScreenshots: [],
 
-  currentFps: 60,
-  dynamicLodDistance: 2.5,
   encyclopediaEntryBirdId: null,
 
   aiGuideOpen: false,
@@ -200,8 +186,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   soundRecognitionResult: null,
   soundRecognitionConfidence: 0,
 
-  appMode: "explore",
-  birdCardExpanded: true,
 
   activeJourneyId: null,
   journeyProgress: loadFromStorage<JourneyProgress[]>(JOURNEY_PROGRESS_KEY, []),
@@ -211,12 +195,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   timeState: createInitialTimeState(),
   migrationInfoPathIndex: null,
 
-  setSelectedBird: (id) => set({ selectedBirdId: id }),
-  toggleLanguage: () =>
-    set((state) => ({ language: state.language === "zh" ? "en" : "zh" })),
-  setAudioStatus: (audioStatus) => set({ audioStatus }),
-  setGlobeReady: (globeReady) => set({ globeReady }),
-  setModelsReady: (modelsReady) => set({ modelsReady }),
 
   setEncyclopediaOpen: (encyclopediaOpen) => set({ encyclopediaOpen }),
   setContinentPanelRegion: (continentPanelRegion) =>
@@ -342,7 +320,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     set((state) => ({ tourStep: state.tourStep + 1, tourState: "touring" })),
   endTour: () => set({ tourState: "idle", tourStep: 0 }),
 
-  setGuideMessage: (en, zh) => set({ guideMessage: en, guideMessageZh: zh }),
 
   setMigrationModeActive: (migrationModeActive) => set({ migrationModeActive }),
 
@@ -356,8 +333,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     set({ storyProgress: updated });
   },
 
-  setRadarOpen: (radarOpen) => set({ radarOpen }),
-  setHoveredBird: (hoveredBirdId) => set({ hoveredBirdId }),
 
   discoverBird: (birdId) => {
     const state = get();
@@ -371,81 +346,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   },
   dismissDiscoveryNotification: () => set({ discoveryNotification: null }),
 
-  setHeatmapVisible: (heatmapVisible) => set({ heatmapVisible }),
   setARViewerBird: (arViewerBirdId) => set({ arViewerBirdId }),
 
-  setActivePanel: (activePanel) => {
-    const state = get();
-    if (activePanel === state.activePanel) return;
-    const reset: Partial<AppStore> = { activePanel };
-    if (activePanel !== null && activePanel !== "birdCard") {
-      reset.selectedBirdId = null;
-    }
-    if (activePanel !== null && activePanel !== "collection") {
-      reset.isCollectionOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "regionFilter") {
-      reset.regionFilterOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "quests") {
-      reset.questsOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "storyExplorer") {
-      reset.storyExplorerOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "encyclopedia") {
-      reset.encyclopediaOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "continentBird") {
-      reset.continentPanelRegion = null;
-    }
-    if (activePanel !== null && activePanel !== "evolution") {
-      reset.evolutionTimelineOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "ar") {
-      reset.arViewerBirdId = null;
-    }
-    if (activePanel !== null && activePanel !== "missions") {
-      reset.missionsPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "photoGallery") {
-      reset.photoGalleryOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "achievements") {
-      reset.achievementPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "expeditions") {
-      reset.expeditionPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "share") {
-      reset.sharePanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "aiGuide") {
-      reset.aiGuideOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "classroom") {
-      reset.classroomModeActive = false;
-    }
-    if (activePanel !== null && activePanel !== "sandbox") {
-      reset.sandboxModeActive = false;
-    }
-    if (activePanel !== null && activePanel !== "learningTracks") {
-      reset.learningTracksOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "discoverMissions") {
-      reset.discoveryMissionsPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "ecosystemPanel") {
-      reset.ecosystemPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "journeyPanel") {
-      reset.journeyPanelOpen = false;
-    }
-    if (activePanel !== null && activePanel !== "migrationIntelligence") {
-      reset.migrationInfoPathIndex = null;
-    }
-    set(reset);
-  },
 
   setMissionsPanelOpen: (missionsPanelOpen) => set({ missionsPanelOpen }),
 
@@ -672,8 +574,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     });
   },
 
-  setWeatherVisible: (weatherVisible) => set({ weatherVisible }),
-  setTimeOfDay: (timeOfDay) => set({ timeOfDay }),
 
   setSharePanelOpen: (sharePanelOpen) => set({ sharePanelOpen }),
   addScreenshot: (dataUrl) =>
@@ -682,8 +582,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     })),
   setScreenshotFlash: (screenshotFlash) => set({ screenshotFlash }),
 
-  setCurrentFps: (currentFps) => set({ currentFps }),
-  setDynamicLodDistance: (dynamicLodDistance) => set({ dynamicLodDistance }),
   setEncyclopediaEntryBirdId: (encyclopediaEntryBirdId) => set({ encyclopediaEntryBirdId }),
 
   setAiGuideOpen: (aiGuideOpen) => set({ aiGuideOpen }),
@@ -860,8 +758,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   setSoundRecognitionResult: (soundRecognitionResult) => set({ soundRecognitionResult }),
   setSoundRecognitionConfidence: (soundRecognitionConfidence) => set({ soundRecognitionConfidence }),
 
-  setAppMode: (appMode) => set({ appMode }),
-  setBirdCardExpanded: (birdCardExpanded) => set({ birdCardExpanded }),
 
   setActiveJourney: (activeJourneyId) => set({ activeJourneyId }),
 
