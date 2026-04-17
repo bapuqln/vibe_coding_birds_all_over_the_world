@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import type {
-  BirdPhoto,
   JourneyProgress,
   StoryPlayState,
   TTSStatus,
@@ -10,23 +9,23 @@ import {
   loadFromStorage,
   saveToStorage,
   STORY_KEY,
-  PHOTOS_KEY,
   JOURNEY_PROGRESS_KEY,
   VISITED_STOPS_KEY,
   COMPLETED_STORIES_KEY,
-  MAX_PHOTOS,
 } from "./persistence";
 import type { AppStore } from "./types";
 export type { AppStore, PanelType } from "./types";
 import { createCoreSlice } from "./slices/coreSlice";
 import { createDiscoverySlice } from "./slices/discoverySlice";
 import { createProgressionSlice } from "./slices/progressionSlice";
+import { createPhotoSlice } from "./slices/photoSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createCoreSlice(set, get, store),
   ...createDiscoverySlice(set, get, store),
   ...createProgressionSlice(set, get, store),
+  ...createPhotoSlice(set, get, store),
 
   quizState: "idle",
   quizQuestions: [],
@@ -60,9 +59,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  birdPhotos: loadFromStorage<BirdPhoto[]>(PHOTOS_KEY, []),
-  photoGalleryOpen: false,
-  photoModeActive: false,
 
 
 
@@ -74,9 +70,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   completedStories: loadFromStorage<string[]>(COMPLETED_STORIES_KEY, []),
 
 
-  sharePanelOpen: false,
-  screenshotFlash: false,
-  recentScreenshots: [],
 
 
   aiGuideOpen: false,
@@ -89,8 +82,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   arSessionActive: false,
 
-  photographerModeActive: false,
-  photographerScore: null,
 
   activeBiome: null,
   biomeAudioEnabled: true,
@@ -242,33 +233,8 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  capturePhoto: (birdId, birdNameZh, birdNameEn, dataUrl) => {
-    const state = get();
-    const photo: BirdPhoto = {
-      id: `photo-${Date.now()}`,
-      birdId,
-      birdNameZh,
-      birdNameEn,
-      dataUrl,
-      capturedAt: Date.now(),
-    };
-    let updated = [photo, ...state.birdPhotos];
-    if (updated.length > MAX_PHOTOS) {
-      updated = updated.slice(0, MAX_PHOTOS);
-    }
-    saveToStorage(PHOTOS_KEY, updated);
-    set({ birdPhotos: updated });
-  },
 
-  deletePhoto: (photoId) => {
-    const state = get();
-    const updated = state.birdPhotos.filter((p) => p.id !== photoId);
-    saveToStorage(PHOTOS_KEY, updated);
-    set({ birdPhotos: updated });
-  },
 
-  setPhotoGalleryOpen: (photoGalleryOpen) => set({ photoGalleryOpen }),
-  setPhotoModeActive: (photoModeActive) => set({ photoModeActive }),
 
 
 
@@ -321,12 +287,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   },
 
 
-  setSharePanelOpen: (sharePanelOpen) => set({ sharePanelOpen }),
-  addScreenshot: (dataUrl) =>
-    set((state) => ({
-      recentScreenshots: [dataUrl, ...state.recentScreenshots].slice(0, 10),
-    })),
-  setScreenshotFlash: (screenshotFlash) => set({ screenshotFlash }),
 
 
   setAiGuideOpen: (aiGuideOpen) => set({ aiGuideOpen }),
@@ -367,8 +327,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   setArSessionActive: (arSessionActive) => set({ arSessionActive }),
 
-  setPhotographerModeActive: (photographerModeActive) => set({ photographerModeActive, photographerScore: null }),
-  setPhotographerScore: (photographerScore) => set({ photographerScore }),
 
   setActiveBiome: (activeBiome) => set({ activeBiome }),
   setBiomeAudioEnabled: (biomeAudioEnabled) => set({ biomeAudioEnabled }),
