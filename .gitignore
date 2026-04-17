@@ -9,5 +9,6 @@ build
 .env*
 .vscode/
 .idea/
+.qwen/
 Thumbs.db
 coverage/

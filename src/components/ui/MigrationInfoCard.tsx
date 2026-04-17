@@ -1,5 +1,5 @@
-import { useAppStore } from "../store";
-import { getAllMigrationIntelligencePaths } from "../domain/migration-paths";
+import { useAppStore } from "../../store";
+import { getAllMigrationIntelligencePaths } from "../../domain/migration-paths";
 
 export function MigrationInfoCard() {
   const pathIndex = useAppStore((s) => s.migrationInfoPathIndex);

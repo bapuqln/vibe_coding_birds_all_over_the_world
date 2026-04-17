@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ACESFilmicToneMapping } from "three";
 import { GlobeScene } from "./components/three/GlobeScene";
@@ -48,8 +48,8 @@ import { SandboxToolbar } from "./components/ui/SandboxToolbar";
 import { EcosystemPanel } from "./components/ui/EcosystemPanel";
 import { MigrationJourneyPanel } from "./components/ui/MigrationJourneyPanel";
 import { SeasonSelector } from "./components/ui/SeasonSelector";
-import { TimelinePanel } from "./ui/TimelinePanel";
-import { MigrationInfoCard } from "./ui/MigrationInfoCard";
+import { TimelinePanel } from "./components/ui/TimelinePanel";
+import { MigrationInfoCard } from "./components/ui/MigrationInfoCard";
 import { ModeGate } from "./components/ui/ModeGate";
 import { useAppStore } from "./store";
 
@@ -193,13 +193,16 @@ export default function App() {
 
 function AppTitle() {
   const setClassroom = useAppStore((s) => s.setClassroomModeActive);
-  const timerRef = { current: null as ReturnType<typeof setTimeout> | null };
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handlePointerDown = () => {
     timerRef.current = setTimeout(() => setClassroom(true), 3000);
   };
   const handlePointerUp = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
 
   return (

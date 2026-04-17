@@ -82,12 +82,27 @@ export function Globe() {
 
   useEffect(() => {
     const loader = new TextureLoader();
+    let loaded: Texture | null = null;
+    let cancelled = false;
     loader.load(
       "/textures/earth_night.jpg",
-      (tex) => setNightTextureState({ texture: tex, loaded: true }),
+      (tex) => {
+        if (cancelled) {
+          tex.dispose();
+          return;
+        }
+        loaded = tex;
+        setNightTextureState({ texture: tex, loaded: true });
+      },
       undefined,
-      () => setNightTextureState({ texture: null, loaded: true }),
+      () => {
+        if (!cancelled) setNightTextureState({ texture: null, loaded: true });
+      },
     );
+    return () => {
+      cancelled = true;
+      if (loaded) loaded.dispose();
+    };
   }, []);
 
   const material = useMemo(() => {
@@ -102,6 +117,8 @@ export function Globe() {
       },
     });
   }, [dayTexture, nightTextureState]);
+
+  useEffect(() => () => material.dispose(), [material]);
 
   useFrame((_, delta) => {
     if (!matRef.current) return;
@@ -161,6 +178,8 @@ function CityLightsGlow({ matRef }: { matRef: React.RefObject<ShaderMaterial | n
       blending: AdditiveBlending,
     });
   }, []);
+
+  useEffect(() => () => glowMaterial.dispose(), [glowMaterial]);
 
   useFrame(() => {
     if (glowMatRef.current && matRef.current) {

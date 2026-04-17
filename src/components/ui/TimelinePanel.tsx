@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
-import { useAppStore } from "../store";
-import { getMonthLabel, getMonthLabelZh } from "../core/TimeController";
+import { useAppStore } from "../../store";
+import { getMonthLabel, getMonthLabelZh } from "../../core/TimeController";
 
 const MONTH_LABELS = Array.from({ length: 12 }, (_, i) => i);
 
