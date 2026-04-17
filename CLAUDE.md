@@ -27,12 +27,23 @@ Deploy target is Cloudflare Pages via `wrangler.jsonc` (assets served from `./di
 
 When adding a panel, wrap it in the right `<ModeGate modes={[...]}>` block in `App.tsx`. Don't unmount panels conditionally — they rely on store-driven visibility.
 
-### State: one monolithic Zustand store
+### State: one Zustand store composed of 12 slices
 
-`src/store.ts` (~42 KB, ~100 fields) is the single source of truth. **Do not add Context providers or second stores** — `ai/gstack.yaml` explicitly forbids it. Key patterns:
+`src/store/` is the single source of truth. **Do not add Context providers or second stores** — `ai/gstack.yaml` explicitly forbids it. The contract is one `useAppStore` hook whose type is `AppStore` (intersection of all slice shapes).
 
-- ~12 localStorage keys (`kids-bird-globe-*`) for persistence; writes go through `saveToStorage` (silent on quota error).
-- Selectors should be narrow: `useAppStore((s) => s.someField)`. Selecting the whole store will re-render every frame any field changes.
+- `src/store/index.ts` — 30-line composition: `create<AppStore>()((...a) => ({ ...createCoreSlice(...a), ... }))`.
+- `src/store/types.ts` — `AppStore` interface and `PanelType` union. Source of truth for the public store type.
+- `src/store/persistence.ts` — storage-key constants, `loadFromStorage` / `saveToStorage`, `loadMissions`. Every `kids-bird-globe-*` localStorage key lives here.
+- `src/store/slices/*Slice.ts` — one file per cohesive subsystem. Each exports `XxxSlice` interface and `createXxxSlice: StateCreator<AppStore, [], [], XxxSlice>`.
+
+Current slices: `core`, `discovery`, `progression` (6 progression subsystems — quests, dailyMissions, achievements, expeditions, learningTracks, discoveryMissions), `photo`, `quiz`, `sound`, `tour`, `story`, `aiGuide`, `ecosystem`, `migration`, `specialModes` (classroom + sandbox + AR).
+
+**Cross-slice reads**: actions call `get().otherSliceAction()` — `get()` returns the full merged store. Never import one slice's creator from another slice; depend only on the `AppStore` type.
+
+**When adding state**: put the field + its actions in the most cohesive existing slice; don't widen `AppStore` directly. TypeScript enforces that every `AppStore` field appears in exactly one slice interface.
+
+Other store rules:
+- Selectors should be narrow: `useAppStore((s) => s.someField)`.
 - Panel open/close state lives in the store, not in parent components.
 
 ### Layered source tree
@@ -53,7 +64,7 @@ src/
 ├── render/      Specialized R3F renderers (MigrationFlockRenderer, SeasonOverlay)
 ├── hooks/       useAudio, useNarration
 ├── utils/       coordinates, migration helpers, bird model loading
-├── store.ts     The single Zustand store
+├── store/       One Zustand store composed of 12 slices (see store/slices/)
 └── types.ts     Central type module (AppMode, Bird, Season, …)
 ```
 
