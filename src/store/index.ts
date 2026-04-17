@@ -28,15 +28,15 @@ import type {
   TrackProgress,
   TTSStatus,
   WorldState,
-} from "./types";
-import { createInitialTimeState } from "./core/TimeController";
-import birdsData from "./data/birds.json";
-import missionTemplates from "./data/missions.json";
-import achievementDefs from "./data/achievements.json";
-import expeditionsData from "./data/expeditions.json";
-import type { AchievementDef, Bird, Expedition } from "./types";
-import { getAllTracks } from "./systems/LearningTrackSystem";
-import { checkMissionProgress, getAllDiscoverMissions } from "./systems/DiscoverMissionSystem";
+} from "../types";
+import { createInitialTimeState } from "../core/TimeController";
+import birdsData from "../data/birds.json";
+import missionTemplates from "../data/missions.json";
+import achievementDefs from "../data/achievements.json";
+import expeditionsData from "../data/expeditions.json";
+import type { AchievementDef, Bird, Expedition } from "../types";
+import { getAllTracks } from "../systems/LearningTrackSystem";
+import { checkMissionProgress, getAllDiscoverMissions } from "../systems/DiscoverMissionSystem";
 
 export type PanelType =
   | "birdCard"
@@ -1145,7 +1145,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   requestBirdExplanation: (birdId) => {
     set({ birdExplanationLoading: true, birdExplanation: null });
-    import("./features/KnowledgeService").then(({ queryBirdExplanation }) => {
+    import("../features/KnowledgeService").then(({ queryBirdExplanation }) => {
       queryBirdExplanation(birdId).then((result) => {
         set({
           birdExplanation: result,
@@ -1162,14 +1162,14 @@ export const useAppStore = create<AppStore>((set, get) => ({
   speakExplanation: () => {
     const { birdExplanation, language } = get();
     if (!birdExplanation) return;
-    import("./features/tts-service").then(({ speak }) => {
+    import("../features/tts-service").then(({ speak }) => {
       const text = language === "zh" ? birdExplanation.textZh : birdExplanation.text;
       const status = speak(text, language, () => set({ ttsStatus: "idle" }));
       set({ ttsStatus: status });
     });
   },
   stopSpeaking: () => {
-    import("./features/tts-service").then(({ stop }) => {
+    import("../features/tts-service").then(({ stop }) => {
       stop();
       set({ ttsStatus: "idle" });
     });
