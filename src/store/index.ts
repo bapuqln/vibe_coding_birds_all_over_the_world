@@ -12,7 +12,6 @@ import type {
   JourneyProgress,
   KnowledgeResult,
   Language,
-  MissionTemplate,
   PhotoScore,
   QuestProgress,
   QuizQuestion,
@@ -31,12 +30,34 @@ import type {
 } from "../types";
 import { createInitialTimeState } from "../core/TimeController";
 import birdsData from "../data/birds.json";
-import missionTemplates from "../data/missions.json";
 import achievementDefs from "../data/achievements.json";
 import expeditionsData from "../data/expeditions.json";
 import type { AchievementDef, Bird, Expedition } from "../types";
 import { getAllTracks } from "../systems/LearningTrackSystem";
 import { checkMissionProgress, getAllDiscoverMissions } from "../systems/DiscoverMissionSystem";
+import {
+  loadFromStorage,
+  saveToStorage,
+  loadMissions,
+  COLLECTION_KEY,
+  QUEST_KEY,
+  STORY_KEY,
+  POINTS_KEY,
+  DISCOVERY_KEY,
+  MISSIONS_KEY,
+  PHOTOS_KEY,
+  ACHIEVEMENTS_KEY,
+  LISTEN_COUNT_KEY,
+  COMPLETED_MISSIONS_KEY,
+  EXPEDITIONS_KEY,
+  TRACKS_KEY,
+  DISCOVERY_BADGES_KEY,
+  DISCOVERY_MISSIONS_KEY,
+  JOURNEY_PROGRESS_KEY,
+  VISITED_STOPS_KEY,
+  COMPLETED_STORIES_KEY,
+  MAX_PHOTOS,
+} from "./persistence";
 
 export type PanelType =
   | "birdCard"
@@ -66,75 +87,7 @@ export type PanelType =
   | "journeyPanel"
   | "migrationIntelligence";
 
-const COLLECTION_KEY = "kids-bird-globe-collection";
-const QUEST_KEY = "kids-bird-globe-quests";
-const STORY_KEY = "kids-bird-globe-stories";
-const POINTS_KEY = "kids-bird-globe-points";
-const DISCOVERY_KEY = "kids-bird-globe-discovered";
-const MISSIONS_KEY = "kids-bird-globe-missions";
-const MISSIONS_DATE_KEY = "kids-bird-globe-missions-date";
-const PHOTOS_KEY = "kids-bird-globe-photos";
-const ACHIEVEMENTS_KEY = "kids-bird-globe-achievements";
-const LISTEN_COUNT_KEY = "kids-bird-globe-listen-count";
-const COMPLETED_MISSIONS_KEY = "kids-bird-globe-completed-missions";
-const EXPEDITIONS_KEY = "kids-bird-globe-expeditions";
-const TRACKS_KEY = "kids-bird-globe-learning-tracks";
-const DISCOVERY_BADGES_KEY = "kids-bird-globe-discovery-badges";
-const DISCOVERY_MISSIONS_KEY = "kids-bird-globe-discovery-missions-progress";
-const JOURNEY_PROGRESS_KEY = "kids-bird-globe-journey-progress";
-const VISITED_STOPS_KEY = "kids-bird-globe-visited-stops";
-
 const allBirds = birdsData as Bird[];
-const templates = missionTemplates as MissionTemplate[];
-const MAX_PHOTOS = 50;
-
-function getTodayKey(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function generateMissions(): DailyMission[] {
-  const shuffled = [...templates].sort(() => Math.random() - 0.5);
-  const selected = shuffled.slice(0, 4);
-  return selected.map((t) => ({
-    id: `${t.id}-${getTodayKey()}`,
-    templateId: t.id,
-    type: t.type,
-    titleZh: t.titleZh,
-    titleEn: t.titleEn,
-    target: t.target,
-    goal: t.goal,
-    current: 0,
-    completed: false,
-    badge: t.badge,
-  }));
-}
-
-function loadMissions(): DailyMission[] {
-  const savedDate = loadFromStorage<string>(MISSIONS_DATE_KEY, "");
-  const today = getTodayKey();
-  if (savedDate === today) {
-    return loadFromStorage<DailyMission[]>(MISSIONS_KEY, []);
-  }
-  const missions = generateMissions();
-  saveToStorage(MISSIONS_KEY, missions);
-  saveToStorage(MISSIONS_DATE_KEY, today);
-  return missions;
-}
-
-function loadFromStorage<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveToStorage(key: string, value: unknown) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch { /* quota exceeded */ }
-}
 
 interface AppStore {
   selectedBirdId: string | null;
@@ -581,7 +534,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   activeStoryId: null,
   storyStepIndex: 0,
   storyHighlightBirdId: null,
-  completedStories: loadFromStorage<string[]>("kids-bird-globe-completed-stories", []),
+  completedStories: loadFromStorage<string[]>(COMPLETED_STORIES_KEY, []),
 
   weatherVisible: false,
   timeOfDay: "morning" as TimeOfDay,
@@ -1118,7 +1071,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const updated = state.completedStories.includes(state.activeStoryId)
       ? state.completedStories
       : [...state.completedStories, state.activeStoryId];
-    saveToStorage("kids-bird-globe-completed-stories", updated);
+    saveToStorage(COMPLETED_STORIES_KEY, updated);
     set({
       storyPlayState: "complete",
       completedStories: updated,
