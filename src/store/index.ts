@@ -21,6 +21,7 @@ import { createProgressionSlice } from "./slices/progressionSlice";
 import { createPhotoSlice } from "./slices/photoSlice";
 import { createQuizSlice } from "./slices/quizSlice";
 import { createSoundSlice } from "./slices/soundSlice";
+import { createTourSlice } from "./slices/tourSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -30,6 +31,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createPhotoSlice(set, get, store),
   ...createQuizSlice(set, get, store),
   ...createSoundSlice(set, get, store),
+  ...createTourSlice(set, get, store),
 
 
   showAllRoutes: false,
@@ -37,8 +39,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  tourState: "idle",
-  tourStep: 0,
 
 
   migrationModeActive: false,
@@ -126,12 +126,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  startTour: () => set({ tourState: "intro", tourStep: 0 }),
-  pauseTour: () => set({ tourState: "paused" }),
-  resumeTour: () => set({ tourState: "touring" }),
-  nextTourStep: () =>
-    set((state) => ({ tourStep: state.tourStep + 1, tourState: "touring" })),
-  endTour: () => set({ tourState: "idle", tourStep: 0 }),
 
 
   setMigrationModeActive: (migrationModeActive) => set({ migrationModeActive }),
