@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(bash *)",
+      "Bash(./node_modules/.bin/tsc -b)",
+      "Bash(./node_modules/.bin/tsc -b --force)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(./node_modules/.bin/vite build *)",
+      "Bash(node -e \"const p = require\\('/Users/weiwei.wang/Documents/GitHub/vibe_coding_birds_all_over_the_world/src/data/birds.json'\\); console.log\\(p[0]\\)\")",
+      "Bash(zsh *)",
+      "Bash(/opt/homebrew/bin/node --version)",
+      "Read(//opt/homebrew/Cellar/node/25.9.0_2/bin/**)",
+      "Read(//opt/homebrew/opt/**)",
+      "Bash(/usr/bin/time zsh *)",
+      "Bash(git mv *)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git checkout *)",
+      "Bash(echo \"TSC exit code: $?\")",
+      "Bash(git restore *)",
+      "Bash(echo \"VITE exit code: $?\")",
+      "Bash(git commit *)",
+      "Bash(echo \"TSC final check: exit code $?\")",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(grep -n \"^interface AppStore\\\\|^}$\\\\|create<AppStore>\" /Users/weiwei.wang/Documents/GitHub/vibe_coding_birds_all_over_the_world/src/store/index.ts)",
+      "Bash(python3 *)",
+      "Bash(sort -u grep -hE \"^ [a-zA-Z]+\\(\\\\??\\):\" src/store/types.ts)",
+      "Bash(git merge *)",
+      "Bash(git push *)"
+    ]
+  }
+}

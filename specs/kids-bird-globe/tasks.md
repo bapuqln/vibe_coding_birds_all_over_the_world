@@ -1,101 +1,104 @@
 # 万羽拾音 (Kids Bird Globe) — Task Breakdown (v32)
 
 > All v1–v7 phases (1–55) are complete (470 tasks).
-> v32 phases (257–264) in progress.
+> **v32 phases (257–264) complete ✅** (42 tasks).
+> **Total: 512 tasks completed** across 32 versions.
 
 ---
 
 # v32 Tasks (Bird Migration Intelligence)
 
+> **v32 Complete ✅** — All 42 tasks finished
+
 ---
 
 ## Phase 257: Core — TimeController & Store
 
-- [ ] **257.1** Add `TimeState` interface to `types.ts` (month, progress, isPlaying, speed).
-- [ ] **257.2** Add `MigrationPath` interface to `types.ts` (birdId, waypoints, season, color, nameZh, nameEn).
-- [ ] **257.3** Add `FlockConfig` interface to `types.ts` (birdId, instanceCount, pathId, offsets).
-- [ ] **257.4** Add `SeasonVisual` interface to `types.ts` (month, northTint, southTint, migrationHighlight).
-- [ ] **257.5** Add `TimeState` slice to Zustand store: `timeState`, `tickTime`, `playTimeline`, `pauseTimeline`, `setTimeMonth`, `setTimeSpeed`, `scrubTimeline`.
-- [ ] **257.6** Create `src/core/TimeController.ts` with `tick(delta)` logic advancing month/progress.
-- [ ] **257.7** Create `src/core/AnimationScheduler.tsx` — single `useFrame` component calling `TimeController.tick`.
+- [x] **257.1** Add `TimeState` interface to `types.ts` (month, progress, isPlaying, speed).
+- [x] **257.2** Add `MigrationPath` interface to `types.ts` (birdId, waypoints, season, color, nameZh, nameEn).
+- [x] **257.3** Add `FlockConfig` interface to `types.ts` (birdId, instanceCount, pathId, offsets).
+- [x] **257.4** Add `SeasonVisual` interface to `types.ts` (month, northTint, southTint, migrationHighlight).
+- [x] **257.5** Add `TimeState` slice to Zustand store: `timeState`, `tickTime`, `playTimeline`, `pauseTimeline`, `setTimeMonth`, `setTimeSpeed`, `scrubTimeline`.
+- [x] **257.6** Create `src/core/TimeController.ts` with `tick(delta)` logic advancing month/progress.
+- [x] **257.7** Create `src/core/AnimationScheduler.tsx` — single `useFrame` component calling `TimeController.tick`.
 
 ---
 
 ## Phase 258: Domain — Migration Data & Path Computation
 
-- [ ] **258.1** Create `src/domain/migration-paths.ts` — load migration path data, compute `CatmullRomCurve3` from waypoints using `latLngToVector3`.
-- [ ] **258.2** Create `src/domain/flock-config.ts` — generate `FlockConfig[]` from migration paths (3–8 instances per species, random offsets).
-- [ ] **258.3** Create `src/data/migration-intelligence.json` — 6 migration paths with waypoint arrays, seasons, colors.
+- [x] **258.1** Create `src/domain/migration-paths.ts` — load migration path data, compute `CatmullRomCurve3` from waypoints using `latLngToVector3`.
+- [x] **258.2** Create `src/domain/flock-config.ts` — generate `FlockConfig[]` from migration paths (3–8 instances per species, random offsets).
+- [x] **258.3** Create `src/data/migration-intelligence.json` — 6 migration paths with waypoint arrays, seasons, colors.
 
 ---
 
 ## Phase 259: Render — Migration Path Renderer
 
-- [ ] **259.1** Create `src/render/MigrationPathRenderer.tsx` — render `CatmullRomCurve3` paths as `TubeGeometry` or `Line` with gradient `ShaderMaterial`.
-- [ ] **259.2** Implement gradient shader: bright at bird head position, dim at tail.
-- [ ] **259.3** Path elevation: waypoints at `globeRadius + 0.02`.
-- [ ] **259.4** Path visibility tied to `TimeState.month` matching path season.
-- [ ] **259.5** Smooth fade-in/fade-out for path appearance.
+- [x] **259.1** Create `src/render/MigrationPathRenderer.tsx` — render `CatmullRomCurve3` paths as `TubeGeometry` or `Line` with gradient `ShaderMaterial`.
+- [x] **259.2** Implement gradient shader: bright at bird head position, dim at tail.
+- [x] **259.3** Path elevation: waypoints at `globeRadius + 0.02`.
+- [x] **259.4** Path visibility tied to `TimeState.month` matching path season.
+- [x] **259.5** Smooth fade-in/fade-out for path appearance.
 
 ---
 
 ## Phase 260: Render — Flock Renderer (InstancedMesh)
 
-- [ ] **260.1** Create `src/render/MigrationFlockRenderer.tsx` — `InstancedMesh` per species with shared `ConeGeometry` + `MeshStandardMaterial`.
-- [ ] **260.2** Position instances along `CatmullRomCurve3` using `TimeState.progress`.
-- [ ] **260.3** Per-instance random offset (±0.01 units) for natural spread.
-- [ ] **260.4** Batch matrix updates: reuse `Matrix4`/`Vector3`/`Quaternion` refs.
-- [ ] **260.5** Orient bird instances along path tangent.
-- [ ] **260.6** Click handler on flock: pause timeline, highlight path, show info card.
+- [x] **260.1** Create `src/render/MigrationFlockRenderer.tsx` — `InstancedMesh` per species with shared `ConeGeometry` + `MeshStandardMaterial`.
+- [x] **260.2** Position instances along `CatmullRomCurve3` using `TimeState.progress`.
+- [x] **260.3** Per-instance random offset (±0.01 units) for natural spread.
+- [x] **260.4** Batch matrix updates: reuse `Matrix4`/`Vector3`/`Quaternion` refs.
+- [x] **260.5** Orient bird instances along path tangent.
+- [x] **260.6** Click handler on flock: pause timeline, highlight path, show info card.
 
 ---
 
 ## Phase 261: Render — Season Visual Overlay
 
-- [ ] **261.1** Create `src/render/SeasonOverlay.tsx` — shader-based hemisphere tinting.
-- [ ] **261.2** Winter (months 11–1): cooler blue tone in northern hemisphere.
-- [ ] **261.3** Summer (months 5–7): greener tones globally.
-- [ ] **261.4** Migration season (months 2–4, 8–10): highlight migration paths with glow.
-- [ ] **261.5** Smooth interpolation between season states using `TimeState.progress`.
+- [x] **261.1** Create `src/render/SeasonOverlay.tsx` — shader-based hemisphere tinting.
+- [x] **261.2** Winter (months 11–1): cooler blue tone in northern hemisphere.
+- [x] **261.3** Summer (months 5–7): greener tones globally.
+- [x] **261.4** Migration season (months 2–4, 8–10): highlight migration paths with glow.
+- [x] **261.5** Smooth interpolation between season states using `TimeState.progress`.
 
 ---
 
 ## Phase 262: UI — Timeline Panel
 
-- [ ] **262.1** Create `src/ui/TimelinePanel.tsx` — horizontal month bar (Jan–Dec).
-- [ ] **262.2** Implement play/pause button toggling `TimeState.isPlaying`.
-- [ ] **262.3** Implement speed toggle (1x / 2x).
-- [ ] **262.4** Implement drag-to-scrub on month bar.
-- [ ] **262.5** Current month indicator with label.
-- [ ] **262.6** Glass-morphism styling consistent with existing UI.
+- [x] **262.1** Create `src/ui/TimelinePanel.tsx` — horizontal month bar (Jan–Dec).
+- [x] **262.2** Implement play/pause button toggling `TimeState.isPlaying`.
+- [x] **262.3** Implement speed toggle (1x / 2x).
+- [x] **262.4** Implement drag-to-scrub on month bar.
+- [x] **262.5** Current month indicator with label.
+- [x] **262.6** Glass-morphism styling consistent with existing UI.
 
 ---
 
 ## Phase 263: UI — Migration Info Card
 
-- [ ] **263.1** Create `src/ui/MigrationInfoCard.tsx` — shown on flock click.
-- [ ] **263.2** Display: bird name, migration origin → destination, distance, season, fun fact.
-- [ ] **263.3** "Resume" button to unpause timeline.
-- [ ] **263.4** Glass-morphism card styling.
+- [x] **263.1** Create `src/ui/MigrationInfoCard.tsx` — shown on flock click.
+- [x] **263.2** Display: bird name, migration origin → destination, distance, season, fun fact.
+- [x] **263.3** "Resume" button to unpause timeline.
+- [x] **263.4** Glass-morphism card styling.
 
 ---
 
 ## Phase 264: Integration & Verification
 
-- [ ] **264.1** Add `AnimationScheduler` to `GlobeScene.tsx`.
-- [ ] **264.2** Add `MigrationPathRenderer` to globe group in `GlobeScene.tsx`.
-- [ ] **264.3** Add `MigrationFlockRenderer` to globe group in `GlobeScene.tsx`.
-- [ ] **264.4** Add `SeasonOverlay` to globe group in `GlobeScene.tsx`.
-- [ ] **264.5** Add `TimelinePanel` to App.tsx bottom panel layer.
-- [ ] **264.6** Add `MigrationInfoCard` to App.tsx card layer.
-- [ ] **264.7** Add `migrationIntelligence` to `PanelType` union in store.
-- [ ] **264.8** Verify TimeController is single source of truth. (AC-V32-1)
-- [ ] **264.9** Verify no per-object animation loops. (AC-V32-2)
-- [ ] **264.10** Verify InstancedMesh for bird rendering. (AC-V32-3)
-- [ ] **264.11** Verify spherical interpolation on paths. (AC-V32-4)
-- [ ] **264.12** Verify ≥30 birds at 50+ FPS. (AC-V32-5)
-- [ ] **264.13** Verify click-to-learn interaction. (AC-V32-6)
-- [ ] **264.14** Build passes without TypeScript errors. (AC-V32-7)
+- [x] **264.1** Add `AnimationScheduler` to `GlobeScene.tsx`.
+- [x] **264.2** Add `MigrationPathRenderer` to globe group in `GlobeScene.tsx`.
+- [x] **264.3** Add `MigrationFlockRenderer` to globe group in `GlobeScene.tsx`.
+- [x] **264.4** Add `SeasonOverlay` to globe group in `GlobeScene.tsx`.
+- [x] **264.5** Add `TimelinePanel` to App.tsx bottom panel layer.
+- [x] **264.6** Add `MigrationInfoCard` to App.tsx card layer.
+- [x] **264.7** Add `migrationIntelligence` to `PanelType` union in store.
+- [x] **264.8** Verify TimeController is single source of truth. (AC-V32-1)
+- [x] **264.9** Verify no per-object animation loops. (AC-V32-2)
+- [x] **264.10** Verify InstancedMesh for bird rendering. (AC-V32-3)
+- [x] **264.11** Verify spherical interpolation on paths. (AC-V32-4)
+- [x] **264.12** Verify ≥30 birds at 50+ FPS. (AC-V32-5)
+- [x] **264.13** Verify click-to-learn interaction. (AC-V32-6)
+- [x] **264.14** Build passes without TypeScript errors. (AC-V32-7)
 
 ---
 
