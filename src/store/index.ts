@@ -19,6 +19,7 @@ import { createCoreSlice } from "./slices/coreSlice";
 import { createDiscoverySlice } from "./slices/discoverySlice";
 import { createProgressionSlice } from "./slices/progressionSlice";
 import { createPhotoSlice } from "./slices/photoSlice";
+import { createQuizSlice } from "./slices/quizSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -26,12 +27,8 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createDiscoverySlice(set, get, store),
   ...createProgressionSlice(set, get, store),
   ...createPhotoSlice(set, get, store),
+  ...createQuizSlice(set, get, store),
 
-  quizState: "idle",
-  quizQuestions: [],
-  quizCurrentIndex: 0,
-  quizScore: 0,
-  quizLastCorrect: null,
 
   showAllRoutes: false,
   soundGuessState: "idle",
@@ -129,35 +126,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  startQuiz: (questions) =>
-    set({
-      quizState: "active",
-      quizQuestions: questions,
-      quizCurrentIndex: 0,
-      quizScore: 0,
-      quizLastCorrect: null,
-    }),
-  answerQuiz: (correct) =>
-    set((state) => ({
-      quizScore: correct ? state.quizScore + 1 : state.quizScore,
-      quizLastCorrect: correct,
-    })),
-  nextQuizQuestion: () =>
-    set((state) => {
-      const nextIndex = state.quizCurrentIndex + 1;
-      if (nextIndex >= state.quizQuestions.length) {
-        return { quizState: "result" as const };
-      }
-      return { quizCurrentIndex: nextIndex, quizLastCorrect: null };
-    }),
-  endQuiz: () =>
-    set({
-      quizState: "idle",
-      quizQuestions: [],
-      quizCurrentIndex: 0,
-      quizScore: 0,
-      quizLastCorrect: null,
-    }),
 
   setShowAllRoutes: (showAllRoutes) => set({ showAllRoutes }),
   startSoundGuess: () =>
