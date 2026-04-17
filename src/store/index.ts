@@ -1,12 +1,4 @@
 import { create } from "zustand";
-import type { JourneyProgress } from "../types";
-import { createInitialTimeState } from "../core/TimeController";
-import {
-  loadFromStorage,
-  saveToStorage,
-  JOURNEY_PROGRESS_KEY,
-  VISITED_STOPS_KEY,
-} from "./persistence";
 import type { AppStore } from "./types";
 export type { AppStore, PanelType } from "./types";
 import { createCoreSlice } from "./slices/coreSlice";
@@ -19,6 +11,7 @@ import { createTourSlice } from "./slices/tourSlice";
 import { createStorySlice } from "./slices/storySlice";
 import { createAiGuideSlice } from "./slices/aiGuideSlice";
 import { createEcosystemSlice } from "./slices/ecosystemSlice";
+import { createMigrationSlice } from "./slices/migrationSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -32,16 +25,15 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createStorySlice(set, get, store),
   ...createAiGuideSlice(set, get, store),
   ...createEcosystemSlice(set, get, store),
-
-
-  showAllRoutes: false,
-
+  ...createMigrationSlice(set, get, store),
 
 
 
 
 
-  migrationModeActive: false,
+
+
+
 
 
 
@@ -64,7 +56,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  migrationSpeed: 1,
 
   classroomModeActive: false,
   presentationMode: false,
@@ -84,25 +75,17 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  activeJourneyId: null,
-  journeyProgress: loadFromStorage<JourneyProgress[]>(JOURNEY_PROGRESS_KEY, []),
-  visitedStops: loadFromStorage<string[]>(VISITED_STOPS_KEY, []),
-  journeyPanelOpen: false,
-
-  timeState: createInitialTimeState(),
-  migrationInfoPathIndex: null,
-
-
-
-
-  setShowAllRoutes: (showAllRoutes) => set({ showAllRoutes }),
 
 
 
 
 
 
-  setMigrationModeActive: (migrationModeActive) => set({ migrationModeActive }),
+
+
+
+
+
 
 
 
@@ -139,7 +122,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  setMigrationSpeed: (migrationSpeed) => set({ migrationSpeed }),
 
   setClassroomModeActive: (classroomModeActive) => set({ classroomModeActive }),
   setPresentationMode: (presentationMode) => set({ presentationMode }),
@@ -176,57 +158,8 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  setActiveJourney: (activeJourneyId) => set({ activeJourneyId }),
 
-  visitStop: (journeyId, stopId) => {
-    const state = get();
-    const visitedStops = state.visitedStops.includes(stopId)
-      ? state.visitedStops
-      : [...state.visitedStops, stopId];
-    saveToStorage(VISITED_STOPS_KEY, visitedStops);
 
-    const existing = state.journeyProgress.find((p) => p.journeyId === journeyId);
-    let journeyProgress: JourneyProgress[];
-    if (existing) {
-      journeyProgress = state.journeyProgress.map((p) =>
-        p.journeyId === journeyId
-          ? { ...p, visitedStopIds: p.visitedStopIds.includes(stopId) ? p.visitedStopIds : [...p.visitedStopIds, stopId] }
-          : p,
-      );
-    } else {
-      journeyProgress = [
-        ...state.journeyProgress,
-        { journeyId, visitedStopIds: [stopId], discoveredBirdIds: [], completed: false },
-      ];
-    }
-    saveToStorage(JOURNEY_PROGRESS_KEY, journeyProgress);
-    set({ visitedStops, journeyProgress });
-  },
 
-  completeJourney: (journeyId) => {
-    const state = get();
-    const journeyProgress = state.journeyProgress.map((p) =>
-      p.journeyId === journeyId
-        ? { ...p, completed: true, completedAt: Date.now() }
-        : p,
-    );
-    saveToStorage(JOURNEY_PROGRESS_KEY, journeyProgress);
-    set({ journeyProgress });
-  },
 
-  setJourneyPanelOpen: (journeyPanelOpen) => set({ journeyPanelOpen }),
-
-  setTimeState: (timeState) => set({ timeState }),
-  playTimeline: () =>
-    set((s) => ({ timeState: { ...s.timeState, isPlaying: true } })),
-  pauseTimeline: () =>
-    set((s) => ({ timeState: { ...s.timeState, isPlaying: false } })),
-  setTimeMonth: (month) =>
-    set((s) => ({ timeState: { ...s.timeState, month, progress: 0 } })),
-  setTimeSpeed: (speed) =>
-    set((s) => ({ timeState: { ...s.timeState, speed } })),
-  scrubTimeline: (progress) =>
-    set((s) => ({ timeState: { ...s.timeState, progress } })),
-  setMigrationInfoPathIndex: (migrationInfoPathIndex) =>
-    set({ migrationInfoPathIndex }),
 }));
