@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import type {
-  JourneyProgress,
-  TTSStatus,
-} from "../types";
+import type { JourneyProgress } from "../types";
 import { createInitialTimeState } from "../core/TimeController";
 import {
   loadFromStorage,
@@ -20,6 +17,7 @@ import { createQuizSlice } from "./slices/quizSlice";
 import { createSoundSlice } from "./slices/soundSlice";
 import { createTourSlice } from "./slices/tourSlice";
 import { createStorySlice } from "./slices/storySlice";
+import { createAiGuideSlice } from "./slices/aiGuideSlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -31,6 +29,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createSoundSlice(set, get, store),
   ...createTourSlice(set, get, store),
   ...createStorySlice(set, get, store),
+  ...createAiGuideSlice(set, get, store),
 
 
   showAllRoutes: false,
@@ -57,13 +56,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  aiGuideOpen: false,
-  aiGuideQuestion: null,
-  aiGuideAnswer: null,
 
-  birdExplanation: null,
-  birdExplanationLoading: false,
-  ttsStatus: "idle" as TTSStatus,
 
   arSessionActive: false,
 
@@ -150,41 +143,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  setAiGuideOpen: (aiGuideOpen) => set({ aiGuideOpen }),
-  setAiGuideQuestion: (aiGuideQuestion) => set({ aiGuideQuestion }),
-  setAiGuideAnswer: (aiGuideAnswer) => set({ aiGuideAnswer }),
 
-  requestBirdExplanation: (birdId) => {
-    set({ birdExplanationLoading: true, birdExplanation: null });
-    import("../features/KnowledgeService").then(({ queryBirdExplanation }) => {
-      queryBirdExplanation(birdId).then((result) => {
-        set({
-          birdExplanation: result,
-          birdExplanationLoading: false,
-          aiGuideOpen: true,
-        });
-      }).catch(() => {
-        set({ birdExplanationLoading: false });
-      });
-    });
-  },
-  clearBirdExplanation: () =>
-    set({ birdExplanation: null, birdExplanationLoading: false }),
-  speakExplanation: () => {
-    const { birdExplanation, language } = get();
-    if (!birdExplanation) return;
-    import("../features/tts-service").then(({ speak }) => {
-      const text = language === "zh" ? birdExplanation.textZh : birdExplanation.text;
-      const status = speak(text, language, () => set({ ttsStatus: "idle" }));
-      set({ ttsStatus: status });
-    });
-  },
-  stopSpeaking: () => {
-    import("../features/tts-service").then(({ stop }) => {
-      stop();
-      set({ ttsStatus: "idle" });
-    });
-  },
 
   setArSessionActive: (arSessionActive) => set({ arSessionActive }),
 
