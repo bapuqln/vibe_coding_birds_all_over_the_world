@@ -1,17 +1,14 @@
 import { create } from "zustand";
 import type {
   JourneyProgress,
-  StoryPlayState,
   TTSStatus,
 } from "../types";
 import { createInitialTimeState } from "../core/TimeController";
 import {
   loadFromStorage,
   saveToStorage,
-  STORY_KEY,
   JOURNEY_PROGRESS_KEY,
   VISITED_STOPS_KEY,
-  COMPLETED_STORIES_KEY,
 } from "./persistence";
 import type { AppStore } from "./types";
 export type { AppStore, PanelType } from "./types";
@@ -22,6 +19,7 @@ import { createPhotoSlice } from "./slices/photoSlice";
 import { createQuizSlice } from "./slices/quizSlice";
 import { createSoundSlice } from "./slices/soundSlice";
 import { createTourSlice } from "./slices/tourSlice";
+import { createStorySlice } from "./slices/storySlice";
 
 
 export const useAppStore = create<AppStore>()((set, get, store) => ({
@@ -32,6 +30,7 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
   ...createQuizSlice(set, get, store),
   ...createSoundSlice(set, get, store),
   ...createTourSlice(set, get, store),
+  ...createStorySlice(set, get, store),
 
 
   showAllRoutes: false,
@@ -43,8 +42,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   migrationModeActive: false,
 
-  storyExplorerOpen: false,
-  storyProgress: loadFromStorage<Record<string, string[]>>(STORY_KEY, {}),
 
 
 
@@ -56,12 +53,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  storyModeActive: false,
-  storyPlayState: "idle" as StoryPlayState,
-  activeStoryId: null,
-  storyStepIndex: 0,
-  storyHighlightBirdId: null,
-  completedStories: loadFromStorage<string[]>(COMPLETED_STORIES_KEY, []),
 
 
 
@@ -130,15 +121,6 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
   setMigrationModeActive: (migrationModeActive) => set({ migrationModeActive }),
 
-  setStoryExplorerOpen: (storyExplorerOpen) => set({ storyExplorerOpen }),
-  markStoryBirdDiscovered: (storyId, birdId) => {
-    const state = get();
-    const current = state.storyProgress[storyId] || [];
-    if (current.includes(birdId)) return;
-    const updated = { ...state.storyProgress, [storyId]: [...current, birdId] };
-    saveToStorage(STORY_KEY, updated);
-    set({ storyProgress: updated });
-  },
 
 
 
@@ -158,48 +140,12 @@ export const useAppStore = create<AppStore>()((set, get, store) => ({
 
 
 
-  setStoryModeActive: (storyModeActive) => set({ storyModeActive }),
 
-  startStoryAdventure: (storyId) =>
-    set({
-      storyModeActive: true,
-      storyPlayState: "playing",
-      activeStoryId: storyId,
-      storyStepIndex: 0,
-      storyHighlightBirdId: null,
-    }),
 
-  nextStoryStep: () =>
-    set((state) => ({
-      storyStepIndex: state.storyStepIndex + 1,
-      storyHighlightBirdId: null,
-    })),
 
-  pauseStoryAdventure: () => set({ storyPlayState: "paused" }),
 
-  resumeStoryAdventure: () => set({ storyPlayState: "playing" }),
 
-  exitStoryAdventure: () =>
-    set({
-      storyModeActive: false,
-      storyPlayState: "idle",
-      activeStoryId: null,
-      storyStepIndex: 0,
-      storyHighlightBirdId: null,
-    }),
 
-  completeStoryAdventure: () => {
-    const state = get();
-    if (!state.activeStoryId) return;
-    const updated = state.completedStories.includes(state.activeStoryId)
-      ? state.completedStories
-      : [...state.completedStories, state.activeStoryId];
-    saveToStorage(COMPLETED_STORIES_KEY, updated);
-    set({
-      storyPlayState: "complete",
-      completedStories: updated,
-    });
-  },
 
 
 
